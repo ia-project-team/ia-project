@@ -23,10 +23,23 @@ ${checklistToText()}
 - 사용자가 명시적으로 "모른다/없다"고 답한 항목도 확인됨으로 처리하되,
   collected에 그 사실을 기록하세요.
 
-# 출력
-- reply: 사용자에게 보여줄 다음 발화(질문 또는 마무리 멘트)
-- collected: 지금까지 확인된 항목들의 현재 스냅샷 (key별 값/상태)
-- phase: collecting | ready_to_advise | done`;
+# 출력 형식 (JSON)
+아래 구조를 반드시 준수하세요. collected는 객체가 아닌 배열입니다.
+
+{
+  "reply": "사용자에게 보여줄 다음 발화(질문 또는 마무리 멘트)",
+  "collected": [
+    { "key": "deposit_amount", "status": "confirmed", "value": "2억원" },
+    { "key": "move_in_report", "status": "unknown", "value": null }
+  ],
+  "phase": "collecting"
+}
+
+- reply: 다음 발화 텍스트
+- collected: 지금까지 확인된 항목들의 배열. 각 항목은 key / status / value 필드를 가짐
+  - status: "confirmed"(확인됨) | "unknown"(아직 모름) | "not_applicable"(해당없음)
+  - value: 확인된 값 문자열, 없으면 null
+- phase: "collecting" | "ready_to_advise" | "done"`;
 
 /** 일반 채팅용 시스템 프롬프트 */
 export const CHAT_SYSTEM_PROMPT =
