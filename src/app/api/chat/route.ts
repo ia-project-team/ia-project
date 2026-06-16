@@ -1,3 +1,5 @@
+// Demo / general streaming chat route.
+
 import type { UIMessage } from "ai";
 
 import { streamChat } from "@/server/llm/chat";

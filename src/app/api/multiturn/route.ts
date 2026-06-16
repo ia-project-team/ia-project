@@ -24,9 +24,11 @@ export async function POST(request: Request) {
     }
 
     const session = store.getOrCreate(sessionId);
+    const t0 = Date.now();
     const result = await runSingleTurn(message, session.history, MULTITURN_MODEL);
+    const duration_ms = Date.now() - t0;
 
-    return NextResponse.json(result);
+    return NextResponse.json({ ...result, duration_ms });
   } catch (err) {
     console.error("multiturn route error:", err);
     return NextResponse.json(
