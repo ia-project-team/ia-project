@@ -1,21 +1,10 @@
-// 멀티턴 한 턴 처리 — Vercel AI SDK (generateObject) 사용.
+// 멀티턴 한 턴 처리 — Vercel AI SDK 사용.
 //
-// [SDK 변환 요약]
-// Before (OpenAI SDK):
-//   client.responses.parse({ model, instructions, input: history, store: false,
-//     text: { format: zodTextFormat(TurnOutput, "turn_output") } })
-// After (Vercel AI SDK):
-//   generateObject({ model: openai(model), schema: TurnOutputSchema,
-//     system: MULTITURN_SYSTEM_PROMPT, messages: history })
-//
-// - zodTextFormat  → schema (Zod 스키마를 generateObject에 직접 전달)
-// - instructions   → system
-// - input          → messages
-// - store: false   → Vercel AI SDK는 기본적으로 저장하지 않음
-// - output_parsed  → object (generateObject 반환값)
+// OPENAI_BASE_URL 설정 시(프록시): generateText + 수동 JSON 파싱
+// 미설정(공식 OpenAI): generateObject (JSON 스키마 강제)
 import "server-only";
 
-import { generateObject } from "ai";
+import { generateObject, generateText } from "ai";
 
 import { TurnOutputSchema, type TurnOutput, type ConversationMessage } from "@/core/schemas/turn";
 import { MULTITURN_SYSTEM_PROMPT } from "@/core/checklist/prompts";
@@ -27,6 +16,17 @@ export async function runTurn(
   history: ConversationMessage[],
 ): Promise<TurnOutput> {
   const openai = getOpenAI();
+
+  if (process.env.OPENAI_BASE_URL) {
+    const { text } = await generateText({
+      model: openai.chat(model),
+      system: MULTITURN_SYSTEM_PROMPT + "\n\n반드시 JSON 형식으로만 응답하세요. 다른 텍스트 없이 JSON만 출력하세요.",
+      messages: history,
+    });
+
+    const json = JSON.parse(text.trim()) as unknown;
+    return TurnOutputSchema.parse(json);
+  }
 
   const { object } = await generateObject({
     model: openai(model),

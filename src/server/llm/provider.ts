@@ -16,7 +16,7 @@ export function getOpenAI(): OpenAIProvider {
     );
   }
 
-  cached = createOpenAI({ apiKey });
+  cached = createOpenAI({ apiKey, baseURL: process.env.OPENAI_BASE_URL });
   return cached;
 }
 
