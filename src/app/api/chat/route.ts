@@ -1,4 +1,5 @@
 // Demo / general streaming chat route.
+// Product multiturn consultation flow uses /api/multiturn.
 
 import type { UIMessage } from "ai";
 
