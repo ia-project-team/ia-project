@@ -1,3 +1,6 @@
+// Demo / general streaming chat route.
+// Product multiturn consultation flow uses /api/multiturn.
+
 import type { UIMessage } from "ai";
 
 import { streamChat } from "@/server/llm/chat";
