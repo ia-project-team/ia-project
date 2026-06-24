@@ -13,6 +13,7 @@
 
 import fs from "fs";
 import path from "path";
+import { loadEnvConfig } from "@next/env";
 
 import {
   ClientSimulator,
@@ -26,6 +27,8 @@ import {
   type SystemRunner,
   type SystemTurnResponse,
 } from "./ia";
+
+loadEnvConfig(process.cwd());
 
 // ============================================================
 // Types

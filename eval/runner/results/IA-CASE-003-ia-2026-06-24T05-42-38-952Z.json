@@ -1,0 +1,2031 @@
+{
+  "case_id": "IA-CASE-003",
+  "case_title": "묵시적 갱신 여부가 불명확한 보증금 미반환",
+  "system": "ia",
+  "started_at": "2026-06-24T05:42:38.952Z",
+  "ended_at": "2026-06-24T05:43:55.226Z",
+  "total_turns": 20,
+  "end_reason": "max_turns_reached",
+  "final_collected": [
+    {
+      "key": "has_contract_doc",
+      "status": "confirmed",
+      "value": "있음"
+    },
+    {
+      "key": "contract_start_date",
+      "status": "confirmed",
+      "value": "2023-06-15"
+    },
+    {
+      "key": "contract_end_date",
+      "status": "confirmed",
+      "value": "2025-06-14"
+    },
+    {
+      "key": "deposit_amount",
+      "status": "confirmed",
+      "value": "2,000만원"
+    },
+    {
+      "key": "unreturned_amount",
+      "status": "confirmed",
+      "value": "전액 2,000만원"
+    },
+    {
+      "key": "has_resident_reg",
+      "status": "confirmed",
+      "value": "있음"
+    },
+    {
+      "key": "has_fixed_date",
+      "status": "confirmed",
+      "value": "있음"
+    },
+    {
+      "key": "has_moved_out",
+      "status": "confirmed",
+      "value": "아직 퇴거 안 함"
+    },
+    {
+      "key": "notice_date",
+      "status": "confirmed",
+      "value": "2025-05-20"
+    },
+    {
+      "key": "notice_method",
+      "status": "confirmed",
+      "value": "전화"
+    },
+    {
+      "key": "landlord_responded",
+      "status": "confirmed",
+      "value": "자동으로 연장된 거 아니냐고 함"
+    },
+    {
+      "key": "has_kakao_records",
+      "status": "confirmed",
+      "value": "없음"
+    },
+    {
+      "key": "has_certified_mail",
+      "status": "confirmed",
+      "value": "없음"
+    },
+    {
+      "key": "has_transfer_records",
+      "status": "unknown",
+      "value": null
+    },
+    {
+      "key": "has_lien_registration",
+      "status": "confirmed",
+      "value": "신청 안 함"
+    },
+    {
+      "key": "registry_check",
+      "status": "unknown",
+      "value": null
+    }
+  ],
+  "final_phase": "collecting",
+  "conversation": [
+    {
+      "turn": 0,
+      "speaker": "client",
+      "content": "계약 끝난 줄 알고 보증금 달라고 했는데 집주인이 자동으로 연장된 거 아니냐고 해요.\n저는 그런 줄 몰랐거든요."
+    },
+    {
+      "turn": 0,
+      "speaker": "ai",
+      "content": "많이 당황스러우셨겠어요. 우선 계약서 기준으로 상황을 차근차근 확인해볼게요. 임대차계약서 사본을 가지고 계신가요?",
+      "collected_snapshot": [
+        {
+          "key": "has_contract_doc",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "contract_start_date",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "contract_end_date",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "deposit_amount",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "unreturned_amount",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_resident_reg",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_fixed_date",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_moved_out",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "notice_date",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "notice_method",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "landlord_responded",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_kakao_records",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_certified_mail",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_transfer_records",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_lien_registration",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "registry_check",
+          "status": "unknown",
+          "value": null
+        }
+      ],
+      "phase_snapshot": "collecting",
+      "duration_ms": 2119
+    },
+    {
+      "turn": 1,
+      "speaker": "client",
+      "content": "네, 있어요."
+    },
+    {
+      "turn": 1,
+      "speaker": "ai",
+      "content": "감사합니다. 그럼 계약서에 적힌 계약 시작일과 종료일은 각각 언제인가요?",
+      "collected_snapshot": [
+        {
+          "key": "has_contract_doc",
+          "status": "confirmed",
+          "value": "있음"
+        },
+        {
+          "key": "contract_start_date",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "contract_end_date",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "deposit_amount",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "unreturned_amount",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_resident_reg",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_fixed_date",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_moved_out",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "notice_date",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "notice_method",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "landlord_responded",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_kakao_records",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_certified_mail",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_transfer_records",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_lien_registration",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "registry_check",
+          "status": "unknown",
+          "value": null
+        }
+      ],
+      "phase_snapshot": "collecting",
+      "duration_ms": 4212
+    },
+    {
+      "turn": 2,
+      "speaker": "client",
+      "content": "2023-06-15, 2025-06-14예요."
+    },
+    {
+      "turn": 2,
+      "speaker": "ai",
+      "content": "감사합니다. 보증금은 얼마로 계약하셨나요?",
+      "collected_snapshot": [
+        {
+          "key": "has_contract_doc",
+          "status": "confirmed",
+          "value": "있음"
+        },
+        {
+          "key": "contract_start_date",
+          "status": "confirmed",
+          "value": "2023-06-15"
+        },
+        {
+          "key": "contract_end_date",
+          "status": "confirmed",
+          "value": "2025-06-14"
+        },
+        {
+          "key": "deposit_amount",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "unreturned_amount",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_resident_reg",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_fixed_date",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_moved_out",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "notice_date",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "notice_method",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "landlord_responded",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_kakao_records",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_certified_mail",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_transfer_records",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_lien_registration",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "registry_check",
+          "status": "unknown",
+          "value": null
+        }
+      ],
+      "phase_snapshot": "collecting",
+      "duration_ms": 2263
+    },
+    {
+      "turn": 3,
+      "speaker": "client",
+      "content": "2,000만원이요."
+    },
+    {
+      "turn": 3,
+      "speaker": "ai",
+      "content": "감사합니다. 그럼 계약이 끝났는데 보증금을 아직 못 받으신 금액은 전액인가요, 아니면 일부만 못 받으셨나요?",
+      "collected_snapshot": [
+        {
+          "key": "has_contract_doc",
+          "status": "confirmed",
+          "value": "있음"
+        },
+        {
+          "key": "contract_start_date",
+          "status": "confirmed",
+          "value": "2023-06-15"
+        },
+        {
+          "key": "contract_end_date",
+          "status": "confirmed",
+          "value": "2025-06-14"
+        },
+        {
+          "key": "deposit_amount",
+          "status": "confirmed",
+          "value": "2,000만원"
+        },
+        {
+          "key": "unreturned_amount",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_resident_reg",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_fixed_date",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_moved_out",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "notice_date",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "notice_method",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "landlord_responded",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_kakao_records",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_certified_mail",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_transfer_records",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_lien_registration",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "registry_check",
+          "status": "unknown",
+          "value": null
+        }
+      ],
+      "phase_snapshot": "collecting",
+      "duration_ms": 2136
+    },
+    {
+      "turn": 4,
+      "speaker": "client",
+      "content": "전액이요. 2,000만원 전부 못 받았어요."
+    },
+    {
+      "turn": 4,
+      "speaker": "ai",
+      "content": "감사합니다. 전입신고와 확정일자는 받으셨나요? 둘 다 했는지, 아니면 하나만 했는지도 알려주세요.",
+      "collected_snapshot": [
+        {
+          "key": "has_contract_doc",
+          "status": "confirmed",
+          "value": "있음"
+        },
+        {
+          "key": "contract_start_date",
+          "status": "confirmed",
+          "value": "2023-06-15"
+        },
+        {
+          "key": "contract_end_date",
+          "status": "confirmed",
+          "value": "2025-06-14"
+        },
+        {
+          "key": "deposit_amount",
+          "status": "confirmed",
+          "value": "2,000만원"
+        },
+        {
+          "key": "unreturned_amount",
+          "status": "confirmed",
+          "value": "2,000만원 전액"
+        },
+        {
+          "key": "has_resident_reg",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_fixed_date",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_moved_out",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "notice_date",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "notice_method",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "landlord_responded",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_kakao_records",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_certified_mail",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_transfer_records",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_lien_registration",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "registry_check",
+          "status": "unknown",
+          "value": null
+        }
+      ],
+      "phase_snapshot": "collecting",
+      "duration_ms": 2249
+    },
+    {
+      "turn": 5,
+      "speaker": "client",
+      "content": "네, 둘 다 했어요."
+    },
+    {
+      "turn": 5,
+      "speaker": "ai",
+      "content": "감사합니다. 실제로는 이사를 나가신 상태인가요? 아직 거주 중인지, 이미 퇴거하셨는지 알려주세요.",
+      "collected_snapshot": [
+        {
+          "key": "has_contract_doc",
+          "status": "confirmed",
+          "value": "있음"
+        },
+        {
+          "key": "contract_start_date",
+          "status": "confirmed",
+          "value": "2023-06-15"
+        },
+        {
+          "key": "contract_end_date",
+          "status": "confirmed",
+          "value": "2025-06-14"
+        },
+        {
+          "key": "deposit_amount",
+          "status": "confirmed",
+          "value": "2,000만원"
+        },
+        {
+          "key": "unreturned_amount",
+          "status": "confirmed",
+          "value": "2,000만원 전액"
+        },
+        {
+          "key": "has_resident_reg",
+          "status": "confirmed",
+          "value": "있음"
+        },
+        {
+          "key": "has_fixed_date",
+          "status": "confirmed",
+          "value": "있음"
+        },
+        {
+          "key": "has_moved_out",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "notice_date",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "notice_method",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "landlord_responded",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_kakao_records",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_certified_mail",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_transfer_records",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_lien_registration",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "registry_check",
+          "status": "unknown",
+          "value": null
+        }
+      ],
+      "phase_snapshot": "collecting",
+      "duration_ms": 2664
+    },
+    {
+      "turn": 6,
+      "speaker": "client",
+      "content": "아직 안 나갔어요. 보증금 받기 전이라 못 나가고 있어요."
+    },
+    {
+      "turn": 6,
+      "speaker": "ai",
+      "content": "감사합니다. 계약 종료를 집주인에게 언제, 어떤 방식으로 알리셨나요? 예를 들어 문자, 카톡, 전화, 내용증명 같은 방식이 있었는지 알려주세요.",
+      "collected_snapshot": [
+        {
+          "key": "has_contract_doc",
+          "status": "confirmed",
+          "value": "있음"
+        },
+        {
+          "key": "contract_start_date",
+          "status": "confirmed",
+          "value": "2023-06-15"
+        },
+        {
+          "key": "contract_end_date",
+          "status": "confirmed",
+          "value": "2025-06-14"
+        },
+        {
+          "key": "deposit_amount",
+          "status": "confirmed",
+          "value": "2,000만원"
+        },
+        {
+          "key": "unreturned_amount",
+          "status": "confirmed",
+          "value": "전액 2,000만원"
+        },
+        {
+          "key": "has_resident_reg",
+          "status": "confirmed",
+          "value": "있음"
+        },
+        {
+          "key": "has_fixed_date",
+          "status": "confirmed",
+          "value": "있음"
+        },
+        {
+          "key": "has_moved_out",
+          "status": "confirmed",
+          "value": "아직 퇴거 전"
+        },
+        {
+          "key": "notice_date",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "notice_method",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "landlord_responded",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_kakao_records",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_certified_mail",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_transfer_records",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_lien_registration",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "registry_check",
+          "status": "unknown",
+          "value": null
+        }
+      ],
+      "phase_snapshot": "collecting",
+      "duration_ms": 2444
+    },
+    {
+      "turn": 7,
+      "speaker": "client",
+      "content": "5월 20일에 전화로만 말했어요. 카톡이나 문자, 내용증명은 없어요."
+    },
+    {
+      "turn": 7,
+      "speaker": "ai",
+      "content": "감사합니다. 마지막으로 등기부등본을 확인해보셨을 때, 선순위 권리나 근저당처럼 앞에 잡힌 권리가 있었는지도 알고 계신가요? 모르시면 ‘확인 안 했다’고 말씀해주셔도 괜찮아요.",
+      "collected_snapshot": [
+        {
+          "key": "has_contract_doc",
+          "status": "confirmed",
+          "value": "있음"
+        },
+        {
+          "key": "contract_start_date",
+          "status": "confirmed",
+          "value": "2023-06-15"
+        },
+        {
+          "key": "contract_end_date",
+          "status": "confirmed",
+          "value": "2025-06-14"
+        },
+        {
+          "key": "deposit_amount",
+          "status": "confirmed",
+          "value": "2,000만원"
+        },
+        {
+          "key": "unreturned_amount",
+          "status": "confirmed",
+          "value": "2,000만원 전부"
+        },
+        {
+          "key": "has_resident_reg",
+          "status": "confirmed",
+          "value": "있음"
+        },
+        {
+          "key": "has_fixed_date",
+          "status": "confirmed",
+          "value": "있음"
+        },
+        {
+          "key": "has_moved_out",
+          "status": "confirmed",
+          "value": "아직 안 나감"
+        },
+        {
+          "key": "notice_date",
+          "status": "confirmed",
+          "value": "2025-05-20"
+        },
+        {
+          "key": "notice_method",
+          "status": "confirmed",
+          "value": "전화"
+        },
+        {
+          "key": "landlord_responded",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_kakao_records",
+          "status": "confirmed",
+          "value": "없음"
+        },
+        {
+          "key": "has_certified_mail",
+          "status": "confirmed",
+          "value": "없음"
+        },
+        {
+          "key": "has_transfer_records",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_lien_registration",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "registry_check",
+          "status": "unknown",
+          "value": null
+        }
+      ],
+      "phase_snapshot": "collecting",
+      "duration_ms": 2471
+    },
+    {
+      "turn": 8,
+      "speaker": "client",
+      "content": "확인 안 했어요."
+    },
+    {
+      "turn": 8,
+      "speaker": "ai",
+      "content": "감사합니다. 현재까지 내용으로 보면, 자동연장 여부와 보증금 반환 가능성을 같이 봐야 해서 등기부 확인이 중요해요. 가능하시면 등기부등본에서 선순위 권리(근저당, 가압류 등) 있는지 먼저 확인해보시고, 집주인이 전화에 어떻게 반응했는지도 알려주시면 다음 안내를 더 정확히 드릴게요.",
+      "collected_snapshot": [
+        {
+          "key": "has_contract_doc",
+          "status": "confirmed",
+          "value": "있음"
+        },
+        {
+          "key": "contract_start_date",
+          "status": "confirmed",
+          "value": "2023-06-15"
+        },
+        {
+          "key": "contract_end_date",
+          "status": "confirmed",
+          "value": "2025-06-14"
+        },
+        {
+          "key": "deposit_amount",
+          "status": "confirmed",
+          "value": "2,000만원"
+        },
+        {
+          "key": "unreturned_amount",
+          "status": "confirmed",
+          "value": "2,000만원 전액"
+        },
+        {
+          "key": "has_resident_reg",
+          "status": "confirmed",
+          "value": "있음"
+        },
+        {
+          "key": "has_fixed_date",
+          "status": "confirmed",
+          "value": "있음"
+        },
+        {
+          "key": "has_moved_out",
+          "status": "confirmed",
+          "value": "아직 안 나감"
+        },
+        {
+          "key": "notice_date",
+          "status": "confirmed",
+          "value": "2025-05-20"
+        },
+        {
+          "key": "notice_method",
+          "status": "confirmed",
+          "value": "전화"
+        },
+        {
+          "key": "landlord_responded",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_kakao_records",
+          "status": "confirmed",
+          "value": "없음"
+        },
+        {
+          "key": "has_certified_mail",
+          "status": "confirmed",
+          "value": "없음"
+        },
+        {
+          "key": "has_transfer_records",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_lien_registration",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "registry_check",
+          "status": "unknown",
+          "value": null
+        }
+      ],
+      "phase_snapshot": "collecting",
+      "duration_ms": 2790
+    },
+    {
+      "turn": 9,
+      "speaker": "client",
+      "content": "집주인이 이미 자동으로 연장된 거 아니냐고 했어요."
+    },
+    {
+      "turn": 9,
+      "speaker": "ai",
+      "content": "감사합니다. 집주인도 자동연장이라고 주장하는 상황이군요. 혹시 집주인에게는 전화를 한 뒤에 문자나 카톡으로 다시 남긴 적은 없으신가요? 없다면 없다라고 말씀해주셔도 됩니다.",
+      "collected_snapshot": [
+        {
+          "key": "has_contract_doc",
+          "status": "confirmed",
+          "value": "있음"
+        },
+        {
+          "key": "contract_start_date",
+          "status": "confirmed",
+          "value": "2023-06-15"
+        },
+        {
+          "key": "contract_end_date",
+          "status": "confirmed",
+          "value": "2025-06-14"
+        },
+        {
+          "key": "deposit_amount",
+          "status": "confirmed",
+          "value": "2,000만원"
+        },
+        {
+          "key": "unreturned_amount",
+          "status": "confirmed",
+          "value": "2,000만원 전부"
+        },
+        {
+          "key": "has_resident_reg",
+          "status": "confirmed",
+          "value": "있음"
+        },
+        {
+          "key": "has_fixed_date",
+          "status": "confirmed",
+          "value": "있음"
+        },
+        {
+          "key": "has_moved_out",
+          "status": "confirmed",
+          "value": "아직 안 나감"
+        },
+        {
+          "key": "notice_date",
+          "status": "confirmed",
+          "value": "2025-05-20"
+        },
+        {
+          "key": "notice_method",
+          "status": "confirmed",
+          "value": "전화"
+        },
+        {
+          "key": "landlord_responded",
+          "status": "confirmed",
+          "value": "자동으로 연장된 거 아니냐고 함"
+        },
+        {
+          "key": "has_kakao_records",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_certified_mail",
+          "status": "confirmed",
+          "value": "없음"
+        },
+        {
+          "key": "has_transfer_records",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_lien_registration",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "registry_check",
+          "status": "unknown",
+          "value": null
+        }
+      ],
+      "phase_snapshot": "collecting",
+      "duration_ms": 2655
+    },
+    {
+      "turn": 10,
+      "speaker": "client",
+      "content": "없어요. 전화로만 했어요."
+    },
+    {
+      "turn": 10,
+      "speaker": "ai",
+      "content": "감사합니다. 지금까지 말씀해주신 내용은 모두 정리됐고, 핵심적으로는 자동연장 주장과 관련해 등기부상 선순위 권리 확인이 아직 안 된 상태예요. 먼저 등기부등본(또는 인터넷 등기소)에서 근저당, 가압류, 압류 같은 선순위 권리가 있는지 확인해보시면 좋습니다. 확인하신 뒤 결과를 알려주시면, 자동연장 여부와 보증금 반환 대응 방향을 더 구체적으로 안내드릴게요.",
+      "collected_snapshot": [
+        {
+          "key": "has_contract_doc",
+          "status": "confirmed",
+          "value": "있음"
+        },
+        {
+          "key": "contract_start_date",
+          "status": "confirmed",
+          "value": "2023-06-15"
+        },
+        {
+          "key": "contract_end_date",
+          "status": "confirmed",
+          "value": "2025-06-14"
+        },
+        {
+          "key": "deposit_amount",
+          "status": "confirmed",
+          "value": "2,000만원"
+        },
+        {
+          "key": "unreturned_amount",
+          "status": "confirmed",
+          "value": "2,000만원 전액"
+        },
+        {
+          "key": "has_resident_reg",
+          "status": "confirmed",
+          "value": "있음"
+        },
+        {
+          "key": "has_fixed_date",
+          "status": "confirmed",
+          "value": "있음"
+        },
+        {
+          "key": "has_moved_out",
+          "status": "confirmed",
+          "value": "아직 퇴거 안 함"
+        },
+        {
+          "key": "notice_date",
+          "status": "confirmed",
+          "value": "2025-05-20"
+        },
+        {
+          "key": "notice_method",
+          "status": "confirmed",
+          "value": "전화"
+        },
+        {
+          "key": "landlord_responded",
+          "status": "confirmed",
+          "value": "자동으로 연장된 거 아니냐고 함"
+        },
+        {
+          "key": "has_kakao_records",
+          "status": "confirmed",
+          "value": "없음"
+        },
+        {
+          "key": "has_certified_mail",
+          "status": "confirmed",
+          "value": "없음"
+        },
+        {
+          "key": "has_transfer_records",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_lien_registration",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "registry_check",
+          "status": "confirmed",
+          "value": "확인 안 함"
+        }
+      ],
+      "phase_snapshot": "ready_to_advise",
+      "duration_ms": 2927
+    },
+    {
+      "turn": 11,
+      "speaker": "client",
+      "content": "잘 모르겠어요. 아직 확인 안 했어요."
+    },
+    {
+      "turn": 11,
+      "speaker": "ai",
+      "content": "괜찮습니다. 등기부 확인은 나중에 해도 되고, 우선 지금은 보증금 반환을 위해서라도 집주인에게 계약 종료와 보증금 반환을 다시 문자로 남겨두는 게 좋아요. 혹시 임차권등기명령은 신청하신 적이 있나요?",
+      "collected_snapshot": [
+        {
+          "key": "has_contract_doc",
+          "status": "confirmed",
+          "value": "있음"
+        },
+        {
+          "key": "contract_start_date",
+          "status": "confirmed",
+          "value": "2023-06-15"
+        },
+        {
+          "key": "contract_end_date",
+          "status": "confirmed",
+          "value": "2025-06-14"
+        },
+        {
+          "key": "deposit_amount",
+          "status": "confirmed",
+          "value": "2000만원"
+        },
+        {
+          "key": "unreturned_amount",
+          "status": "confirmed",
+          "value": "2000만원 전액"
+        },
+        {
+          "key": "has_resident_reg",
+          "status": "confirmed",
+          "value": "있음"
+        },
+        {
+          "key": "has_fixed_date",
+          "status": "confirmed",
+          "value": "있음"
+        },
+        {
+          "key": "has_moved_out",
+          "status": "confirmed",
+          "value": "아직 퇴거 안 함"
+        },
+        {
+          "key": "notice_date",
+          "status": "confirmed",
+          "value": "2025-05-20"
+        },
+        {
+          "key": "notice_method",
+          "status": "confirmed",
+          "value": "전화"
+        },
+        {
+          "key": "landlord_responded",
+          "status": "confirmed",
+          "value": "자동연장 주장"
+        },
+        {
+          "key": "has_kakao_records",
+          "status": "confirmed",
+          "value": "없음"
+        },
+        {
+          "key": "has_certified_mail",
+          "status": "confirmed",
+          "value": "없음"
+        },
+        {
+          "key": "has_transfer_records",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_lien_registration",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "registry_check",
+          "status": "unknown",
+          "value": null
+        }
+      ],
+      "phase_snapshot": "collecting",
+      "duration_ms": 3240
+    },
+    {
+      "turn": 12,
+      "speaker": "client",
+      "content": "그게 뭔지 잘 모르겠어요. 신청한 적은 없어요."
+    },
+    {
+      "turn": 12,
+      "speaker": "ai",
+      "content": "괜찮습니다. 임차권등기명령은 이사를 나가더라도 대항력·우선변제를 지키기 위해 법원에 신청하는 절차예요. \n그럼 다음으로, 계약 종료를 알린 5월 20일 전화 이후에 집주인이 보증금 반환에 대해 뭐라고 했는지 기억나시는 대로 말씀해주실 수 있을까요? 예를 들면 “언제 주겠다”, “자동연장이다”, “새 세입자 구해야 준다” 같은 말이요.",
+      "collected_snapshot": [
+        {
+          "key": "has_contract_doc",
+          "status": "confirmed",
+          "value": "있음"
+        },
+        {
+          "key": "contract_start_date",
+          "status": "confirmed",
+          "value": "2023-06-15"
+        },
+        {
+          "key": "contract_end_date",
+          "status": "confirmed",
+          "value": "2025-06-14"
+        },
+        {
+          "key": "deposit_amount",
+          "status": "confirmed",
+          "value": "2,000만원"
+        },
+        {
+          "key": "unreturned_amount",
+          "status": "confirmed",
+          "value": "2,000만원 전액"
+        },
+        {
+          "key": "has_resident_reg",
+          "status": "confirmed",
+          "value": "있음"
+        },
+        {
+          "key": "has_fixed_date",
+          "status": "confirmed",
+          "value": "있음"
+        },
+        {
+          "key": "has_moved_out",
+          "status": "confirmed",
+          "value": "아직 퇴거하지 않음"
+        },
+        {
+          "key": "notice_date",
+          "status": "confirmed",
+          "value": "2025-05-20"
+        },
+        {
+          "key": "notice_method",
+          "status": "confirmed",
+          "value": "전화"
+        },
+        {
+          "key": "landlord_responded",
+          "status": "confirmed",
+          "value": "자동으로 연장된 거 아니냐고 함"
+        },
+        {
+          "key": "has_kakao_records",
+          "status": "confirmed",
+          "value": "없음"
+        },
+        {
+          "key": "has_certified_mail",
+          "status": "confirmed",
+          "value": "없음"
+        },
+        {
+          "key": "has_transfer_records",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_lien_registration",
+          "status": "confirmed",
+          "value": "신청한 적 없음"
+        },
+        {
+          "key": "registry_check",
+          "status": "unknown",
+          "value": null
+        }
+      ],
+      "phase_snapshot": "collecting",
+      "duration_ms": 2886
+    },
+    {
+      "turn": 13,
+      "speaker": "client",
+      "content": "자동으로 연장된 거 아니냐고 했어요."
+    },
+    {
+      "turn": 13,
+      "speaker": "ai",
+      "content": "감사합니다. 지금까지 말씀으로는 집주인이 자동연장을 주장하고 있고, 아직 계약 종료 통보는 전화로만 하신 상태로 보입니다. 다음으로는 혹시 계약서에 묵시적 갱신이나 자동연장에 관한 특약이 있었는지 확인해볼게요. 계약서에 그런 문구가 있었나요? 잘 모르시면 ‘모르겠다’고 하셔도 괜찮습니다.",
+      "collected_snapshot": [
+        {
+          "key": "has_contract_doc",
+          "status": "confirmed",
+          "value": "있음"
+        },
+        {
+          "key": "contract_start_date",
+          "status": "confirmed",
+          "value": "2023-06-15"
+        },
+        {
+          "key": "contract_end_date",
+          "status": "confirmed",
+          "value": "2025-06-14"
+        },
+        {
+          "key": "deposit_amount",
+          "status": "confirmed",
+          "value": "2,000만원"
+        },
+        {
+          "key": "unreturned_amount",
+          "status": "confirmed",
+          "value": "2,000만원 전액"
+        },
+        {
+          "key": "has_resident_reg",
+          "status": "confirmed",
+          "value": "있음"
+        },
+        {
+          "key": "has_fixed_date",
+          "status": "confirmed",
+          "value": "있음"
+        },
+        {
+          "key": "has_moved_out",
+          "status": "confirmed",
+          "value": "아직 퇴거하지 않음"
+        },
+        {
+          "key": "notice_date",
+          "status": "confirmed",
+          "value": "2025-05-20"
+        },
+        {
+          "key": "notice_method",
+          "status": "confirmed",
+          "value": "전화"
+        },
+        {
+          "key": "landlord_responded",
+          "status": "confirmed",
+          "value": "자동으로 연장된 거 아니냐고 함"
+        },
+        {
+          "key": "has_kakao_records",
+          "status": "confirmed",
+          "value": "없음"
+        },
+        {
+          "key": "has_certified_mail",
+          "status": "confirmed",
+          "value": "없음"
+        },
+        {
+          "key": "has_transfer_records",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_lien_registration",
+          "status": "confirmed",
+          "value": "신청한 적 없음"
+        },
+        {
+          "key": "registry_check",
+          "status": "unknown",
+          "value": null
+        }
+      ],
+      "phase_snapshot": "collecting",
+      "duration_ms": 2869
+    },
+    {
+      "turn": 14,
+      "speaker": "client",
+      "content": "모르겠어요. 계약서 자세히는 기억 안 나요."
+    },
+    {
+      "turn": 14,
+      "speaker": "ai",
+      "content": "지금까지 확인된 내용으로는, 계약서는 보유하고 계시고 계약기간은 2023-06-15 ~ 2025-06-14, 보증금 2,000만원 전액 미반환 상태이며, 전입신고·확정일자는 되어 있고 아직 퇴거는 안 하신 상태예요. 종료 통보는 5월 20일에 전화로만 하셨고, 집주인은 자동연장이라고 주장 중입니다. \n\n다만 아직 등기부상 선순위 권리 확인이 안 되어 있어서, 그 부분이 매우 중요합니다. 가능하시면 인터넷등기소나 등기부등본으로 근저당·가압류·압류가 있는지 확인해보시고, 확인이 어려우면 제가 보는 법을 간단히 안내드릴게요. 또 계약서에 자동연장/묵시적 갱신 특약이 있었는지도 한 번만 살펴보시면 좋아요.",
+      "collected_snapshot": [
+        {
+          "key": "has_contract_doc",
+          "status": "confirmed",
+          "value": "있음"
+        },
+        {
+          "key": "contract_start_date",
+          "status": "confirmed",
+          "value": "2023-06-15"
+        },
+        {
+          "key": "contract_end_date",
+          "status": "confirmed",
+          "value": "2025-06-14"
+        },
+        {
+          "key": "deposit_amount",
+          "status": "confirmed",
+          "value": "2,000만원"
+        },
+        {
+          "key": "unreturned_amount",
+          "status": "confirmed",
+          "value": "2,000만원 전액"
+        },
+        {
+          "key": "has_resident_reg",
+          "status": "confirmed",
+          "value": "있음"
+        },
+        {
+          "key": "has_fixed_date",
+          "status": "confirmed",
+          "value": "있음"
+        },
+        {
+          "key": "has_moved_out",
+          "status": "confirmed",
+          "value": "아직 퇴거 안 함"
+        },
+        {
+          "key": "notice_date",
+          "status": "confirmed",
+          "value": "2025-05-20"
+        },
+        {
+          "key": "notice_method",
+          "status": "confirmed",
+          "value": "전화"
+        },
+        {
+          "key": "landlord_responded",
+          "status": "confirmed",
+          "value": "자동으로 연장된 거 아니냐고 함"
+        },
+        {
+          "key": "has_kakao_records",
+          "status": "confirmed",
+          "value": "없음"
+        },
+        {
+          "key": "has_certified_mail",
+          "status": "confirmed",
+          "value": "없음"
+        },
+        {
+          "key": "has_transfer_records",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_lien_registration",
+          "status": "confirmed",
+          "value": "신청 안 함"
+        },
+        {
+          "key": "registry_check",
+          "status": "unknown",
+          "value": null
+        }
+      ],
+      "phase_snapshot": "collecting",
+      "duration_ms": 3384
+    },
+    {
+      "turn": 15,
+      "speaker": "client",
+      "content": "네, 알겠어요.  \n근데 등기부는 아직 확인 안 했고, 계약서 특약도 잘 모르겠어요.  \n제가 뭘 잘못 알고 있는 건지 모르겠어요."
+    },
+    {
+      "turn": 15,
+      "speaker": "ai",
+      "content": "괜찮습니다. 지금 단계에서는 ‘내가 잘못 안 건지’부터 단정하기보다, 계약 종료 통보와 등기부 상태를 같이 봐야 해요. 자동연장 여부는 바로 결론 내기 어려우니, 우선 등기부등본에서 근저당·가압류·압류 같은 선순위 권리가 있는지 확인해보시는 게 중요합니다. 가능하시면 확인 후 결과를 알려주시고, 오늘은 제가 보증금 반환 관련 다음 대응을 더 구체적으로 안내드릴게요.",
+      "collected_snapshot": [
+        {
+          "key": "has_contract_doc",
+          "status": "confirmed",
+          "value": "있음"
+        },
+        {
+          "key": "contract_start_date",
+          "status": "confirmed",
+          "value": "2023-06-15"
+        },
+        {
+          "key": "contract_end_date",
+          "status": "confirmed",
+          "value": "2025-06-14"
+        },
+        {
+          "key": "deposit_amount",
+          "status": "confirmed",
+          "value": "2,000만원"
+        },
+        {
+          "key": "unreturned_amount",
+          "status": "confirmed",
+          "value": "2,000만원 전액"
+        },
+        {
+          "key": "has_resident_reg",
+          "status": "confirmed",
+          "value": "있음"
+        },
+        {
+          "key": "has_fixed_date",
+          "status": "confirmed",
+          "value": "있음"
+        },
+        {
+          "key": "has_moved_out",
+          "status": "confirmed",
+          "value": "아직 퇴거하지 않음"
+        },
+        {
+          "key": "notice_date",
+          "status": "confirmed",
+          "value": "2025-05-20"
+        },
+        {
+          "key": "notice_method",
+          "status": "confirmed",
+          "value": "전화"
+        },
+        {
+          "key": "landlord_responded",
+          "status": "confirmed",
+          "value": "자동으로 연장된 거 아니냐고 함"
+        },
+        {
+          "key": "has_kakao_records",
+          "status": "confirmed",
+          "value": "없음"
+        },
+        {
+          "key": "has_certified_mail",
+          "status": "confirmed",
+          "value": "없음"
+        },
+        {
+          "key": "has_transfer_records",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_lien_registration",
+          "status": "confirmed",
+          "value": "신청한 적 없음"
+        },
+        {
+          "key": "registry_check",
+          "status": "unknown",
+          "value": null
+        }
+      ],
+      "phase_snapshot": "collecting",
+      "duration_ms": 2969
+    },
+    {
+      "turn": 16,
+      "speaker": "client",
+      "content": "잘 모르겠어요. 아직 확인 안 했어요."
+    },
+    {
+      "turn": 16,
+      "speaker": "ai",
+      "content": "괜찮습니다. 우선 지금까지 확인된 내용으로 정리해둘게요. 계약서와 기간, 보증금, 전입신고·확정일자, 종료 통보 방식, 집주인의 반응은 확인됐고, 등기부 선순위 권리만 아직 미확인입니다. \n\n등기부 확인은 어려우시면 제가 아주 쉽게 보는 방법부터 안내해드릴게요. 원하시면 제가 바로 ‘인터넷등기소에서 어디를 보면 되는지’ 순서대로 짧게 설명드리겠습니다.",
+      "collected_snapshot": [
+        {
+          "key": "has_contract_doc",
+          "status": "confirmed",
+          "value": "있음"
+        },
+        {
+          "key": "contract_start_date",
+          "status": "confirmed",
+          "value": "2023-06-15"
+        },
+        {
+          "key": "contract_end_date",
+          "status": "confirmed",
+          "value": "2025-06-14"
+        },
+        {
+          "key": "deposit_amount",
+          "status": "confirmed",
+          "value": "2,000만원"
+        },
+        {
+          "key": "unreturned_amount",
+          "status": "confirmed",
+          "value": "2,000만원 전액"
+        },
+        {
+          "key": "has_resident_reg",
+          "status": "confirmed",
+          "value": "있음"
+        },
+        {
+          "key": "has_fixed_date",
+          "status": "confirmed",
+          "value": "있음"
+        },
+        {
+          "key": "has_moved_out",
+          "status": "confirmed",
+          "value": "아직 퇴거 안 함"
+        },
+        {
+          "key": "notice_date",
+          "status": "confirmed",
+          "value": "2025-05-20"
+        },
+        {
+          "key": "notice_method",
+          "status": "confirmed",
+          "value": "전화"
+        },
+        {
+          "key": "landlord_responded",
+          "status": "confirmed",
+          "value": "자동으로 연장된 거 아니냐고 함"
+        },
+        {
+          "key": "has_kakao_records",
+          "status": "confirmed",
+          "value": "없음"
+        },
+        {
+          "key": "has_certified_mail",
+          "status": "confirmed",
+          "value": "없음"
+        },
+        {
+          "key": "has_transfer_records",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_lien_registration",
+          "status": "confirmed",
+          "value": "신청한 적 없음"
+        },
+        {
+          "key": "registry_check",
+          "status": "unknown",
+          "value": null
+        }
+      ],
+      "phase_snapshot": "collecting",
+      "duration_ms": 2893
+    },
+    {
+      "turn": 17,
+      "speaker": "client",
+      "content": "네, 설명해 주세요."
+    },
+    {
+      "turn": 17,
+      "speaker": "ai",
+      "content": "네, 아주 간단히 안내드릴게요.\n\n1) 인터넷등기소에 접속해서 ‘등기부등본(건물/집합건물)’을 열어보세요.\n2) 표제부가 아니라 ‘을구’와 ‘갑구’를 보시면 됩니다.\n3) 확인할 것:\n- 을구: 근저당권, 전세권, 임차권등기 같은 권리\n- 갑구: 가압류, 압류, 경매개시결정 같은 권리\n4) 여기서 하나라도 있으면 적어두시고, 없으면 ‘없음’으로 보면 됩니다.\n\n확인하신 뒤에\n- 근저당/가압류/압류가 있는지\n- 있다면 금액이 얼마인지\n만 알려주시면, 보증금 반환 가능성과 자동연장 주장에 대해 다음으로 같이 정리해드릴게요.",
+      "collected_snapshot": [
+        {
+          "key": "has_contract_doc",
+          "status": "confirmed",
+          "value": "있음"
+        },
+        {
+          "key": "contract_start_date",
+          "status": "confirmed",
+          "value": "2023-06-15"
+        },
+        {
+          "key": "contract_end_date",
+          "status": "confirmed",
+          "value": "2025-06-14"
+        },
+        {
+          "key": "deposit_amount",
+          "status": "confirmed",
+          "value": "2000만원"
+        },
+        {
+          "key": "unreturned_amount",
+          "status": "confirmed",
+          "value": "2000만원 전액"
+        },
+        {
+          "key": "has_resident_reg",
+          "status": "confirmed",
+          "value": "있음"
+        },
+        {
+          "key": "has_fixed_date",
+          "status": "confirmed",
+          "value": "있음"
+        },
+        {
+          "key": "has_moved_out",
+          "status": "confirmed",
+          "value": "아직 퇴거 안 함"
+        },
+        {
+          "key": "notice_date",
+          "status": "confirmed",
+          "value": "2025-05-20"
+        },
+        {
+          "key": "notice_method",
+          "status": "confirmed",
+          "value": "전화"
+        },
+        {
+          "key": "landlord_responded",
+          "status": "confirmed",
+          "value": "자동으로 연장된 거 아니냐고 함"
+        },
+        {
+          "key": "has_kakao_records",
+          "status": "confirmed",
+          "value": "없음"
+        },
+        {
+          "key": "has_certified_mail",
+          "status": "confirmed",
+          "value": "없음"
+        },
+        {
+          "key": "has_transfer_records",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_lien_registration",
+          "status": "confirmed",
+          "value": "신청한 적 없음"
+        },
+        {
+          "key": "registry_check",
+          "status": "unknown",
+          "value": null
+        }
+      ],
+      "phase_snapshot": "collecting",
+      "duration_ms": 3574
+    },
+    {
+      "turn": 18,
+      "speaker": "client",
+      "content": "네, 알겠어요. 확인해볼게요."
+    },
+    {
+      "turn": 18,
+      "speaker": "ai",
+      "content": "지금까지 내용을 정리하면, 계약서와 계약기간, 보증금, 전입신고·확정일자, 종료 통보 방식은 확인됐고, 등기부 선순위 권리만 아직 확인이 안 된 상태예요. 등기부를 확인하신 뒤 근저당·가압류·압류가 있는지 알려주시면, 자동연장 주장에 대한 대응 방향을 더 구체적으로 안내드릴게요.",
+      "collected_snapshot": [
+        {
+          "key": "has_contract_doc",
+          "status": "confirmed",
+          "value": "있음"
+        },
+        {
+          "key": "contract_start_date",
+          "status": "confirmed",
+          "value": "2023-06-15"
+        },
+        {
+          "key": "contract_end_date",
+          "status": "confirmed",
+          "value": "2025-06-14"
+        },
+        {
+          "key": "deposit_amount",
+          "status": "confirmed",
+          "value": "2,000만원"
+        },
+        {
+          "key": "unreturned_amount",
+          "status": "confirmed",
+          "value": "2,000만원 전액"
+        },
+        {
+          "key": "has_resident_reg",
+          "status": "confirmed",
+          "value": "있음"
+        },
+        {
+          "key": "has_fixed_date",
+          "status": "confirmed",
+          "value": "있음"
+        },
+        {
+          "key": "has_moved_out",
+          "status": "confirmed",
+          "value": "아직 퇴거하지 않음"
+        },
+        {
+          "key": "notice_date",
+          "status": "confirmed",
+          "value": "2025-05-20"
+        },
+        {
+          "key": "notice_method",
+          "status": "confirmed",
+          "value": "전화"
+        },
+        {
+          "key": "landlord_responded",
+          "status": "confirmed",
+          "value": "자동으로 연장된 거 아니냐고 함"
+        },
+        {
+          "key": "has_kakao_records",
+          "status": "confirmed",
+          "value": "없음"
+        },
+        {
+          "key": "has_certified_mail",
+          "status": "confirmed",
+          "value": "없음"
+        },
+        {
+          "key": "has_transfer_records",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_lien_registration",
+          "status": "confirmed",
+          "value": "신청한 적 없음"
+        },
+        {
+          "key": "registry_check",
+          "status": "unknown",
+          "value": null
+        }
+      ],
+      "phase_snapshot": "collecting",
+      "duration_ms": 2765
+    },
+    {
+      "turn": 19,
+      "speaker": "client",
+      "content": "네. 확인해볼게요."
+    },
+    {
+      "turn": 19,
+      "speaker": "ai",
+      "content": "좋아요. 지금은 등기부 확인 결과만 기다리면 됩니다. 확인하시면 ‘근저당/가압류/압류가 있는지’와 ‘금액이 얼마인지’만 알려주세요. 그러면 자동연장 주장에 대한 대응과 보증금 반환 절차를 이어서 정리해드릴게요.",
+      "collected_snapshot": [
+        {
+          "key": "has_contract_doc",
+          "status": "confirmed",
+          "value": "있음"
+        },
+        {
+          "key": "contract_start_date",
+          "status": "confirmed",
+          "value": "2023-06-15"
+        },
+        {
+          "key": "contract_end_date",
+          "status": "confirmed",
+          "value": "2025-06-14"
+        },
+        {
+          "key": "deposit_amount",
+          "status": "confirmed",
+          "value": "2,000만원"
+        },
+        {
+          "key": "unreturned_amount",
+          "status": "confirmed",
+          "value": "전액 2,000만원"
+        },
+        {
+          "key": "has_resident_reg",
+          "status": "confirmed",
+          "value": "있음"
+        },
+        {
+          "key": "has_fixed_date",
+          "status": "confirmed",
+          "value": "있음"
+        },
+        {
+          "key": "has_moved_out",
+          "status": "confirmed",
+          "value": "아직 퇴거 안 함"
+        },
+        {
+          "key": "notice_date",
+          "status": "confirmed",
+          "value": "2025-05-20"
+        },
+        {
+          "key": "notice_method",
+          "status": "confirmed",
+          "value": "전화"
+        },
+        {
+          "key": "landlord_responded",
+          "status": "confirmed",
+          "value": "자동으로 연장된 거 아니냐고 함"
+        },
+        {
+          "key": "has_kakao_records",
+          "status": "confirmed",
+          "value": "없음"
+        },
+        {
+          "key": "has_certified_mail",
+          "status": "confirmed",
+          "value": "없음"
+        },
+        {
+          "key": "has_transfer_records",
+          "status": "unknown",
+          "value": null
+        },
+        {
+          "key": "has_lien_registration",
+          "status": "confirmed",
+          "value": "신청 안 함"
+        },
+        {
+          "key": "registry_check",
+          "status": "unknown",
+          "value": null
+        }
+      ],
+      "phase_snapshot": "collecting",
+      "duration_ms": 2734
+    }
+  ],
+  "ground_truth": {
+    "has_contract_doc": {
+      "value": true
+    },
+    "contract_start_date": {
+      "value": "2023-06-15"
+    },
+    "contract_end_date": {
+      "value": "2025-06-14"
+    },
+    "deposit_amount": {
+      "value": 20000000,
+      "unit": "KRW"
+    },
+    "unreturned_amount": {
+      "value": 20000000,
+      "unit": "KRW"
+    },
+    "has_resident_reg": {
+      "value": true
+    },
+    "has_fixed_date": {
+      "value": true
+    },
+    "has_moved_out": {
+      "value": false,
+      "detail": "보증금 반환 받기 전 퇴거 못 함"
+    },
+    "notice_date": {
+      "value": "2025-05-20"
+    },
+    "notice_method": {
+      "value": [
+        "phone"
+      ]
+    },
+    "landlord_responded": {
+      "value": true,
+      "detail": "이미 자동으로 연장된 거 아니냐고 답변 (묵시적 갱신 주장)"
+    },
+    "has_kakao_records": {
+      "value": false,
+      "detail": "전화로만 통보, 카톡/문자 기록 없음"
+    },
+    "has_certified_mail": {
+      "value": false
+    },
+    "has_transfer_records": {
+      "value": true
+    },
+    "has_lien_registration": {
+      "value": false
+    },
+    "registry_check": {
+      "value": false
+    }
+  }
+}
