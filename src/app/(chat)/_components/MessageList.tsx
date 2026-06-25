@@ -1,18 +1,12 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import type { UIMessage } from "ai";
+
+import type { ChatMessage } from "./types";
 
 interface MessageListProps {
-  messages: UIMessage[];
+  messages: ChatMessage[];
   isStreaming: boolean;
-}
-
-function getMessageText(message: UIMessage): string {
-  return message.parts
-    .filter((part) => part.type === "text")
-    .map((part) => part.text)
-    .join("");
 }
 
 export function MessageList({ messages, isStreaming }: MessageListProps) {
@@ -34,7 +28,6 @@ export function MessageList({ messages, isStreaming }: MessageListProps) {
     <div className="flex flex-1 flex-col gap-4 overflow-y-auto px-4 py-6">
       {messages.map((message) => {
         const isUser = message.role === "user";
-        const text = getMessageText(message);
         return (
           <div
             key={message.id}
@@ -47,11 +40,18 @@ export function MessageList({ messages, isStreaming }: MessageListProps) {
                   : "bg-zinc-100 text-black dark:bg-zinc-800 dark:text-zinc-100"
               }`}
             >
-              {text || <span className="text-zinc-400">…</span>}
+              {message.text || <span className="text-zinc-400">…</span>}
             </div>
           </div>
         );
       })}
+      {isStreaming ? (
+        <div className="flex justify-start">
+          <div className="max-w-[80%] rounded-2xl bg-zinc-100 px-4 py-2 text-sm leading-6 text-zinc-400 dark:bg-zinc-800">
+            …
+          </div>
+        </div>
+      ) : null}
       <div ref={bottomRef} />
     </div>
   );
