@@ -1,0 +1,149 @@
+{
+  "case_id": "IA-CASE-008",
+  "case_title": "거짓 약속 반복받는 보증금 미반환",
+  "system": "gpt_baseline",
+  "total_slots": 16,
+  "matches": 0,
+  "mismatches": 1,
+  "missing": 14,
+  "unparseable": 1,
+  "recall": 0,
+  "slot_results": [
+    {
+      "slot": "has_contract_doc",
+      "gt_value": true,
+      "predicted_status": "unknown",
+      "predicted_value": null,
+      "normalized_predicted": null,
+      "match": "missing"
+    },
+    {
+      "slot": "contract_start_date",
+      "gt_value": "2023-02-15",
+      "predicted_status": "unknown",
+      "predicted_value": null,
+      "normalized_predicted": null,
+      "match": "missing"
+    },
+    {
+      "slot": "contract_end_date",
+      "gt_value": "2025-02-14",
+      "predicted_status": "unknown",
+      "predicted_value": null,
+      "normalized_predicted": null,
+      "match": "missing"
+    },
+    {
+      "slot": "deposit_amount",
+      "gt_value": 80000000,
+      "predicted_status": "unknown",
+      "predicted_value": null,
+      "normalized_predicted": null,
+      "match": "missing"
+    },
+    {
+      "slot": "unreturned_amount",
+      "gt_value": 80000000,
+      "predicted_status": "unknown",
+      "predicted_value": null,
+      "normalized_predicted": null,
+      "match": "missing"
+    },
+    {
+      "slot": "has_resident_reg",
+      "gt_value": true,
+      "predicted_status": "unknown",
+      "predicted_value": null,
+      "normalized_predicted": null,
+      "match": "missing"
+    },
+    {
+      "slot": "has_fixed_date",
+      "gt_value": true,
+      "predicted_status": "unknown",
+      "predicted_value": null,
+      "normalized_predicted": null,
+      "match": "missing"
+    },
+    {
+      "slot": "has_moved_out",
+      "gt_value": false,
+      "predicted_status": "confirmed",
+      "predicted_value": "저는 새 집도 알아보고 싶은데 보증금이 묶여 있어서 못 움직이고 있어요.",
+      "normalized_predicted": true,
+      "match": "mismatch",
+      "reason": "gt=false, predicted=\"저는 새 집도 알아보고 싶은데 보증금이 묶여 있어서 못 움직이고 있어요.\" → true"
+    },
+    {
+      "slot": "notice_date",
+      "gt_value": "2025-01-10",
+      "predicted_status": "unknown",
+      "predicted_value": null,
+      "normalized_predicted": null,
+      "match": "missing"
+    },
+    {
+      "slot": "notice_method",
+      "gt_value": [
+        "kakao",
+        "phone"
+      ],
+      "predicted_status": "unknown",
+      "predicted_value": null,
+      "normalized_predicted": null,
+      "match": "missing"
+    },
+    {
+      "slot": "landlord_responded",
+      "gt_value": true,
+      "predicted_status": "confirmed",
+      "predicted_value": "계속 \"조만간 정리될 거다\"라고만 하고 있고요.",
+      "normalized_predicted": null,
+      "match": "unparseable",
+      "reason": "boolean 정규화 실패: \"계속 \"조만간 정리될 거다\"라고만 하고 있고요.\""
+    },
+    {
+      "slot": "has_kakao_records",
+      "gt_value": true,
+      "predicted_status": "unknown",
+      "predicted_value": null,
+      "normalized_predicted": null,
+      "match": "missing"
+    },
+    {
+      "slot": "has_certified_mail",
+      "gt_value": false,
+      "predicted_status": "unknown",
+      "predicted_value": null,
+      "normalized_predicted": null,
+      "match": "missing"
+    },
+    {
+      "slot": "has_transfer_records",
+      "gt_value": true,
+      "predicted_status": "unknown",
+      "predicted_value": null,
+      "normalized_predicted": null,
+      "match": "missing"
+    },
+    {
+      "slot": "has_lien_registration",
+      "gt_value": false,
+      "predicted_status": "unknown",
+      "predicted_value": null,
+      "normalized_predicted": null,
+      "match": "missing"
+    },
+    {
+      "slot": "registry_check",
+      "gt_value": false,
+      "predicted_status": "unknown",
+      "predicted_value": null,
+      "normalized_predicted": null,
+      "match": "missing"
+    }
+  ],
+  "conversation_turns": 0,
+  "end_reason": "ia_error",
+  "evaluated_at": "2026-06-24T22:57:33.248Z"
+}

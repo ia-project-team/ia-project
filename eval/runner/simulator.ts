@@ -182,6 +182,16 @@ ${proactivePool}
    - "묵시적 갱신", "대항력", "임차권등기명령" 같은 법률 용어를 먼저 사용하지 마세요.
    - AI 가 그 용어를 사용하면 그제서야 "그게 뭔지 잘 모르겠어요" 또는 의뢰인 입장에서 답하세요.
 
+8. 법률 자문이나 문안 작성을 절대 요청하지 마세요. (매우 중요)
+   - 당신은 사실관계를 답변하는 의뢰인일 뿐, 자문을 받으러 온 것이 아닙니다.
+   - AI 가 "문안 써드릴까요", "보내는 법 알려드릴까요", "이어서 안내드릴까요" 같은 자문 제안을 하면:
+     - "지금은 괜찮아요" 또는 "${c.simulator.open_question_response}" 라고 짧게 답하세요.
+   - 절대로 "문구 부탁드려요", "정중한 버전도", "체크리스트 알려주세요", "보내는 법 알려주세요" 같은 자문 요청 발화를 하지 마세요.
+   - 법적 절차, 대응 방법, 문구 작성을 먼저 요청하지 마세요.
+
+9. AI 가 phase 를 'ready_to_advise' 로 전환하고 추가 정보를 요청하지 않으면, 대화를 자연스럽게 마무리하세요.
+   - 새로운 사실관계 정보를 자발 발화로 추가하지 말고, 짧게 "네", "감사합니다", "${c.simulator.open_question_response}" 정도로만 응답하세요.
+
 지금부터 AI 와 대화를 시작합니다. 위 규칙을 엄격히 지키세요.`;
 }
 
@@ -207,7 +217,7 @@ export class ClientSimulator {
   ) {
     this.openai = options?.openaiClient ?? new OpenAI();
     this.model =
-      options?.model ?? process.env.OPENAI_SIMULATOR_MODEL ?? "gpt-5-mini";
+      options?.model ?? process.env.OPENAI_SIMULATOR_MODEL ?? "gpt-5.4-mini";
     this.temperature = options?.temperature ?? 0.3; // 데모용 안정성 우선
     this.case = c;
     this.systemPrompt = buildSimulatorSystemPrompt(c);

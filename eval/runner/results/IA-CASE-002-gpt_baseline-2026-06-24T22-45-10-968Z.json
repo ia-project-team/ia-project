@@ -1,0 +1,82 @@
+{
+  "case_id": "IA-CASE-002",
+  "case_title": "단순 보증금 미반환",
+  "system": "gpt_baseline",
+  "started_at": "2026-06-24T22:45:10.968Z",
+  "ended_at": "2026-06-24T22:45:11.216Z",
+  "total_turns": 0,
+  "end_reason": "ia_error",
+  "final_collected": [],
+  "final_phase": "collecting",
+  "conversation": [
+    {
+      "turn": 0,
+      "speaker": "client",
+      "content": "전세 계약이 끝났는데 집주인이 돈을 안 돌려줘요.\n계속 기다려달라고만 하는데 너무 답답해요."
+    }
+  ],
+  "ground_truth": {
+    "has_contract_doc": {
+      "value": true,
+      "detail": "원본 계약서 보유"
+    },
+    "contract_start_date": {
+      "value": "2023-04-01"
+    },
+    "contract_end_date": {
+      "value": "2025-03-31"
+    },
+    "deposit_amount": {
+      "value": 120000000,
+      "unit": "KRW"
+    },
+    "unreturned_amount": {
+      "value": 120000000,
+      "unit": "KRW"
+    },
+    "has_resident_reg": {
+      "value": true,
+      "detail": "2023-04-02 전입신고"
+    },
+    "has_fixed_date": {
+      "value": true,
+      "detail": "2023-04-01 확정일자"
+    },
+    "has_moved_out": {
+      "value": false,
+      "detail": "현재 계속 거주 중"
+    },
+    "notice_date": {
+      "value": "2025-02-01"
+    },
+    "notice_method": {
+      "value": [
+        "kakao"
+      ]
+    },
+    "landlord_responded": {
+      "value": true,
+      "detail": "조금만 기다려달라고 카톡 답변"
+    },
+    "has_kakao_records": {
+      "value": true,
+      "detail": "캡처 보관 중"
+    },
+    "has_certified_mail": {
+      "value": false
+    },
+    "has_transfer_records": {
+      "value": true,
+      "detail": "은행 앱에서 확인 가능"
+    },
+    "has_lien_registration": {
+      "value": false,
+      "detail": "신청 안 함"
+    },
+    "registry_check": {
+      "value": false,
+      "detail": "미확인"
+    }
+  },
+  "error": "400 Unsupported value: 'temperature' does not support 0.7 with this model. Only the default (1) value is supported."
+}

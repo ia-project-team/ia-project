@@ -1,0 +1,150 @@
+{
+  "case_id": "IA-CASE-002",
+  "case_title": "단순 보증금 미반환",
+  "system": "ia",
+  "total_slots": 16,
+  "matches": 12,
+  "mismatches": 0,
+  "missing": 3,
+  "unparseable": 1,
+  "recall": 0.75,
+  "slot_results": [
+    {
+      "slot": "has_contract_doc",
+      "gt_value": true,
+      "predicted_status": "confirmed",
+      "predicted_value": "원본 계약서 보유",
+      "normalized_predicted": true,
+      "match": "match"
+    },
+    {
+      "slot": "contract_start_date",
+      "gt_value": "2023-04-01",
+      "predicted_status": "confirmed",
+      "predicted_value": "2023-04-01",
+      "normalized_predicted": "2023-04-01",
+      "match": "match"
+    },
+    {
+      "slot": "contract_end_date",
+      "gt_value": "2025-03-31",
+      "predicted_status": "confirmed",
+      "predicted_value": "2025-03-31",
+      "normalized_predicted": "2025-03-31",
+      "match": "match"
+    },
+    {
+      "slot": "deposit_amount",
+      "gt_value": 120000000,
+      "predicted_status": "confirmed",
+      "predicted_value": "1억 2천만원",
+      "normalized_predicted": 120000000,
+      "match": "match"
+    },
+    {
+      "slot": "unreturned_amount",
+      "gt_value": 120000000,
+      "predicted_status": "confirmed",
+      "predicted_value": "전액 미반환",
+      "normalized_predicted": 120000000,
+      "match": "match",
+      "reason": "정성 표현 \"전액\" → gt 와 동일로 처리"
+    },
+    {
+      "slot": "has_resident_reg",
+      "gt_value": true,
+      "predicted_status": "confirmed",
+      "predicted_value": "예",
+      "normalized_predicted": true,
+      "match": "match"
+    },
+    {
+      "slot": "has_fixed_date",
+      "gt_value": true,
+      "predicted_status": "confirmed",
+      "predicted_value": "예",
+      "normalized_predicted": true,
+      "match": "match"
+    },
+    {
+      "slot": "has_moved_out",
+      "gt_value": false,
+      "predicted_status": "confirmed",
+      "predicted_value": "아니요, 아직 거주 중",
+      "normalized_predicted": false,
+      "match": "match"
+    },
+    {
+      "slot": "notice_date",
+      "gt_value": "2025-02-01",
+      "predicted_status": "confirmed",
+      "predicted_value": "2025-02-01",
+      "normalized_predicted": "2025-02-01",
+      "match": "match"
+    },
+    {
+      "slot": "notice_method",
+      "gt_value": [
+        "kakao"
+      ],
+      "predicted_status": "confirmed",
+      "predicted_value": "카카오톡",
+      "normalized_predicted": [
+        "kakao"
+      ],
+      "match": "match"
+    },
+    {
+      "slot": "landlord_responded",
+      "gt_value": true,
+      "predicted_status": "confirmed",
+      "predicted_value": "조금만 기다려달라고 카카오톡으로 답변",
+      "normalized_predicted": null,
+      "match": "unparseable",
+      "reason": "boolean 정규화 실패: \"조금만 기다려달라고 카카오톡으로 답변\""
+    },
+    {
+      "slot": "has_kakao_records",
+      "gt_value": true,
+      "predicted_status": "confirmed",
+      "predicted_value": "있음",
+      "normalized_predicted": true,
+      "match": "match"
+    },
+    {
+      "slot": "has_certified_mail",
+      "gt_value": false,
+      "predicted_status": "unknown",
+      "predicted_value": null,
+      "normalized_predicted": null,
+      "match": "missing"
+    },
+    {
+      "slot": "has_transfer_records",
+      "gt_value": true,
+      "predicted_status": "confirmed",
+      "predicted_value": "있음",
+      "normalized_predicted": true,
+      "match": "match"
+    },
+    {
+      "slot": "has_lien_registration",
+      "gt_value": false,
+      "predicted_status": "unknown",
+      "predicted_value": null,
+      "normalized_predicted": null,
+      "match": "missing"
+    },
+    {
+      "slot": "registry_check",
+      "gt_value": false,
+      "predicted_status": "unknown",
+      "predicted_value": null,
+      "normalized_predicted": null,
+      "match": "missing"
+    }
+  ],
+  "conversation_turns": 12,
+  "end_reason": "max_turns_reached",
+  "evaluated_at": "2026-06-25T04:11:30.515Z"
+}

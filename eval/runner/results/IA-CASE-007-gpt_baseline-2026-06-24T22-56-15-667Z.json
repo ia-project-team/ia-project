@@ -1,0 +1,84 @@
+{
+  "case_id": "IA-CASE-007",
+  "case_title": "퇴거 후 일부 반환 미반환",
+  "system": "gpt_baseline",
+  "started_at": "2026-06-24T22:56:15.667Z",
+  "ended_at": "2026-06-24T22:56:15.896Z",
+  "total_turns": 0,
+  "end_reason": "ia_error",
+  "final_collected": [],
+  "final_phase": "collecting",
+  "conversation": [
+    {
+      "turn": 0,
+      "speaker": "client",
+      "content": "보증금 일부만 받고 못 받은 돈이 있어요.\n나머지를 안 줘요."
+    }
+  ],
+  "ground_truth": {
+    "has_contract_doc": {
+      "value": true,
+      "detail": "원본 보유"
+    },
+    "contract_start_date": {
+      "value": "2023-05-01"
+    },
+    "contract_end_date": {
+      "value": "2025-04-30"
+    },
+    "deposit_amount": {
+      "value": 100000000,
+      "unit": "KRW"
+    },
+    "unreturned_amount": {
+      "value": 70000000,
+      "unit": "KRW",
+      "detail": "전체 1억 중 3천만원은 받고 7천만원 미반환"
+    },
+    "has_resident_reg": {
+      "value": true,
+      "detail": "2023-05-02 전입신고"
+    },
+    "has_fixed_date": {
+      "value": true,
+      "detail": "2023-05-01 확정일자"
+    },
+    "has_moved_out": {
+      "value": true,
+      "detail": "2025-05-15 퇴거 완료"
+    },
+    "notice_date": {
+      "value": "2025-03-25"
+    },
+    "notice_method": {
+      "value": [
+        "sms"
+      ]
+    },
+    "landlord_responded": {
+      "value": true,
+      "detail": "다음달에 마저 줄게요라고 문자로 답변, 이후 미이행"
+    },
+    "has_kakao_records": {
+      "value": false,
+      "detail": "문자로만 통보, 카톡 사용 안 함"
+    },
+    "has_certified_mail": {
+      "value": true,
+      "detail": "퇴거 후 2025-05-20 발송"
+    },
+    "has_transfer_records": {
+      "value": true,
+      "detail": "처음 입금한 계좌이체 내역 + 3천만원 반환받은 입금 내역 모두 보유"
+    },
+    "has_lien_registration": {
+      "value": true,
+      "detail": "2025-05-10 퇴거 직전 신청, 등기 완료"
+    },
+    "registry_check": {
+      "value": true,
+      "detail": "확인함, 소유자 변경 없음"
+    }
+  },
+  "error": "400 Unsupported value: 'temperature' does not support 0.7 with this model. Only the default (1) value is supported."
+}

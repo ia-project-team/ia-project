@@ -1,0 +1,151 @@
+{
+  "case_id": "IA-CASE-008",
+  "case_title": "거짓 약속 반복받는 보증금 미반환",
+  "system": "ia",
+  "total_slots": 16,
+  "matches": 15,
+  "mismatches": 0,
+  "missing": 1,
+  "unparseable": 0,
+  "recall": 0.9375,
+  "slot_results": [
+    {
+      "slot": "has_contract_doc",
+      "gt_value": true,
+      "predicted_status": "confirmed",
+      "predicted_value": "있음",
+      "normalized_predicted": true,
+      "match": "match"
+    },
+    {
+      "slot": "contract_start_date",
+      "gt_value": "2023-02-15",
+      "predicted_status": "confirmed",
+      "predicted_value": "2023-02-15",
+      "normalized_predicted": "2023-02-15",
+      "match": "match"
+    },
+    {
+      "slot": "contract_end_date",
+      "gt_value": "2025-02-14",
+      "predicted_status": "confirmed",
+      "predicted_value": "2025-02-14",
+      "normalized_predicted": "2025-02-14",
+      "match": "match"
+    },
+    {
+      "slot": "deposit_amount",
+      "gt_value": 80000000,
+      "predicted_status": "confirmed",
+      "predicted_value": "8000만원",
+      "normalized_predicted": 80000000,
+      "match": "match"
+    },
+    {
+      "slot": "unreturned_amount",
+      "gt_value": 80000000,
+      "predicted_status": "confirmed",
+      "predicted_value": "전액",
+      "normalized_predicted": 80000000,
+      "match": "match",
+      "reason": "정성 표현 \"전액\" → gt 와 동일로 처리"
+    },
+    {
+      "slot": "has_resident_reg",
+      "gt_value": true,
+      "predicted_status": "confirmed",
+      "predicted_value": "있음",
+      "normalized_predicted": true,
+      "match": "match"
+    },
+    {
+      "slot": "has_fixed_date",
+      "gt_value": true,
+      "predicted_status": "confirmed",
+      "predicted_value": "있음",
+      "normalized_predicted": true,
+      "match": "match"
+    },
+    {
+      "slot": "has_moved_out",
+      "gt_value": false,
+      "predicted_status": "confirmed",
+      "predicted_value": "아직 거주 중",
+      "normalized_predicted": false,
+      "match": "match"
+    },
+    {
+      "slot": "notice_date",
+      "gt_value": "2025-01-10",
+      "predicted_status": "confirmed",
+      "predicted_value": "2025-01-10쯤",
+      "normalized_predicted": "2025-01-10",
+      "match": "match"
+    },
+    {
+      "slot": "notice_method",
+      "gt_value": [
+        "kakao",
+        "phone"
+      ],
+      "predicted_status": "confirmed",
+      "predicted_value": "전화 후 카카오톡",
+      "normalized_predicted": [
+        "kakao",
+        "phone"
+      ],
+      "match": "match"
+    },
+    {
+      "slot": "landlord_responded",
+      "gt_value": true,
+      "predicted_status": "confirmed",
+      "predicted_value": "있음, 다음달/조만간 지급한다는 답변 반복",
+      "normalized_predicted": true,
+      "match": "match"
+    },
+    {
+      "slot": "has_kakao_records",
+      "gt_value": true,
+      "predicted_status": "confirmed",
+      "predicted_value": "있음",
+      "normalized_predicted": true,
+      "match": "match"
+    },
+    {
+      "slot": "has_certified_mail",
+      "gt_value": false,
+      "predicted_status": "confirmed",
+      "predicted_value": "없음",
+      "normalized_predicted": false,
+      "match": "match"
+    },
+    {
+      "slot": "has_transfer_records",
+      "gt_value": true,
+      "predicted_status": "confirmed",
+      "predicted_value": "있음",
+      "normalized_predicted": true,
+      "match": "match"
+    },
+    {
+      "slot": "has_lien_registration",
+      "gt_value": false,
+      "predicted_status": "confirmed",
+      "predicted_value": "아직 신청 안 함",
+      "normalized_predicted": false,
+      "match": "match"
+    },
+    {
+      "slot": "registry_check",
+      "gt_value": false,
+      "predicted_status": "unknown",
+      "predicted_value": null,
+      "normalized_predicted": null,
+      "match": "missing"
+    }
+  ],
+  "conversation_turns": 12,
+  "end_reason": "max_turns_reached",
+  "evaluated_at": "2026-06-24T22:46:43.693Z"
+}

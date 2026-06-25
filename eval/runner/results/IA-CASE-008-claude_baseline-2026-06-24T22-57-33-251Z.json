@@ -1,0 +1,83 @@
+{
+  "case_id": "IA-CASE-008",
+  "case_title": "거짓 약속 반복받는 보증금 미반환",
+  "system": "claude_baseline",
+  "started_at": "2026-06-24T22:57:33.251Z",
+  "ended_at": "2026-06-24T22:57:34.169Z",
+  "total_turns": 0,
+  "end_reason": "ia_error",
+  "final_collected": [],
+  "final_phase": "collecting",
+  "conversation": [
+    {
+      "turn": 0,
+      "speaker": "client",
+      "content": "집주인이 보증금을 안 줘서 너무 답답해요.\n처음에는 다음달에 준다고 했는데 그게 벌써 세 번째예요.\n계속 \"조만간 정리될 거다\"라고만 하고 있고요.\n저는 새 집도 알아보고 싶은데 보증금이 묶여 있어서 못 움직이고 있어요."
+    }
+  ],
+  "ground_truth": {
+    "has_contract_doc": {
+      "value": true,
+      "detail": "원본 보유, 사진도 따로 찍어둠"
+    },
+    "contract_start_date": {
+      "value": "2023-02-15"
+    },
+    "contract_end_date": {
+      "value": "2025-02-14"
+    },
+    "deposit_amount": {
+      "value": 80000000,
+      "unit": "KRW"
+    },
+    "unreturned_amount": {
+      "value": 80000000,
+      "unit": "KRW",
+      "detail": "전액 미반환"
+    },
+    "has_resident_reg": {
+      "value": true,
+      "detail": "2023-02-16 전입신고"
+    },
+    "has_fixed_date": {
+      "value": true,
+      "detail": "2023-02-15 확정일자"
+    },
+    "has_moved_out": {
+      "value": false,
+      "detail": "보증금 못 받아 계속 거주 중"
+    },
+    "notice_date": {
+      "value": "2025-01-10",
+      "detail": "최초 통보일 (이후 여러 번 추가 연락)"
+    },
+    "notice_method": {
+      "value": [
+        "kakao",
+        "phone"
+      ],
+      "detail": "처음엔 전화, 이후 카톡으로 여러 번"
+    },
+    "landlord_responded": {
+      "value": true,
+      "detail": "매번 다음달, 조만간 같은 약속 반복. 지키지 않음"
+    },
+    "has_kakao_records": {
+      "value": true,
+      "detail": "카톡 전체 대화 캡처 보관"
+    },
+    "has_certified_mail": {
+      "value": false
+    },
+    "has_transfer_records": {
+      "value": true
+    },
+    "has_lien_registration": {
+      "value": false
+    },
+    "registry_check": {
+      "value": false
+    }
+  },
+  "error": "400 {\"type\":\"error\",\"error\":{\"type\":\"invalid_request_error\",\"message\":\"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.\"},\"request_id\":\"req_011CcNurDqPFxRSHhcmVz1Lg\"}"
+}

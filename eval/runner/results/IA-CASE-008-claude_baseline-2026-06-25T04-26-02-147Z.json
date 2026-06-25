@@ -1,0 +1,233 @@
+{
+  "case_id": "IA-CASE-008",
+  "case_title": "거짓 약속 반복받는 보증금 미반환",
+  "system": "claude_baseline",
+  "started_at": "2026-06-25T04:26:02.147Z",
+  "ended_at": "2026-06-25T04:27:25.071Z",
+  "total_turns": 12,
+  "end_reason": "max_turns_reached",
+  "final_collected": [],
+  "final_phase": "collecting",
+  "conversation": [
+    {
+      "turn": 0,
+      "speaker": "client",
+      "content": "집주인이 보증금을 안 줘서 너무 답답해요.\n처음에는 다음달에 준다고 했는데 그게 벌써 세 번째예요.\n계속 \"조만간 정리될 거다\"라고만 하고 있고요.\n저는 새 집도 알아보고 싶은데 보증금이 묶여 있어서 못 움직이고 있어요."
+    },
+    {
+      "turn": 0,
+      "speaker": "ai",
+      "content": "정말 답답하고 힘드시겠어요. 이사도 못 하고 기다리기만 해야 하는 상황이 많이 지치실 것 같아요.\n\n상황을 좀 더 파악해야 도움이 될 것 같아서 몇 가지 여쭤봐도 될까요?\n\n**계약 관련해서**\n- 계약 만료일이 언제였나요?\n- 혹시 계약 종료 전에 집주인에게 이사 의사를 미리 전달하셨나요? (문자나 서면으로 하셨는지도요)\n\n**현재 상황**\n- 지금 이미 이사를 나오신 건가요, 아직 그 집에 계신 건가요?\n- 집주인이 보증금을 못 주는 이유로 뭔가 얘기한 게 있나요?",
+      "collected_snapshot": [],
+      "phase_snapshot": "collecting",
+      "duration_ms": 7045
+    },
+    {
+      "turn": 1,
+      "speaker": "client",
+      "content": "계약 만료일은 2025년 2월 14일이었어요.\n계약 종료 전에 집주인한테는 2025년 1월 10일쯤 처음 말했고, 그 뒤로 전화랑 카톡으로 여러 번 얘기했어요.\n아직 그 집에 계속 살고 있어요. 보증금을 못 받아서요.\n집주인은 매번 다음달에 준다, 조만간 준다 이런 식으로만 말했어요."
+    },
+    {
+      "turn": 1,
+      "speaker": "ai",
+      "content": "그렇군요, 상황이 좀 더 명확해졌어요. 계약이 끝난 지 꽤 됐는데 아직 해결이 안 되고 계시는군요.\n\n몇 가지 더 여쭤볼게요.\n\n**집과 관련해서**\n- 혹시 전입신고와 확정일자는 받아두셨나요?\n- 해당 주택에 다른 근저당이나 선순위 권리가 있는지 혹시 아시나요?\n\n**집주인과의 소통**\n- 집주인과 주고받은 카톡이나 문자 내용들을 보관하고 계신가요?\n- 집주인이 보증금을 못 주는 이유로 구체적으로 언급한 게 있나요? (예: 새 세입자를 못 구했다, 자금 사정이 어렵다 등)\n\n**보증금 규모**\n- 보증금이 어느 정도 되시나요?",
+      "collected_snapshot": [],
+      "phase_snapshot": "collecting",
+      "duration_ms": 7990
+    },
+    {
+      "turn": 2,
+      "speaker": "client",
+      "content": "전입신고는 해뒀고, 확정일자도 받아뒀어요.\n카톡 대화는 전체 캡처해둔 게 있어요.\n보증금은 8천만 원이에요.\n집주인이 구체적으로 왜 못 주는지는 정확히는 기억이 안 나는데, 그냥 매번 다음달에 준다고만 했어요."
+    },
+    {
+      "turn": 2,
+      "speaker": "ai",
+      "content": "중요한 준비들을 잘 해두셨네요. 전입신고, 확정일자, 카톡 캡처까지 챙겨두신 게 나중에 큰 도움이 될 수 있어요.\n\n한 가지만 더 여쭤볼게요.\n\n**집주인 집에 대해서**\n- 혹시 이 집에 근저당이나 다른 대출이 잡혀 있는지 아시나요? (등기부등본을 떼어보신 적 있으신가요?)\n\n이걸 여쭤보는 이유는, 8천만 원이 적지 않은 금액이라 집주인이 실제로 돈을 마련하기 어려운 상황인지, 아니면 단순히 미루는 건지에 따라 상황이 달라질 수 있거든요.\n\n---\n\n그리고 지금까지 말씀해주신 내용을 정리해보면,\n\n- ✅ 전입신고 완료\n- ✅ 확정일자 확보\n- ✅ 카톡 대화 캡처 보관\n- 📅 계약 만료 후 약 3~4개월째 보증금 미반환 중\n- 💰 보증금 8천만 원\n\n꽤 오래 기다리셨는데, 혹시 지금 어떻게 하고 싶으신지 생각해두신 게 있으신가요? 예를 들어 집주인과 계속 협의해보고 싶으신지, 아니면 공식적인 절차를 알아보고 싶으신지요.",
+      "collected_snapshot": [],
+      "phase_snapshot": "collecting",
+      "duration_ms": 9635
+    },
+    {
+      "turn": 3,
+      "speaker": "client",
+      "content": "등기부등본은 떼어본 적이 없어서 근저당이나 대출이 있는지는 잘 모르겠어요.\n지금은 그냥 너무 지쳐서, 집주인이 계속 미루는 게 답답해요.\n공식적인 절차는 아직 잘 모르겠고, 일단은 상황이 어떻게 되는지부터 알고 싶어요."
+    },
+    {
+      "turn": 3,
+      "speaker": "ai",
+      "content": "많이 지치셨겠어요. 몇 달째 기다리시면서 혼자 감당하셨을 생각을 하니 정말 힘드셨겠다 싶어요.\n\n지금까지 말씀해주신 내용을 정리해드릴게요.\n\n---\n\n**현재 상황 정리**\n- 계약 만료(2월 14일) 후 약 3~4개월째 보증금 8천만 원 미반환\n- 전입신고 ✅ 확정일자 ✅ 카톡 대화 캡처 ✅\n- 집주인은 계속 \"다음달에 준다\"는 말만 반복\n- 등기부등본은 아직 미확인\n\n---\n\n**지금 당장 확인해보시면 좋을 것**\n\n등기부등본은 **인터넷등기소(iros.go.kr)** 에서 700원에 바로 떼어보실 수 있어요. 이 집에 근저당이 얼마나 잡혀 있는지 확인하시면, 집주인 상황을 좀 더 파악하는 데 도움이 돼요.\n\n---\n\n**상담받아보실 수 있는 곳**\n\n혼자 판단하기 어려운 상황이라, 전문 기관에 무료로 상담받아보시는 것도 방법이에요.\n\n- **주택도시보증공사(HUG)** 1566-9009\n- **대한법률구조공단** 132\n- **법률홈닥터** (거주지 주민센터 통해 신청 가능)\n\n이런 곳들에서 지금 상황을 설명하시면, 어떤 절차가 가능한지 구체적으로 안내받으실 수 있어요.\n\n---\n\n지금 가장 걱정되시는 부분이 어떤 건가요? 보증금을 못 받을까봐 불안하신 건지, 아니면 이사를 빨리 가고 싶으신 건지요.",
+      "collected_snapshot": [],
+      "phase_snapshot": "collecting",
+      "duration_ms": 12585
+    },
+    {
+      "turn": 4,
+      "speaker": "client",
+      "content": "지금은 보증금을 못 받을까 봐 제일 불안해요.\n이사도 빨리 가고 싶긴 한데, 보증금이 묶여 있어서 더 막막해요.\n지금 생각나는 건 없어요."
+    },
+    {
+      "turn": 4,
+      "speaker": "ai",
+      "content": "보증금을 못 받을 수도 있다는 불안감, 정말 크게 느껴지실 것 같아요. 8천만 원이 작은 돈이 아니니까요.\n\n지금 당장 뭔가 결정하지 않으셔도 돼요. 다만 한 가지만 말씀드리면,\n\n**등기부등본 확인**이 지금 할 수 있는 가장 빠르고 간단한 첫 걸음이에요.\n\n집에 근저당이 많이 잡혀 있다면 보증금을 못 받을 위험이 실제로 있는 건지, 아니면 집주인이 단순히 미루는 건지 파악이 되거든요. 그 결과에 따라 다음에 어떻게 할지도 달라질 수 있고요.\n\n인터넷등기소(iros.go.kr)에서 700원으로 바로 확인하실 수 있어요.\n\n---\n\n혹시 등기부등본을 떼어보신 후에 다시 얘기 나눠보실 의향이 있으신가요? 결과를 보고 나면 상황을 좀 더 구체적으로 파악하는 데 도움이 될 것 같아요.",
+      "collected_snapshot": [],
+      "phase_snapshot": "collecting",
+      "duration_ms": 7501
+    },
+    {
+      "turn": 5,
+      "speaker": "client",
+      "content": "아직은 잘 모르겠어요.\n지금은 너무 지쳐서, 일단 상황을 좀 더 알아보고 싶어요."
+    },
+    {
+      "turn": 5,
+      "speaker": "ai",
+      "content": "네, 충분히 이해해요. 몇 달째 혼자 감당해오셨으니 지치시는 게 당연해요. 지금 당장 뭔가 결정하지 않으셔도 돼요.\n\n준비가 되실 때 아래 두 가지만 기억해두세요.\n\n- **등기부등본 확인** (인터넷등기소 iros.go.kr / 700원)\n- **무료 상담** 대한법률구조공단 ☎ 132\n\n언제든 다시 얘기 나누고 싶으실 때 오세요. 그때 더 도움이 될 수 있도록 함께 생각해볼게요.",
+      "collected_snapshot": [],
+      "phase_snapshot": "collecting",
+      "duration_ms": 4914
+    },
+    {
+      "turn": 6,
+      "speaker": "client",
+      "content": "네, 감사합니다.\n지금은 일단 여기까지 생각해볼게요."
+    },
+    {
+      "turn": 6,
+      "speaker": "ai",
+      "content": "네, 오늘 많은 얘기 나눠주셔서 감사해요.\n\n힘든 상황에서도 전입신고, 확정일자, 카톡 캡처까지 잘 챙겨두셨으니 그 부분은 정말 잘 하셨어요.\n\n준비되실 때 언제든 다시 오세요. 그때 더 도움이 되도록 할게요. 힘내세요. 😊",
+      "collected_snapshot": [],
+      "phase_snapshot": "collecting",
+      "duration_ms": 4674
+    },
+    {
+      "turn": 7,
+      "speaker": "client",
+      "content": "네, 감사합니다."
+    },
+    {
+      "turn": 7,
+      "speaker": "ai",
+      "content": "네, 고생 많으셨어요. 좋은 결과 있으시길 바랍니다. 😊",
+      "collected_snapshot": [],
+      "phase_snapshot": "collecting",
+      "duration_ms": 2871
+    },
+    {
+      "turn": 8,
+      "speaker": "client",
+      "content": "네."
+    },
+    {
+      "turn": 8,
+      "speaker": "ai",
+      "content": "네, 안녕히 계세요. 😊",
+      "collected_snapshot": [],
+      "phase_snapshot": "collecting",
+      "duration_ms": 1560
+    },
+    {
+      "turn": 9,
+      "speaker": "client",
+      "content": "안녕히 계세요."
+    },
+    {
+      "turn": 9,
+      "speaker": "ai",
+      "content": "네, 안녕히 가세요. 😊",
+      "collected_snapshot": [],
+      "phase_snapshot": "collecting",
+      "duration_ms": 1972
+    },
+    {
+      "turn": 10,
+      "speaker": "client",
+      "content": "안녕히 가세요."
+    },
+    {
+      "turn": 10,
+      "speaker": "ai",
+      "content": "네, 안녕히 가세요. 😊",
+      "collected_snapshot": [],
+      "phase_snapshot": "collecting",
+      "duration_ms": 3379
+    },
+    {
+      "turn": 11,
+      "speaker": "client",
+      "content": "안녕히 가세요."
+    },
+    {
+      "turn": 11,
+      "speaker": "ai",
+      "content": "네, 안녕히 가세요! 힘내세요. 😊",
+      "collected_snapshot": [],
+      "phase_snapshot": "collecting",
+      "duration_ms": 1536
+    }
+  ],
+  "ground_truth": {
+    "has_contract_doc": {
+      "value": true,
+      "detail": "원본 보유, 사진도 따로 찍어둠"
+    },
+    "contract_start_date": {
+      "value": "2023-02-15"
+    },
+    "contract_end_date": {
+      "value": "2025-02-14"
+    },
+    "deposit_amount": {
+      "value": 80000000,
+      "unit": "KRW"
+    },
+    "unreturned_amount": {
+      "value": 80000000,
+      "unit": "KRW",
+      "detail": "전액 미반환"
+    },
+    "has_resident_reg": {
+      "value": true,
+      "detail": "2023-02-16 전입신고"
+    },
+    "has_fixed_date": {
+      "value": true,
+      "detail": "2023-02-15 확정일자"
+    },
+    "has_moved_out": {
+      "value": false,
+      "detail": "보증금 못 받아 계속 거주 중"
+    },
+    "notice_date": {
+      "value": "2025-01-10",
+      "detail": "최초 통보일 (이후 여러 번 추가 연락)"
+    },
+    "notice_method": {
+      "value": [
+        "kakao",
+        "phone"
+      ],
+      "detail": "처음엔 전화, 이후 카톡으로 여러 번"
+    },
+    "landlord_responded": {
+      "value": true,
+      "detail": "매번 다음달, 조만간 같은 약속 반복. 지키지 않음"
+    },
+    "has_kakao_records": {
+      "value": true,
+      "detail": "카톡 전체 대화 캡처 보관"
+    },
+    "has_certified_mail": {
+      "value": false
+    },
+    "has_transfer_records": {
+      "value": true
+    },
+    "has_lien_registration": {
+      "value": false
+    },
+    "registry_check": {
+      "value": false
+    }
+  }
+}

@@ -37,7 +37,8 @@ loadEnvConfig(process.cwd());
 export type EndReason =
   | "phase_done"
   | "max_turns_reached"
-  | "ia_error"
+  | "ready_to_advise_window_done"
+  | "system_error"
   | "simulator_error";
 
 export interface ConversationTurn {
@@ -78,13 +79,15 @@ export interface RunSingleExperimentOptions {
 export async function runSingleExperiment(
   opts: RunSingleExperimentOptions,
 ): Promise<ExperimentResult> {
-  const { case: c, system, maxTurns = 20, verbose = true } = opts;
+  const { case: c, system, maxTurns = 12, verbose = true } = opts;
   const startedAt = new Date().toISOString();
   const conversation: ConversationTurn[] = [];
   let endReason: EndReason = "max_turns_reached";
   let finalCollected: SystemTurnResponse["collected"] = [];
   let finalPhase: SystemTurnResponse["phase"] = "collecting";
   let errorMsg: string | undefined;
+  // ready_to_advise 도달 후 강제 종료 카운터 (-1: 미도달, n: 남은 턴 수)
+  let readyToAdviseTurnsRemaining = -1;
 
   const simulator = new ClientSimulator(c);
   system.reset();
@@ -123,6 +126,10 @@ export async function runSingleExperiment(
     if (aiResponse.phase === "done") {
       endReason = "phase_done";
     } else {
+      // 첫 응답에서 ready_to_advise 도달 시 카운터 시작
+      if (aiResponse.phase === "ready_to_advise" && readyToAdviseTurnsRemaining === -1) {
+        readyToAdviseTurnsRemaining = 2;
+      }
       // 멀티턴 루프
       for (let turn = 1; turn < maxTurns; turn++) {
         // 시뮬레이터가 AI 응답에 답변
@@ -147,7 +154,7 @@ export async function runSingleExperiment(
         try {
           aiResponse = await system.sendMessage(clientReply);
         } catch (err) {
-          endReason = "ia_error";
+          endReason = "system_error";
           errorMsg = err instanceof Error ? err.message : String(err);
           break;
         }
@@ -172,12 +179,25 @@ export async function runSingleExperiment(
           endReason = "phase_done";
           break;
         }
+
+        // ready_to_advise 도달 시점부터 카운트다운 (한 번만 시작)
+        if (aiResponse.phase === "ready_to_advise" && readyToAdviseTurnsRemaining === -1) {
+          readyToAdviseTurnsRemaining = 2;
+        }
+        // 카운트다운 진행: 0 이 되면 강제 종료
+        if (readyToAdviseTurnsRemaining > 0) {
+          readyToAdviseTurnsRemaining--;
+          if (readyToAdviseTurnsRemaining === 0) {
+            endReason = "ready_to_advise_window_done";
+            break;
+          }
+        }
       }
     }
   } catch (err) {
     errorMsg = err instanceof Error ? err.message : String(err);
     if (!endReason || endReason === "max_turns_reached") {
-      endReason = "ia_error";
+      endReason = "system_error";
     }
   }
 
@@ -231,7 +251,7 @@ async function main() {
     console.error(
       "  case_id: IA-CASE-002 (cases/ 디렉토리에 frontmatter 가 있어야 함)",
     );
-    console.error("  system:  ia (현재 지원)");
+    console.error("  system:  ia | gpt_baseline | claude_baseline");
     process.exit(1);
   }
 
@@ -269,9 +289,17 @@ async function main() {
     }
     console.log("IA server OK.\n");
     system = new IARunner();
+  } else if (systemName === "gpt_baseline") {
+    console.log(`Using GPT baseline (model: ${process.env.OPENAI_BASELINE_MODEL ?? "gpt-5-mini"})\n`);
+    const { GPTBaselineRunner } = await import("./baselines/gpt");
+    system = new GPTBaselineRunner();
+  } else if (systemName === "claude_baseline") {
+    console.log(`Using Claude baseline (model: ${process.env.CLAUDE_BASELINE_MODEL ?? "claude-sonnet-4-6"})\n`);
+    const { ClaudeBaselineRunner } = await import("./baselines/claude");
+    system = new ClaudeBaselineRunner();
   } else {
     console.error(`Unsupported system: ${systemName}`);
-    console.error("Currently supported: ia");
+    console.error("Currently supported: ia, gpt_baseline, claude_baseline");
     process.exit(1);
   }
 
@@ -279,7 +307,7 @@ async function main() {
   const result = await runSingleExperiment({
     case: c,
     system,
-    maxTurns: 20,
+    maxTurns: 12,
     verbose: true,
   });
 

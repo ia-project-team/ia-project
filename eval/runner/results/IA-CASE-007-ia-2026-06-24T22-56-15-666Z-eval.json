@@ -1,0 +1,151 @@
+{
+  "case_id": "IA-CASE-007",
+  "case_title": "퇴거 후 일부 반환 미반환",
+  "system": "ia",
+  "total_slots": 16,
+  "matches": 12,
+  "mismatches": 1,
+  "missing": 1,
+  "unparseable": 2,
+  "recall": 0.75,
+  "slot_results": [
+    {
+      "slot": "has_contract_doc",
+      "gt_value": true,
+      "predicted_status": "confirmed",
+      "predicted_value": "있음",
+      "normalized_predicted": true,
+      "match": "match"
+    },
+    {
+      "slot": "contract_start_date",
+      "gt_value": "2023-05-01",
+      "predicted_status": "confirmed",
+      "predicted_value": "2023-05-01",
+      "normalized_predicted": "2023-05-01",
+      "match": "match"
+    },
+    {
+      "slot": "contract_end_date",
+      "gt_value": "2025-04-30",
+      "predicted_status": "confirmed",
+      "predicted_value": "2025-04-30",
+      "normalized_predicted": "2025-04-30",
+      "match": "match"
+    },
+    {
+      "slot": "deposit_amount",
+      "gt_value": 100000000,
+      "predicted_status": "confirmed",
+      "predicted_value": "1억원",
+      "normalized_predicted": 100000000,
+      "match": "match"
+    },
+    {
+      "slot": "unreturned_amount",
+      "gt_value": 70000000,
+      "predicted_status": "confirmed",
+      "predicted_value": "7천만원",
+      "normalized_predicted": 70000000,
+      "match": "match"
+    },
+    {
+      "slot": "has_resident_reg",
+      "gt_value": true,
+      "predicted_status": "confirmed",
+      "predicted_value": "있음",
+      "normalized_predicted": true,
+      "match": "match"
+    },
+    {
+      "slot": "has_fixed_date",
+      "gt_value": true,
+      "predicted_status": "confirmed",
+      "predicted_value": "있음",
+      "normalized_predicted": true,
+      "match": "match"
+    },
+    {
+      "slot": "has_moved_out",
+      "gt_value": true,
+      "predicted_status": "confirmed",
+      "predicted_value": "퇴거함",
+      "normalized_predicted": true,
+      "match": "match"
+    },
+    {
+      "slot": "notice_date",
+      "gt_value": "2025-03-25",
+      "predicted_status": "confirmed",
+      "predicted_value": "2025-03-25",
+      "normalized_predicted": "2025-03-25",
+      "match": "match"
+    },
+    {
+      "slot": "notice_method",
+      "gt_value": [
+        "sms"
+      ],
+      "predicted_status": "confirmed",
+      "predicted_value": "SMS(문자)",
+      "normalized_predicted": [
+        "sms"
+      ],
+      "match": "match"
+    },
+    {
+      "slot": "landlord_responded",
+      "gt_value": true,
+      "predicted_status": "confirmed",
+      "predicted_value": "다음달에 마저 줄게요",
+      "normalized_predicted": null,
+      "match": "unparseable",
+      "reason": "boolean 정규화 실패: \"다음달에 마저 줄게요\""
+    },
+    {
+      "slot": "has_kakao_records",
+      "gt_value": false,
+      "predicted_status": "confirmed",
+      "predicted_value": "문자 내역 있음",
+      "normalized_predicted": true,
+      "match": "mismatch",
+      "reason": "gt=false, predicted=\"문자 내역 있음\" → true"
+    },
+    {
+      "slot": "has_certified_mail",
+      "gt_value": true,
+      "predicted_status": "confirmed",
+      "predicted_value": "보냄",
+      "normalized_predicted": null,
+      "match": "unparseable",
+      "reason": "boolean 정규화 실패: \"보냄\""
+    },
+    {
+      "slot": "has_transfer_records",
+      "gt_value": true,
+      "predicted_status": "confirmed",
+      "predicted_value": "있음",
+      "normalized_predicted": true,
+      "match": "match"
+    },
+    {
+      "slot": "has_lien_registration",
+      "gt_value": true,
+      "predicted_status": "confirmed",
+      "predicted_value": "신청함",
+      "normalized_predicted": true,
+      "match": "match"
+    },
+    {
+      "slot": "registry_check",
+      "gt_value": true,
+      "predicted_status": "unknown",
+      "predicted_value": null,
+      "normalized_predicted": null,
+      "match": "missing"
+    }
+  ],
+  "conversation_turns": 10,
+  "end_reason": "phase_done",
+  "evaluated_at": "2026-06-24T22:56:15.666Z"
+}

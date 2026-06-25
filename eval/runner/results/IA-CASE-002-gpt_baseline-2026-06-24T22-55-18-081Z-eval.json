@@ -1,0 +1,147 @@
+{
+  "case_id": "IA-CASE-002",
+  "case_title": "단순 보증금 미반환",
+  "system": "gpt_baseline",
+  "total_slots": 16,
+  "matches": 0,
+  "mismatches": 0,
+  "missing": 15,
+  "unparseable": 1,
+  "recall": 0,
+  "slot_results": [
+    {
+      "slot": "has_contract_doc",
+      "gt_value": true,
+      "predicted_status": "unknown",
+      "predicted_value": null,
+      "normalized_predicted": null,
+      "match": "missing"
+    },
+    {
+      "slot": "contract_start_date",
+      "gt_value": "2023-04-01",
+      "predicted_status": "unknown",
+      "predicted_value": null,
+      "normalized_predicted": null,
+      "match": "missing"
+    },
+    {
+      "slot": "contract_end_date",
+      "gt_value": "2025-03-31",
+      "predicted_status": "unknown",
+      "predicted_value": null,
+      "normalized_predicted": null,
+      "match": "missing"
+    },
+    {
+      "slot": "deposit_amount",
+      "gt_value": 120000000,
+      "predicted_status": "unknown",
+      "predicted_value": null,
+      "normalized_predicted": null,
+      "match": "missing"
+    },
+    {
+      "slot": "unreturned_amount",
+      "gt_value": 120000000,
+      "predicted_status": "unknown",
+      "predicted_value": null,
+      "normalized_predicted": null,
+      "match": "missing"
+    },
+    {
+      "slot": "has_resident_reg",
+      "gt_value": true,
+      "predicted_status": "unknown",
+      "predicted_value": null,
+      "normalized_predicted": null,
+      "match": "missing"
+    },
+    {
+      "slot": "has_fixed_date",
+      "gt_value": true,
+      "predicted_status": "unknown",
+      "predicted_value": null,
+      "normalized_predicted": null,
+      "match": "missing"
+    },
+    {
+      "slot": "has_moved_out",
+      "gt_value": false,
+      "predicted_status": "unknown",
+      "predicted_value": null,
+      "normalized_predicted": null,
+      "match": "missing"
+    },
+    {
+      "slot": "notice_date",
+      "gt_value": "2025-02-01",
+      "predicted_status": "unknown",
+      "predicted_value": null,
+      "normalized_predicted": null,
+      "match": "missing"
+    },
+    {
+      "slot": "notice_method",
+      "gt_value": [
+        "kakao"
+      ],
+      "predicted_status": "unknown",
+      "predicted_value": null,
+      "normalized_predicted": null,
+      "match": "missing"
+    },
+    {
+      "slot": "landlord_responded",
+      "gt_value": true,
+      "predicted_status": "confirmed",
+      "predicted_value": "계속 기다려달라고만 하는데",
+      "normalized_predicted": null,
+      "match": "unparseable",
+      "reason": "boolean 정규화 실패: \"계속 기다려달라고만 하는데\""
+    },
+    {
+      "slot": "has_kakao_records",
+      "gt_value": true,
+      "predicted_status": "unknown",
+      "predicted_value": null,
+      "normalized_predicted": null,
+      "match": "missing"
+    },
+    {
+      "slot": "has_certified_mail",
+      "gt_value": false,
+      "predicted_status": "unknown",
+      "predicted_value": null,
+      "normalized_predicted": null,
+      "match": "missing"
+    },
+    {
+      "slot": "has_transfer_records",
+      "gt_value": true,
+      "predicted_status": "unknown",
+      "predicted_value": null,
+      "normalized_predicted": null,
+      "match": "missing"
+    },
+    {
+      "slot": "has_lien_registration",
+      "gt_value": false,
+      "predicted_status": "unknown",
+      "predicted_value": null,
+      "normalized_predicted": null,
+      "match": "missing"
+    },
+    {
+      "slot": "registry_check",
+      "gt_value": false,
+      "predicted_status": "unknown",
+      "predicted_value": null,
+      "normalized_predicted": null,
+      "match": "missing"
+    }
+  ],
+  "conversation_turns": 0,
+  "end_reason": "ia_error",
+  "evaluated_at": "2026-06-24T22:55:18.081Z"
+}

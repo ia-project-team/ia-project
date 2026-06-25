@@ -1,0 +1,232 @@
+{
+  "case_id": "IA-CASE-002",
+  "case_title": "단순 보증금 미반환",
+  "system": "claude_baseline",
+  "started_at": "2026-06-25T04:17:26.950Z",
+  "ended_at": "2026-06-25T04:18:30.752Z",
+  "total_turns": 12,
+  "end_reason": "max_turns_reached",
+  "final_collected": [],
+  "final_phase": "collecting",
+  "conversation": [
+    {
+      "turn": 0,
+      "speaker": "client",
+      "content": "전세 계약이 끝났는데 집주인이 돈을 안 돌려줘요.\n계속 기다려달라고만 하는데 너무 답답해요."
+    },
+    {
+      "turn": 0,
+      "speaker": "ai",
+      "content": "정말 답답하고 힘드시겠어요. 😔\n\n상황을 더 잘 이해하기 위해 몇 가지 여쭤봐도 될까요?\n\n---\n\n**📋 확인이 필요한 사항들**\n\n1. **계약 만료일**이 언제였나요?\n - 만료된 지 얼마나 지났는지가 중요해요.\n\n2. **전입신고와 확정일자**를 받아두셨나요?\n\n3. **계약서상 보증금 반환 조건**에 특별한 내용이 있었나요?\n\n4. 집주인이 **돈을 못 돌려주는 이유**로 뭐라고 하던가요?\n - 예) 새 세입자를 못 구함, 대출이 있음 등\n\n5. 현재 **해당 집에 거주 중**이신가요, 아니면 이미 이사를 나가셨나요?\n\n---\n\n말씀해 주신 내용을 바탕으로 어떤 도움을 받을 수 있는지 같이 찾아볼게요. 🙂",
+      "collected_snapshot": [],
+      "phase_snapshot": "collecting",
+      "duration_ms": 7937
+    },
+    {
+      "turn": 1,
+      "speaker": "client",
+      "content": "계약 만료일은 2025-03-31이에요.  \n전입신고랑 확정일자는 해뒀어요.  \n계약서도 원본 가지고 있어요.  \n집주인은 그냥 조금만 기다려달라고만 했어요.  \n저는 아직 계속 거주 중이에요."
+    },
+    {
+      "turn": 1,
+      "speaker": "ai",
+      "content": "상황을 정리해 주셔서 감사해요. 😊\n\n한 가지만 더 여쭤볼게요!\n\n---\n\n**💰 보증금 관련해서**\n\n혹시 **보증금이 얼마**인지 알려주실 수 있나요?\n\n또, 해당 집에 **근저당이나 다른 대출**이 있다는 걸 알고 계신가요?\n(등기부등본을 확인해 보셨나요?)\n\n---\n\n이 부분에 따라 활용할 수 있는 제도나 기관이 달라질 수 있어서요! 🙂",
+      "collected_snapshot": [],
+      "phase_snapshot": "collecting",
+      "duration_ms": 4588
+    },
+    {
+      "turn": 2,
+      "speaker": "client",
+      "content": "보증금은 1억 2천만원이에요.  \n근저당이나 다른 대출은 잘 모르겠어요. 등기부등본은 아직 확인 안 했어요."
+    },
+    {
+      "turn": 2,
+      "speaker": "ai",
+      "content": "알려주셔서 감사해요! 지금까지 말씀해 주신 내용을 정리해 볼게요. 😊\n\n---\n\n**📋 현재 상황 요약**\n\n| 항목 | 내용 |\n|------|------|\n| 계약 만료일 | 2025년 3월 31일 |\n| 전입신고 / 확정일자 | ✅ 완료 |\n| 계약서 원본 | ✅ 보유 |\n| 보증금 | 1억 2천만원 |\n| 현재 거주 여부 | 거주 중 |\n| 등기부등본 확인 | ❌ 미확인 |\n\n---\n\n**⚠️ 지금 당장 확인하시면 좋을 것들**\n\n**등기부등본 확인이 꽤 중요해요!**\n- 인터넷등기소(iros.go.kr)에서 소액으로 바로 발급 가능해요\n- 근저당 규모에 따라 보증금 회수 가능 여부가 달라질 수 있거든요\n\n---\n\n**🏛️ 도움받을 수 있는 곳**\n\n혼자 해결하기 어려우시면 아래 기관에 **무료로** 상담받으실 수 있어요.\n\n- **주택도시보증공사(HUG)** ☎ 1566-9009\n- **대한법률구조공단** ☎ 132\n- **법률홈닥터** (온라인 무료 상담)\n- 각 지자체 **임대차 분쟁조정위원회**\n\n---\n\n등기부등본 확인 후 상황이 더 명확해지면, 위 기관들에 상담받아 보시는 걸 추천드려요! 💪\n\n혹시 더 궁금하신 점 있으신가요? 😊",
+      "collected_snapshot": [],
+      "phase_snapshot": "collecting",
+      "duration_ms": 11060
+    },
+    {
+      "turn": 3,
+      "speaker": "client",
+      "content": "지금 생각나는 건 없어요."
+    },
+    {
+      "turn": 3,
+      "speaker": "ai",
+      "content": "네, 알겠어요! 😊\n\n---\n\n오늘 상담 내용을 간단히 정리해 드릴게요.\n\n**✅ 잘 준비되어 있는 것들**\n- 전입신고, 확정일자, 계약서 원본 모두 갖추고 계세요\n- 거주 중이시라 대항력도 유지되고 있어요\n\n**🔑 가장 먼저 하실 일**\n> 📄 **등기부등본 확인** (인터넷등기소 iros.go.kr)\n\n**📞 그 다음 전문 상담**\n> 대한법률구조공단 **132** 또는 HUG **1566-9009**\n\n---\n\n보증금이 크신 만큼 혼자 고민하지 마시고 꼭 전문 기관의 도움을 받아보세요. 빨리 해결되시길 바랍니다! 💪😊",
+      "collected_snapshot": [],
+      "phase_snapshot": "collecting",
+      "duration_ms": 10396
+    },
+    {
+      "turn": 4,
+      "speaker": "client",
+      "content": "네, 감사합니다."
+    },
+    {
+      "turn": 4,
+      "speaker": "ai",
+      "content": "도움이 되셨으면 좋겠어요! 😊\n\n보증금 꼭 돌려받으시길 바랍니다. 힘내세요! 💪\n\n궁금한 점이 생기면 언제든지 다시 찾아와 주세요. 🙂",
+      "collected_snapshot": [],
+      "phase_snapshot": "collecting",
+      "duration_ms": 2460
+    },
+    {
+      "turn": 5,
+      "speaker": "client",
+      "content": "네, 감사합니다."
+    },
+    {
+      "turn": 5,
+      "speaker": "ai",
+      "content": "네, 감사합니다! 😊\n\n좋은 결과 있으시길 바랄게요. 🍀",
+      "collected_snapshot": [],
+      "phase_snapshot": "collecting",
+      "duration_ms": 1988
+    },
+    {
+      "turn": 6,
+      "speaker": "client",
+      "content": "네, 감사합니다."
+    },
+    {
+      "turn": 6,
+      "speaker": "ai",
+      "content": "네! 😊 언제든지 또 오세요~! 🙂",
+      "collected_snapshot": [],
+      "phase_snapshot": "collecting",
+      "duration_ms": 2456
+    },
+    {
+      "turn": 7,
+      "speaker": "client",
+      "content": "네, 감사합니다."
+    },
+    {
+      "turn": 7,
+      "speaker": "ai",
+      "content": "네, 감사합니다! 😊\n\n좋은 하루 보내세요! 🌟",
+      "collected_snapshot": [],
+      "phase_snapshot": "collecting",
+      "duration_ms": 2616
+    },
+    {
+      "turn": 8,
+      "speaker": "client",
+      "content": "네, 감사합니다."
+    },
+    {
+      "turn": 8,
+      "speaker": "ai",
+      "content": "네! 😊 안녕히 계세요~! 🙂",
+      "collected_snapshot": [],
+      "phase_snapshot": "collecting",
+      "duration_ms": 2079
+    },
+    {
+      "turn": 9,
+      "speaker": "client",
+      "content": "네, 감사합니다."
+    },
+    {
+      "turn": 9,
+      "speaker": "ai",
+      "content": "네! 😊\n\n궁금한 점이 생기시면 언제든지 다시 찾아와 주세요. 안녕히 계세요! 🙂",
+      "collected_snapshot": [],
+      "phase_snapshot": "collecting",
+      "duration_ms": 2459
+    },
+    {
+      "turn": 10,
+      "speaker": "client",
+      "content": "네, 감사합니다."
+    },
+    {
+      "turn": 10,
+      "speaker": "ai",
+      "content": "네! 안녕히 계세요! 😊",
+      "collected_snapshot": [],
+      "phase_snapshot": "collecting",
+      "duration_ms": 1845
+    },
+    {
+      "turn": 11,
+      "speaker": "client",
+      "content": "네, 감사합니다."
+    },
+    {
+      "turn": 11,
+      "speaker": "ai",
+      "content": "네! 😊 안녕히 계세요~! 🙂",
+      "collected_snapshot": [],
+      "phase_snapshot": "collecting",
+      "duration_ms": 1809
+    }
+  ],
+  "ground_truth": {
+    "has_contract_doc": {
+      "value": true,
+      "detail": "원본 계약서 보유"
+    },
+    "contract_start_date": {
+      "value": "2023-04-01"
+    },
+    "contract_end_date": {
+      "value": "2025-03-31"
+    },
+    "deposit_amount": {
+      "value": 120000000,
+      "unit": "KRW"
+    },
+    "unreturned_amount": {
+      "value": 120000000,
+      "unit": "KRW"
+    },
+    "has_resident_reg": {
+      "value": true,
+      "detail": "2023-04-02 전입신고"
+    },
+    "has_fixed_date": {
+      "value": true,
+      "detail": "2023-04-01 확정일자"
+    },
+    "has_moved_out": {
+      "value": false,
+      "detail": "현재 계속 거주 중"
+    },
+    "notice_date": {
+      "value": "2025-02-01"
+    },
+    "notice_method": {
+      "value": [
+        "kakao"
+      ]
+    },
+    "landlord_responded": {
+      "value": true,
+      "detail": "조금만 기다려달라고 카톡 답변"
+    },
+    "has_kakao_records": {
+      "value": true,
+      "detail": "캡처 보관 중"
+    },
+    "has_certified_mail": {
+      "value": false
+    },
+    "has_transfer_records": {
+      "value": true,
+      "detail": "은행 앱에서 확인 가능"
+    },
+    "has_lien_registration": {
+      "value": false,
+      "detail": "신청 안 함"
+    },
+    "registry_check": {
+      "value": false,
+      "detail": "미확인"
+    }
+  }
+}
