@@ -1,6 +1,7 @@
 # IA Golden Set — 스펙 & 페르소나 분류체계
 
 > 작성일: 2026.06.28
+> 마지막 업데이트: 2026.06.29 (enum 어휘집 확정)
 > 작성자: 최유진
 > 대상: IA(Intake Assistant) 골든셋 v1 (목표 30케이스, 현재 8케이스)
 > 위치: `eval/golden-set/cases/IA-CASE-NNN.md`
@@ -22,7 +23,18 @@ LLM이 골든셋 케이스의 Ground Truth(16슬롯)를 연기하는 **가상 �
 3. **작성·검증 절차** — status 워크플로 + GT 누출 검사 게이트
 4. **기존 케이스 보완 계획** — 남은 22케이스 작성 우선순위
 
-### 0-3. 표기 규칙
+### 0-3. LEGALMIDM에서 차용한 큐레이션 원칙
+
+LEGALMIDM의 차별점은 데이터 큐레이션의 엄격함이었다. 본 골든셋도 같은 원칙을 적용한다.
+
+| LEGALMIDM 원칙 | 본 골든셋 적용 |
+|---|---|
+| 법 전문가 참여 | 케이스 GT는 도메인 검토자가 `confirmed` 처리 |
+| substring 기반 검증 | `proactive_speech_pool` ↔ GT 누출 자동 검사 (§3-2 G5) |
+| 폐기 절차 | status enum: `draft → review → confirmed` (역방향 가능) |
+| 데이터 격리 | frontmatter = SSOT, 본문은 인간 검토용 (평가 자동화에 사용 안 함) |
+
+### 0-4. 표기 규칙
 
 - 🟩 = `simulator.ts` / `_example.md` / 기존 케이스에 **이미 있는 사실**
 - 🟦 = 본 문서에서 **새로 정한 결정**
@@ -34,6 +46,8 @@ LLM이 골든셋 케이스의 Ground Truth(16슬롯)를 연기하는 **가상 �
 ### 1-1. 원칙
 
 **frontmatter = single source of truth.** LangSmith Example 변환 스크립트가 frontmatter만 읽는다. 본문 마크다운은 인간 검토용이며 평가 자동화에 사용되지 않는다.
+
+> 노션 DB는 케이스 작성 보조용(한글 옵션·실험 결과 추적)으로 운영되며, frontmatter와의 sync는 별도 export 단계에서 처리한다. 본 문서는 frontmatter 스펙만 다룬다.
 
 ### 1-2. 전 필드 정의
 
@@ -56,16 +70,16 @@ LLM이 골든셋 케이스의 Ground Truth(16슬롯)를 연기하는 **가상 �
 | `client_type` | enum | ✓ | 페르소나 5종 (§2-1) | `emotional` | 🟩 |
 | `difficulty` | enum | ✓ | `low \| medium \| medium_high \| high` — §2-3에 따라 `hidden_info_count` 기반으로 매핑 | `low` | 🟩 enum / 🟦 매핑 |
 | `move_out_status` | enum | ✓ | `living_in_property \| moved_out \| moving_out_planned \| unknown` | `moved_out` | 🟩 |
-| `notice_method` | string[] | ✓ | `kakao \| sms \| phone \| certified_mail \| email`의 배열 (다중 가능) | `[kakao, certified_mail]` | 🟩 |
-| `evidence_items` | string[] | ✓ | 보유 증거자료 종류 | `[contract_doc, kakao_records]` | 🟩 |
-| `evaluation_purpose` | string[] | ✓ | `golden_set_v1 \| checklist_recall \| single_turn_comparison` 등 | `[golden_set_v1, checklist_recall]` | 🟩 |
+| `notice_method` | string[] | ✓ | 7종 enum 배열 → **§1-3-1** | `[kakao, certified_mail]` | 🟦 (확장) |
+| `evidence_items` | string[] | ✓ | 8종 enum 배열 → **§1-3-2** | `[contract_doc, kakao_records]` | 🟦 (확장) |
+| `evaluation_purpose` | string[] | ✓ | 6종 enum 배열 → **§1-3-3** | `[checklist_recall, golden_set]` | 🟦 (확장) |
 
 #### 3) 평가 분류 (v1/v2 분리)
 
 | 필드 | 타입 | 필수 | 설명 | 출처 |
 |---|---|---|---|---|
-| `issue_tags` | string[] | ✓ | **v2 RAG 평가용 법률 쟁점 태그.** v1 순수 케이스는 빈 배열 `[]` | 🟩 |
-| `risk_missing_points` | string[] | ✓ | v1 단일턴이 놓치기 쉬운 일반 정보 항목 | 🟩 |
+| `issue_tags` | string[] | ✓ | **v2 RAG 평가용 법률 쟁점 태그.** 13종 enum → **§1-3-4**. v1 순수 케이스는 빈 배열 `[]` | 🟦 (확장) |
+| `risk_missing_points` | string[] | ✓ | v1 단일턴이 놓치기 쉬운 정보 항목. 35종 별도 어휘집 → **§1-3-5** | 🟦 (확장) |
 
 #### 4) 카운트 (참고용)
 
@@ -125,7 +139,112 @@ slot_key:
 | `simulator.proactive_speech_pool` | string[] | ✓ | 자발 발화 풀. **GT 16슬롯 정보 노출 절대 금지** (§3-2 G5) | 🟩 |
 | `simulator.open_question_response` | string | ✓ | open question에 대한 통일 응답 | 🟩 |
 
-### 1-3. 엄격 규칙 (🟩 코드 결정사항)
+### 1-3. Enum 어휘집
+
+본 절은 §1-2의 string[] 타입 필드들이 허용하는 enum 값을 정의한다. **여기 정의된 값 외에는 허용하지 않는다** — 새 값이 필요하면 본 문서 개정 후 추가한다.
+
+#### 1-3-1. `notice_method` (7종)
+
+| 영문 enum | 표시명 |
+|---|---|
+| `kakao` | 카카오톡 |
+| `sms` | 문자 |
+| `phone` | 전화 |
+| `certified_mail` | 내용증명 |
+| `email` | 이메일 |
+| `none` | 없음 |
+| `unknown` | 미확인 |
+
+#### 1-3-2. `evidence_items` (8종)
+
+| 영문 enum | 표시명 |
+|---|---|
+| `contract_doc` | 계약서 |
+| `kakao_records` | 카카오톡 |
+| `sms_records` | 문자 |
+| `call_recording` | 통화 녹음 |
+| `certified_mail` | 내용증명 |
+| `transfer_records` | 계좌이체 |
+| `registry_doc` | 등기부등본 |
+| `none` | 없음 |
+
+#### 1-3-3. `evaluation_purpose` (6종)
+
+| 영문 enum | 표시명 |
+|---|---|
+| `checklist_recall` | 체크리스트 수집률 |
+| `issue_detection` | 추가 쟁점 탐지 |
+| `single_turn_comparison` | 단일턴 비교 |
+| `report_generation` | 리포트 생성 검증 |
+| `prompt_regression` | 프롬프트 회귀 테스트 |
+| `golden_set` | 골든셋 |
+
+> 참고: `_example.md`에서 본 `golden_set_v1` 표기는 본 어휘집에서는 `golden_set`으로 통일. v1/v2 구분은 `issue_tags` 비어있음 여부로 판별.
+
+#### 1-3-4. `issue_tags` (13종, v2 RAG 평가용)
+
+| 영문 enum | 표시명 |
+|---|---|
+| `none` | 없음 |
+| `implied_renewal` | 묵시적 갱신 |
+| `moving_out_planned` | 퇴거 예정 |
+| `moved_out` | 퇴거 완료 |
+| `no_leasehold_registration` | 임차권등기 미신청 |
+| `landlord_changed` | 임대인 변경 |
+| `unclear_notice_recipient` | 통보 대상 불명확 |
+| `no_fixed_date` | 확정일자 없음 |
+| `senior_mortgage` | 선순위 근저당 |
+| `weak_notice_evidence` | 통보 증거 부족 |
+| `no_certified_mail` | 내용증명 없음 |
+| `registry_not_checked` | 등기부 미확인 |
+| `landlord_no_response` | 집주인 미응답 |
+
+> v1 케이스는 `issue_tags: []` (빈 배열). 빈 배열인지가 v1/v2 판별 기준.
+
+#### 1-3-5. `risk_missing_points` (35종, 별도 어휘집)
+
+**중요**: `risk_missing_points`는 16슬롯의 부분집합이 아니다. 슬롯 key와 일치하는 항목(`contract_end_date`, `deposit_amount` 등)과, 슬롯에 없는 별도 표현(`implied_renewal`, `senior_mortgage`, `landlord_no_response` 등)이 함께 들어 있는 **별도 분류체계**다. 목적은 단일턴 베이스라인이 놓치기 쉬운 항목을 폭넓게 포착하는 것.
+
+| 영문 enum | 표시명 | 슬롯 key와의 관계 |
+|---|---|---|
+| `contract_start_date` | 계약 시작일 | 슬롯 동일 |
+| `contract_end_date` | 계약 종료일 | 슬롯 동일 |
+| `deposit_amount` | 보증금 액수 | 슬롯 동일 |
+| `unreturned_amount` | 미반환 금액 | 슬롯 동일 |
+| `resident_registration` | 전입신고 | 슬롯 `has_resident_reg` 대응 |
+| `fixed_date` | 확정일자 | 슬롯 `has_fixed_date` 대응 |
+| `move_out_status` | 퇴거 여부 | 슬롯 `has_moved_out` 대응 |
+| `move_out_date` | 퇴거일 | 비-슬롯 (상세 정보) |
+| `planned_move_out_date` | 퇴거 예정일 | 비-슬롯 |
+| `notice_date` | 통보 시점 | 슬롯 동일 |
+| `notice_method` | 통보 방식 | 슬롯 동일 |
+| `notice_recipient` | 통보 대상 | 비-슬롯 |
+| `notice_method_validity` | 통보 방식 효력 | 비-슬롯 |
+| `landlord_response` | 집주인 답변 | 슬롯 `landlord_responded` 대응 |
+| `landlord_no_response` | 집주인 미응답 | 비-슬롯 |
+| `kakao_records` | 카카오톡 기록 | 슬롯 `has_kakao_records` 대응 |
+| `sms_records` | 문자 기록 | 비-슬롯 |
+| `call_recording` | 통화 녹음 | 비-슬롯 |
+| `certified_mail` | 내용증명 | 슬롯 `has_certified_mail` 대응 |
+| `transfer_records` | 계좌이체 내역 | 슬롯 `has_transfer_records` 대응 |
+| `leasehold_registration` | 임차권등기 | 슬롯 `has_lien_registration` 대응 |
+| `no_leasehold_registration` | 임차권등기 미신청 | 비-슬롯 (쟁점) |
+| `registry_check` | 등기부 확인 | 슬롯 동일 |
+| `registry_not_checked` | 등기부 미확인 | 비-슬롯 (쟁점) |
+| `registry_details_unclear` | 등기부 세부내용 이해 부족 | 비-슬롯 |
+| `senior_rights` | 선순위 권리 | 비-슬롯 |
+| `senior_mortgage` | 선순위 근저당 | 비-슬롯 (쟁점) |
+| `landlord_changed` | 집주인 변경 | 비-슬롯 (쟁점) |
+| `landlord_change_date` | 집주인 변경 시점 | 비-슬롯 |
+| `landlord_identity_distinction` | 기존/새 임대인 구분 | 비-슬롯 |
+| `certified_mail_recipient` | 내용증명 발송 대상 | 비-슬롯 |
+| `implied_renewal` | 묵시적 갱신 여부 | 비-슬롯 (쟁점) |
+| `opposing_power_risk` | 대항력 상실 위험 | 비-슬롯 |
+| `rights_preservation_concern` | 권리 유지 불안 | 비-슬롯 |
+
+> 🟦 표기 일관성 노트: 통보 시점 항목은 `notice_date`로 통일한다 (슬롯 key와 일치). 외부 문서에서 `notice_timing` 표기가 보이면 `notice_date`로 정규화 필요.
+
+### 1-4. 엄격 규칙 (🟩 코드 결정사항)
 
 1. **GT 16슬롯 자발 발화 금지.** 어떤 슬롯 값도 의뢰인이 먼저 말하지 않는다. IA가 명시적으로 물어야만 답한다.
 2. **GT 외 정황·감정·맥락**만 `proactive_speech_pool`에서 허용.
@@ -213,7 +332,7 @@ simulator.ts에는 정의돼 있지만 코드 주석에만 존재한다. 본 문
 
 ---
 
-## 3. 케이스 작성·검증 절차
+## 3. 케이스 작성·검증 절차 (LEGALMIDM 큐레이션)
 
 ### 3-1. 작성 단계 (5단계)
 
@@ -235,6 +354,7 @@ simulator.ts에는 정의돼 있지만 코드 주석에만 존재한다. 본 문
 | G2 | 페르소나 enum 유효성 | `client_type` ∈ 5종 |
 | G3 | difficulty ↔ hidden_info_count 일치 | §2-3 매핑 검증 |
 | G4 | 첫 발화 어투 ↔ client_type 일치 | 검토자 정성 평가 (1줄 코멘트) |
+| G4a | enum 어휘집 준수 | `notice_method` / `evidence_items` / `evaluation_purpose` / `issue_tags` / `risk_missing_points` 모두 §1-3 어휘집 내 값만 사용 |
 
 #### `review → confirmed` (핵심 게이트)
 
@@ -270,7 +390,7 @@ simulator.ts에는 정의돼 있지만 코드 주석에만 존재한다. 본 문
 | IA-CASE-007 | v1 채워짐 | `draft` | (frontmatter 재확인 필요) | |
 | IA-CASE-008 | v1 채워짐 | `draft` | (frontmatter 재확인 필요) | |
 
-> 이미 채워진 002/007/008도 본 분류체계 기준으로 재검증 필요 (difficulty ↔ hidden_info_count 일치, answer_style 매핑 확인 등).
+> 이미 채워진 002/007/008도 본 분류체계 기준으로 재검증 필요 (difficulty ↔ hidden_info_count 일치, answer_style 매핑 확인, enum 어휘집 준수 등).
 
 ### 4-2. 작업 목록
 
@@ -283,6 +403,8 @@ simulator.ts에는 정의돼 있지만 코드 주석에만 존재한다. 본 문
 | **P1** | 그리드 빈 칸 우선 메우기 (§2-4-1 기준) | 유진 | — |
 | **P2** | 신규 17케이스 작성 (8 → 30) | 유진 (+ 검토자) | 17케이스 |
 | **P2** | 도메인 검토자 사인오프 (G7) | 외부 검토자 | `confirmed` 승격 |
+
+> ⏸ P0 두 항목(G5 스크립트, 기존 케이스 재검증)은 평가 프레임워크 / ablation / RAG 설계 문서 작성 이후 진행.
 
 ### 4-3. 분포 추적 — 현재 채워진 케이스의 그리드 위치
 
@@ -302,21 +424,28 @@ simulator.ts에는 정의돼 있지만 코드 주석에만 존재한다. 본 문
 
 | 항목 | 결정 | 출처 |
 |---|---|---|
-| frontmatter SSOT | frontmatter만 평가, 본문은 인간용 | 🟩 코드 |
+| frontmatter SSOT | frontmatter만 평가, 본문은 인간용. 노션 DB는 작성 보조용으로 별도 운영 | 🟩 코드 / 🟦 본 문서 |
 | 페르소나 5종 enum | emotional / fragmented / confused / avoidant / over_explaining | 🟩 코드 |
+| status enum | draft / review / confirmed (3단계 유지) | 🟩 `_example.md` |
 | difficulty enum | low / medium / medium_high / high (4단계) | 🟩 `_example.md` |
 | difficulty 매핑 기준 | `hidden_info_count` | 🟦 본 문서 |
 | difficulty 매핑 구간 | 0–6 / 7–10 / 11–13 / 14–16 | 🟦 본 문서 |
 | 분포 방식 | 케이스별 균등. 5 × 6 = 30 | 🟦 본 문서 |
 | 페르소나 내 difficulty 분배 | (low, medium, medium_high, high) = (1, 2, 2, 1) | 🟦 본 문서 |
+| `notice_method` enum | 7종 (kakao/sms/phone/certified_mail/email/none/unknown) | 🟦 본 문서 |
+| `evidence_items` enum | 8종 (contract_doc/kakao_records/sms_records/call_recording/certified_mail/transfer_records/registry_doc/none) | 🟦 본 문서 |
+| `evaluation_purpose` enum | 6종 (checklist_recall/issue_detection/single_turn_comparison/report_generation/prompt_regression/golden_set) | 🟦 본 문서 |
+| `issue_tags` enum | 13종 (§1-3-4) | 🟦 본 문서 |
+| `risk_missing_points` 어휘집 | 35종 (§1-3-5). 슬롯 key의 부분집합 아닌 별도 분류체계 | 🟦 본 문서 |
+| 통보 시점 표기 | `notice_date`로 통일 (`notice_timing` 미사용) | 🟦 본 문서 |
+| 평가 결과 필드 (`checklist_complete` / `*_single_turn_result` / `ia_collection_rate`) | frontmatter에 포함하지 않음. 노션 DB에서만 추적 | 🟦 본 문서 |
 | 검증 게이트 G5 (누출 검사) | substring 자동 검사 (스크립트화 필요) | 🟦 본 문서 |
 
 ### 미결 / 추가 결정 필요
 
-- ⏸ `evaluation_purpose` enum 확정 (현재 `_example.md`에는 3개만 예시)
-- ⏸ `risk_missing_points` 항목명이 슬롯 key 기반인지 별도 enum인지 (002에서는 슬롯 key가 아닌 표현 사용 — `registry_not_checked`, `leasehold_registration` 등)
 - ⏸ G5 누출 검사 스크립트 매칭 방식 (substring 단순 매칭 / 토큰 기반 / 임베딩 유사도)
-- ⏸ 폐기 status enum (`deprecated` 추가 여부)
-- ⏸ `issue_tags` 표준 어휘집 (v2 작성 전 확정 필요)
+- ⏸ 폐기 status enum (`deprecated` 추가 여부, 또는 `_deprecated/` 디렉토리 이동 방식)
 
 ---
+
+*문서 끝.*
