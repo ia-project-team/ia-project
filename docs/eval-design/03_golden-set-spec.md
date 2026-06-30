@@ -301,6 +301,10 @@ simulator.ts에는 정의돼 있지만 코드 주석에만 존재한다. 본 문
 
 > 16슬롯 자연 분할 6/4/3/3 기준. 케이스 작성 시 GT를 먼저 채우고 `first_utterance`에서 직접 드러나는 슬롯 수를 세서 자동 결정.
 
+> **드러남의 정의 (🟦 2026-06-30 추가)**: 첫 발화에서 슬롯의 boolean 방향(있다/없다, 했다/안했다)이 합리적으로 추론되면 **드러남으로 카운트**. 단 구체 값(날짜·금액·수단)은 항상 미드러남으로 카운트.
+
+> **`low` 케이스 설계 정책 (🟦 2026-06-30 추가, 중요)**: v1 페르소나 설계 철학상 `first_utterance`를 "정황 위주"로 짜면 거의 모든 케이스가 `high`(14–16)에 집중된다. 따라서 **`low` 난이도를 분포 그리드에 채우려면, `first_utterance`에 구체값(날짜·금액·통보방식 중 1~2개)을 의도적으로 노출하는 페르소나 설계**가 필요. 예: "보증금 1억인데 집주인이 안 돌려줘요" (→ `deposit_amount` 즉시 드러남). 이 정책은 `avoidant`/`fragmented` 정의와 약간 결이 다르지만 그리드 변별력 확보 목적상 채택.
+
 ### 2-4. 분포 목표 (🟦 신규 결정)
 
 **원칙**: 케이스별 균등 분포. 실제 의뢰인 빈도 가중치 없음. 30케이스 = 5 페르소나 × 6.
@@ -340,7 +344,7 @@ simulator.ts에는 정의돼 있지만 코드 주석에만 존재한다. 본 문
 |---|---|---|
 | 1 | **GT 16슬롯 먼저 채우기.** 어떤 사건인지 구체화. `value` + `detail` | `ground_truth` |
 | 2 | **페르소나 선택.** §2-4-1 그리드의 어느 칸을 채울지 결정 | `client_type`, `difficulty` |
-| 3 | **first_utterance 작성.** 페르소나 어투로 1–4문장. GT 슬롯 중 몇 개를 드러낼지 의도적으로 결정 | `first_utterance` |
+| 3 | **first_utterance 작성.** 페르소나 어투로 1–4문장. GT 슬롯 중 몇 개를 드러낼지 의도적으로 결정. **`difficulty=low` 목표면 구체값(날짜·금액·통보방식 중 1~2개)을 의도적으로 노출, medium 이상은 정황 위주** (§2-3 참조) | `first_utterance` |
 | 4 | **hidden_info_count 계산.** first_utterance에서 드러나지 않은 GT 슬롯 수를 카운트 → §2-3 매핑과 일치하는지 검증 | `hidden_info_count` |
 | 5 | **simulator 제어값 설정.** answer_style 권장값(§2-2)을 기본으로, 케이스 특수성 반영. `proactive_speech_pool`은 정황·감정만, GT 정보 누출 없이 | `simulator` |
 
@@ -396,11 +400,11 @@ simulator.ts에는 정의돼 있지만 코드 주석에만 존재한다. 본 문
 
 | 우선순위 | 작업 | 담당 | 산출 |
 |---|---|---|---|
-| **P0** | G5 누출 검사 스크립트 작성 | 유진 | `eval/golden-set/scripts/validate_leakage.ts` |
-| **P0** | 기존 v1 3개(002/007/008) 본 스펙 기준 재검증 | 유진 | status `draft → review` 승격 |
-| **P1** | 007/008 그리드 위치 확정 → §4-3 표 업데이트 | 유진 | 분포 추적표 갱신 |
+| ~~**P0**~~ ✅ 2026-06-30 완료 | G5 누출 검사 스크립트 작성 | 유진 | `eval/golden-set/scripts/validate_leakage.ts` |
+| ~~**P0**~~ ✅ 2026-06-30 완료 | 기존 v1 3개(002/007/008) 본 스펙 기준 재검증 (enum 마이그레이션, difficulty·hidden_info_count 보정) | 유진 | status 유지 (구체 GT 검토자 사인오프 전까지 draft) |
+| **P1** | 007/008 그리드 위치 확정 → §4-3 표 업데이트 | ~~유진~~ ✅ 2026-06-30 완료 | 분포 추적표 갱신 |
 | **P1** | 빈 케이스 5개(001/003–006) frontmatter 채우기 | 유진 | 5케이스 추가 |
-| **P1** | 그리드 빈 칸 우선 메우기 (§2-4-1 기준) | 유진 | — |
+| **P1** | 그리드 빈 칸 우선 메우기 (§2-4-1 기준, 특히 `low`/`medium`/`medium_high`) | 유진 | — |
 | **P2** | 신규 17케이스 작성 (8 → 30) | 유진 (+ 검토자) | 17케이스 |
 | **P2** | 도메인 검토자 사인오프 (G7) | 외부 검토자 | `confirmed` 승격 |
 
@@ -410,13 +414,13 @@ simulator.ts에는 정의돼 있지만 코드 주석에만 존재한다. 본 문
 
 | | `low` | `medium` | `medium_high` | `high` |
 |---|---|---|---|---|
-| `emotional` | **002** ⬜ | ⬜ ⬜ | ⬜ ⬜ | ⬜ |
-| `fragmented` | ⬜ | ⬜ ⬜ | ⬜ ⬜ | ⬜ |
+| `emotional` | ⬜ | ⬜ ⬜ | ⬜ ⬜ | **002** ⬜ |
+| `fragmented` | ⬜ | ⬜ ⬜ | ⬜ ⬜ | **007** ⬜ |
 | `confused` | ⬜ | ⬜ ⬜ | ⬜ ⬜ | ⬜ |
 | `avoidant` | ⬜ | ⬜ ⬜ | ⬜ ⬜ | ⬜ |
-| `over_explaining` | ⬜ | ⬜ ⬜ | ⬜ ⬜ | ⬜ |
+| `over_explaining` | ⬜ | ⬜ ⬜ | ⬜ ⬜ | **008** ⬜ |
 
-> 002만 확인됨 (`emotional × low`). 007·008은 frontmatter 재확인 후 위치 표시. 빈 슬롯부터 우선 작성.
+> 2026-06-30: 002/007/008 모두 hidden_info_count 정의 보정 후 `high` 구간으로 재분류. **`low`·`medium`·`medium_high` 칸은 아직 비어있으므로 신규 22케이스 작성 시 이쪽을 우선 메울 것**. 이 중 `low` 칸은 §2-3 설계 정책(구체값 노출)을 따라 작성.
 
 ---
 
@@ -430,6 +434,8 @@ simulator.ts에는 정의돼 있지만 코드 주석에만 존재한다. 본 문
 | difficulty enum | low / medium / medium_high / high (4단계) | 🟩 `_example.md` |
 | difficulty 매핑 기준 | `hidden_info_count` | 🟦 본 문서 |
 | difficulty 매핑 구간 | 0–6 / 7–10 / 11–13 / 14–16 | 🟦 본 문서 |
+| "드러남"의 정의 | boolean 방향 추론 가능 → 드러남 / 구체값은 항상 미드러남 | 🟦 본 문서 (2026-06-30) |
+| `low` 케이스 first_utterance 정책 | 구체값(날짜·금액·통보방식 중 1~2개) 의도적 노출. `avoidant`/`fragmented` 정의와 결이 다르지만 그리드 변별력 우선 | 🟦 본 문서 (2026-06-30) |
 | 분포 방식 | 케이스별 균등. 5 × 6 = 30 | 🟦 본 문서 |
 | 페르소나 내 difficulty 분배 | (low, medium, medium_high, high) = (1, 2, 2, 1) | 🟦 본 문서 |
 | `notice_method` enum | 7종 (kakao/sms/phone/certified_mail/email/none/unknown) | 🟦 본 문서 |

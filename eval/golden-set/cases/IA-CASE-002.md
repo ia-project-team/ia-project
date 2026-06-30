@@ -12,13 +12,13 @@ case_id: IA-CASE-002
 case_title: "단순 보증금 미반환"
 schema_version: "0.1"
 created_at: "2026-06-16"
-last_updated: "2026-06-21"
+last_updated: "2026-06-30"
 author: "최유진"
 status: draft   # draft | review | confirmed
 
 # --- 2. 분류 메타데이터 (LangSmith metadata 로 매핑) ---
 client_type: emotional                # emotional | fragmented | confused | avoidant | over_explaining
-difficulty: low                       # low | medium | medium_high | high
+difficulty: high                      # low | medium | medium_high | high  (재분류 2026-06-30: hidden_info_count 정의 보정)
 move_out_status: living_in_property   # living_in_property | moved_out | moving_out_planned | unknown
 notice_method: [kakao]
 evidence_items:
@@ -26,7 +26,7 @@ evidence_items:
   - kakao_records
   - transfer_records
 evaluation_purpose:
-  - golden_set_v1
+  - golden_set
   - checklist_recall
   - single_turn_comparison
 
@@ -45,7 +45,7 @@ risk_missing_points:
   - registry_not_checked
 
 # --- 4. 카운트 (참고용, 평가 기준 아님) ---
-hidden_info_count: 8     # 첫 발화에 안 드러나고 GT에 있는 슬롯 수 (정의 재검토 필요, 변환 이슈 #3 참조)
+hidden_info_count: 15    # 첫 발화에 안 드러나고 GT에 있는 슬롯 수 (2026-06-30 재산정: landlord_responded만 암시 → 16-1=15)
 expected_ia_turns: 13    # 인간이 설계한 ideal 턴 수
 
 # --- 5. 페르소나 (LangSmith inputs.persona) ---
