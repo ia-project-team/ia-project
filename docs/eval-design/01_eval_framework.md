@@ -13,10 +13,9 @@
 
 | 다루는 것 | 다루지 않는 것 |
 |---|---|
-| IA의 멀티턴 인테이크 성능을 GPT/Claude baseline 대비 측정하는 **방법론** | 베이스라인 프롬프트 ablation (→ `02_prompt-ablation.md`) |
+| IA의 멀티턴 인테이크 성능을 GPT/Claude baseline 대비 측정하는 **방법론** | 베이스라인 프롬프트 ablation (→ `04_prompt-ablation.md`) |
 | 정량 지표 (체크리스트 수집률, 추가 쟁점 탐지율) 정의 | 모델 학습·튜닝 (IA는 prompt-only 시스템) |
 | 정성 지표 5종 rubric 초안 | 사용자 만족도·사업 KPI (대화 완료율, 리포트 활용도 등 — 서비스 기획안 §8) |
-| 학술 평가 생태계와의 호환 입장 | 실측 결과 보고 (→ `04_results-*.md`) |
 | LangSmith 등 관측 수단 정리 | RAG 평가 (MVP 외, v2에서 issue detection rate 활성화 시 정의) |
 
 ---
