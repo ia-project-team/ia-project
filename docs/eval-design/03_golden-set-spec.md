@@ -266,6 +266,8 @@ simulator.ts에는 정의돼 있지만 코드 주석에만 존재한다. 본 문
 | `avoidant` | 불리한 정보 늦게 | 자신에게 불리한 사실(예: 전입신고 미이행)을 늦게 또는 안 꺼낸다. 직접 물어야만 나옴 | **완전성·집요함**. 모든 슬롯을 끝까지 채우는지. 안 물어본 슬롯을 미수집으로 남기는지 |
 | `over_explaining` | 정보 많지만 산만 | 말은 많은데 관련 없는 디테일이 섞인다. GT 슬롯이 잡음 속에 묻힘 | **잡음 속 신호 추출**. 무관한 정보에 끌려가지 않고 GT 슬롯만 정확히 집어내는지 |
 
+> **페르소나 발현 위치 (🟦 2026-06-30 추가, 중요)**: 페르소나는 주로 `simulator.answer_style`, `proactive_speech_pool`, 그리고 시뮬레이션 중 후속 답변에서 발현된다. `first_utterance`는 페르소나 발현 위치가 아니라 **difficulty 조절 레버**다. 본 데이터셋은 실험 평가용이므로 first_utterance의 자연스러움보다 difficulty 분포 그리드 변별력을 우선한다. (§2-3 `low` 정책의 근거)
+
 ### 2-2. answer_style 권장값 매핑 (🟦 신규 결정)
 
 `_example.md`의 answer_style 3축(date/amount/emotion)을 페르소나 5종에 매핑한다. **신규 케이스 작성 시 기본값**이며, 케이스 특수성에 따라 조정 가능.
@@ -303,7 +305,7 @@ simulator.ts에는 정의돼 있지만 코드 주석에만 존재한다. 본 문
 
 > **드러남의 정의 (🟦 2026-06-30 추가)**: 첫 발화에서 슬롯의 boolean 방향(있다/없다, 했다/안했다)이 합리적으로 추론되면 **드러남으로 카운트**. 단 구체 값(날짜·금액·수단)은 항상 미드러남으로 카운트.
 
-> **`low` 케이스 설계 정책 (🟦 2026-06-30 추가, 중요)**: v1 페르소나 설계 철학상 `first_utterance`를 "정황 위주"로 짜면 거의 모든 케이스가 `high`(14–16)에 집중된다. 따라서 **`low` 난이도를 분포 그리드에 채우려면, `first_utterance`에 구체값(날짜·금액·통보방식 중 1~2개)을 의도적으로 노출하는 페르소나 설계**가 필요. 예: "보증금 1억인데 집주인이 안 돌려줘요" (→ `deposit_amount` 즉시 드러남). 이 정책은 `avoidant`/`fragmented` 정의와 약간 결이 다르지만 그리드 변별력 확보 목적상 채택.
+> **`low` 케이스 설계 정책 (🟦 2026-06-30 재정립, 중요)**: `low` (hidden 0–6)는 first_utterance에서 10–16개 슬롯이 드러나야 도달 가능. **이를 위해 first_utterance에 구체값을 충분히 노출하는 페르소나 설계**가 필요. 페르소나 본질은 `simulator.answer_style`/`proactive_speech_pool`과 후속 답변에서 발현되므로(§2-1 참조), first_utterance의 자연스러움 제약은 해제한다. 예: `avoidant × low`는 first_utterance에 유리정보(보증금 액수/통보 시점/카톡 기록 보유 등) 8–10개를 노출하되, 불리정보 1–2개(예: 전입신고 미이행)는 GT에 숨겨두어 IA가 캐물어내야 드러나게 설계.
 
 ### 2-4. 분포 목표 (🟦 신규 결정)
 
@@ -435,7 +437,8 @@ simulator.ts에는 정의돼 있지만 코드 주석에만 존재한다. 본 문
 | difficulty 매핑 기준 | `hidden_info_count` | 🟦 본 문서 |
 | difficulty 매핑 구간 | 0–6 / 7–10 / 11–13 / 14–16 | 🟦 본 문서 |
 | "드러남"의 정의 | boolean 방향 추론 가능 → 드러남 / 구체값은 항상 미드러남 | 🟦 본 문서 (2026-06-30) |
-| `low` 케이스 first_utterance 정책 | 구체값(날짜·금액·통보방식 중 1~2개) 의도적 노출. `avoidant`/`fragmented` 정의와 결이 다르지만 그리드 변별력 우선 | 🟦 본 문서 (2026-06-30) |
+| `low` 케이스 first_utterance 정책 | first_utterance에 구체값 충분 노출 (8–10개). 페르소나 본질은 simulator에서 발현, first_utterance 자연스러움 제약 해제. 실험 설계 우선 | 🟦 본 문서 (2026-06-30 재정립) |
+| 페르소나 발현 위치 | `simulator.answer_style` + `proactive_speech_pool` + 시뮬레이션 중 후속 답변. `first_utterance`는 difficulty 조절 레버 | 🟦 본 문서 (2026-06-30) |
 | 분포 방식 | 케이스별 균등. 5 × 6 = 30 | 🟦 본 문서 |
 | 페르소나 내 difficulty 분배 | (low, medium, medium_high, high) = (1, 2, 2, 1) | 🟦 본 문서 |
 | `notice_method` enum | 7종 (kakao/sms/phone/certified_mail/email/none/unknown) | 🟦 본 문서 |
