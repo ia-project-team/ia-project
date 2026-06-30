@@ -13,7 +13,7 @@
 
 | 다루는 것 | 다루지 않는 것 |
 |---|---|
-| IA의 멀티턴 인테이크 성능을 GPT/Claude baseline 대비 측정하는 **방법론** | 베이스라인 프롬프트 ablation (→ `04_prompt-ablation.md`) |
+| IA의 멀티턴 인테이크 성능을 GPT/Claude baseline 대비 측정하는 **방법론** | 베이스라인 프롬프트 ablation (→ `04_ablation-design.md`) |
 | 정량 지표 (체크리스트 수집률, 추가 쟁점 탐지율) 정의 | 모델 학습·튜닝 (IA는 prompt-only 시스템) |
 | 정성 지표 5종 rubric 초안 | 사용자 만족도·사업 KPI (대화 완료율, 리포트 활용도 등 — 서비스 기획안 §8) |
 | LangSmith 등 관측 수단 정리 | RAG 평가 (MVP 외, v2에서 issue detection rate 활성화 시 정의) |
@@ -79,7 +79,7 @@ Issue Detection Rate = #{detected expected_issues} / #{total expected_issues per
 
 **공통 형식)** 각 rubric은 평가 항목 4개 × 1–10 정수, 5단 scoring guide, JSON 출력. 케이스당 **3회 독립 추론 평균**
 
-**판정).** GPT (모델 선정 미확정 — §3 참조). 판정자에게는 ① 전체 대화 turn-by-turn, ② 케이스 GT (슬롯 + persona 변수), ③ 해당 rubric 정의를 입력으로 제공한다.
+**판정).** GPT (모델: GPT-4.o — §3 참조). 판정자에게는 ① 전체 대화 turn-by-turn, ② 케이스 GT (슬롯 + persona 변수), ③ 해당 rubric 정의를 입력으로 제공한다.
 
 ---
 
