@@ -38,6 +38,8 @@ export type EndReason =
   | "phase_done"
   | "max_turns_reached"
   | "ready_to_advise_window_done"
+  | "baseline_done"
+  | "simulator_done"
   | "system_error"
   | "simulator_error";
 
@@ -88,6 +90,7 @@ export async function runSingleExperiment(
   let errorMsg: string | undefined;
   // ready_to_advise 도달 후 강제 종료 카운터 (-1: 미도달, n: 남은 턴 수)
   let readyToAdviseTurnsRemaining = -1;
+  let shortReplyCount = 0;
 
   const simulator = new ClientSimulator(c);
   system.reset();
@@ -178,6 +181,24 @@ export async function runSingleExperiment(
         if (aiResponse.phase === "done") {
           endReason = "phase_done";
           break;
+        }
+
+        // baseline 종료 조건: "상담 준비가 완료되었습니다" 문구 감지
+        if (aiResponse.reply.includes("상담 준비가 완료되었습니다")) {
+          endReason = "baseline_done";
+          break;
+        }
+
+        // 시뮬레이터 단답 연속 2번 시 종료
+        const SHORT_REPLIES = ["네", "감사합니다", "지금 생각나는 건 없어요", "알겠습니다"];
+        if (SHORT_REPLIES.some((r) => clientReply.trim() === r)) {
+          shortReplyCount++;
+          if (shortReplyCount >= 2) {
+            endReason = "simulator_done";
+            break;
+          }
+        } else {
+          shortReplyCount = 0;
         }
 
         // ready_to_advise 도달 시점부터 카운트다운 (한 번만 시작)
