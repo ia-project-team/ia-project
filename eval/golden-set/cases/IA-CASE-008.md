@@ -10,13 +10,13 @@ case_id: IA-CASE-008
 case_title: "거짓 약속 반복받는 보증금 미반환"
 schema_version: "0.1"
 created_at: "2026-06-24"
-last_updated: "2026-06-24"
+last_updated: "2026-06-30"
 author: "최유진"
 status: draft
 
 # --- 2. 분류 메타데이터 ---
 client_type: over_explaining
-difficulty: low
+difficulty: high                      # 재분류 2026-06-30: hidden_info_count 정의 보정
 move_out_status: living_in_property
 notice_method: [kakao, phone]
 evidence_items:
@@ -24,7 +24,7 @@ evidence_items:
   - kakao_records
   - transfer_records
 evaluation_purpose:
-  - golden_set_v1
+  - golden_set
   - checklist_recall
   - single_turn_comparison
 
@@ -38,7 +38,7 @@ risk_missing_points:
   - leasehold_registration
 
 # --- 4. 카운트 ---
-hidden_info_count: 7
+hidden_info_count: 14   # 2026-06-30 재산정: landlord_responded + has_moved_out 암시 → 16-2=14
 expected_ia_turns: 13
 
 # --- 5. 페르소나 ---

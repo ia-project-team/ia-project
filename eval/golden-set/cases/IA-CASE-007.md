@@ -10,13 +10,13 @@ case_id: IA-CASE-007
 case_title: "퇴거 후 일부 반환 미반환"
 schema_version: "0.1"
 created_at: "2026-06-24"
-last_updated: "2026-06-24"
+last_updated: "2026-06-30"
 author: "최유진"
 status: draft
 
 # --- 2. 분류 메타데이터 ---
 client_type: fragmented
-difficulty: medium
+difficulty: high                      # 재분류 2026-06-30: hidden_info_count 정의 보정
 move_out_status: moved_out
 notice_method: [sms]
 evidence_items:
@@ -26,7 +26,7 @@ evidence_items:
   - transfer_records
   - registry_doc
 evaluation_purpose:
-  - golden_set_v1
+  - golden_set
   - checklist_recall
   - single_turn_comparison
 
@@ -42,7 +42,7 @@ risk_missing_points:
   - notice_date
 
 # --- 4. 카운트 ---
-hidden_info_count: 9
+hidden_info_count: 16   # 2026-06-30 재산정: 첫 발화에 구체값/암시 모두 없음
 expected_ia_turns: 13
 
 # --- 5. 페르소나 ---
