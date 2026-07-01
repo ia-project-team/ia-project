@@ -23,6 +23,7 @@ for (const file of files) {
 
   examples.push({
     inputs: {
+      case_id: frontmatter.case_id, 
       first_utterance: frontmatter.first_utterance,
       persona: frontmatter.persona,
       simulator_context: frontmatter.simulator,
