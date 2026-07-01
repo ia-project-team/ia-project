@@ -78,7 +78,8 @@ const NEGATIVE_KEYWORDS = [
 
 function normalizeBoolean(value: string | null): boolean | null {
   if (!value) return null;
-  const v = value.toLowerCase();
+  if (typeof value === "boolean") return value;
+  const v = String(value).toLowerCase();
   // 부정 먼저 체크 (긍정 키워드 포함된 부정 표현 우선 처리)
   for (const neg of NEGATIVE_KEYWORDS) {
     if (v.includes(neg)) return false;
@@ -181,7 +182,7 @@ function normalizeArrayWithMap(
   map: Record<string, string>,
 ): string[] | null {
   if (!value) return null;
-  const v = value.toLowerCase();
+  const v = String(value).toLowerCase();
   const matched = new Set<string>();
   for (const [keyword, enumValue] of Object.entries(map)) {
     if (v.includes(keyword)) {
