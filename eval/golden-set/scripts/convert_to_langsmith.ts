@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import yaml from "js-yaml";
+import matter from "gray-matter";
 import { Client } from "langsmith";
 import { loadEnvConfig } from "@next/env";
 
@@ -18,11 +18,8 @@ const examples: {
 
 for (const file of files) {
   const content = fs.readFileSync(path.join(CASES_DIR, file), "utf-8");
-
-  const match = content.match(/^---\n([\s\S]*?)\n---/);
-  if (!match) continue;
-
-  const frontmatter = yaml.load(match[1]) as Record<string, unknown>;
+  const { data: frontmatter } = matter(content);
+  if (!frontmatter.case_id) continue;
 
   examples.push({
     inputs: {
@@ -62,7 +59,7 @@ async function main() {
       example.outputs,
       { datasetId: dataset.id, metadata: example.metadata }
     );
-    console.log(`✅ ${example.metadata.case_id} 업로드 완료`);
+    console.log(`${example.metadata.case_id} 업로드 완료`);
   }
 
   console.log(`\n총 ${examples.length}개 업로드 완료`);
