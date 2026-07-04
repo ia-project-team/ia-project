@@ -17,13 +17,13 @@ import path from "path";
 
 import { loadCase } from "./simulator";
 import { runSingleExperiment, saveResult } from "./runExperiment";
-import { evaluateResult, saveEvalReport } from "./evaluators";
+import { evaluateQuantitativeResult, saveQuanEvalReport } from "./evaluators";
 import { IARunner, checkIAHealth, type SystemRunner } from "./ia";
 import { GPTBaselineRunner } from "./baselines/gpt";
 import { ClaudeBaselineRunner } from "./baselines/claude";
 
 import type { ExperimentResult } from "./runExperiment";
-import type { EvalReport } from "./evaluators";
+import type { QuanEvaluationReport } from "./evaluators";
 
 // ============================================================
 // 데모 설정
@@ -78,7 +78,7 @@ interface OneRun {
   case_id: string;
   system: string;
   experiment: ExperimentResult;
-  eval: EvalReport;
+  eval: QuanEvaluationReport;
   experimentFile: string;
   evalFile: string;
 }
@@ -106,8 +106,8 @@ async function runOneCaseSystem(
   const experimentFile = saveResult(experiment, RESULTS_DIR);
 
   // 2) 채점
-  const evalReport = await evaluateResult(experiment);
-  const evalFile = saveEvalReport(evalReport, RESULTS_DIR);
+  const evalReport = await evaluateQuantitativeResult(experiment);
+  const evalFile = saveQuanEvalReport(evalReport, RESULTS_DIR);
 
   return { case_id: caseId, system: systemName, experiment, eval: evalReport, experimentFile, evalFile };
 }
