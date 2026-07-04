@@ -17,13 +17,13 @@ import path from "path";
 
 import { loadCase } from "./simulator";
 import { runSingleExperiment, saveResult } from "./runExperiment";
-import { evaluateResult, saveEvalReport } from "./evaluators/quan_evaluator";
+import { evaluateResult, saveEvalReport } from "./evaluators";
 import { IARunner, checkIAHealth, type SystemRunner } from "./ia";
 import { GPTBaselineRunner } from "./baselines/gpt";
 import { ClaudeBaselineRunner } from "./baselines/claude";
 
 import type { ExperimentResult } from "./runExperiment";
-import type { EvalReport } from "./evaluators/quan_evaluator";
+import type { EvalReport } from "./evaluators";
 
 // ============================================================
 // 데모 설정
