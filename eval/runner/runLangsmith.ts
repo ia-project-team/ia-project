@@ -7,7 +7,7 @@ import { GPTBaselineRunner } from "./baselines/gpt";
 import { ClaudeBaselineRunner } from "./baselines/claude";
 import { loadCase } from "./simulator";
 import { runSingleExperiment } from "./runExperiment";
-import { evaluateResult } from "./evaluator";
+import { evaluateResult } from "./evaluators/quan_evaluator";
 import { IARunner } from "./ia";
 import type { ExperimentResult } from "./runExperiment";
 

@@ -14,8 +14,8 @@ import OpenAI from "openai";
 import fs from "fs";
 import path from "path";
 
-import type { ExperimentResult } from "./runExperiment";
-import type { CollectedItem, CollectedStatus } from "./ia";
+import type { ExperimentResult } from "../runExperiment";
+import type { CollectedItem, CollectedStatus } from "../ia";
 
 // ============================================================
 // Types
@@ -505,6 +505,25 @@ export async function evaluateResult(
 }
 
 // ============================================================
+// LangSmith Evaluator Adapter
+// ============================================================
+
+export async function quanEvaluator({
+  outputs,
+}: {
+  outputs: Record<string, unknown>;
+  referenceOutputs?: Record<string, unknown>;
+}) {
+  const result = outputs as unknown as ExperimentResult;
+  const report = await evaluateResult(result);
+
+  return {
+    key: "recall",
+    score: report.recall,
+  };
+}
+
+// ============================================================
 // 결과 저장
 // ============================================================
 
@@ -561,8 +580,8 @@ export function printEvalSummary(report: EvalReport): void {
 async function main() {
   const args = process.argv.slice(2);
   if (args.length < 1) {
-    console.error("Usage: npx tsx eval/runner/evaluator.ts <result_json_path>");
-    console.error("  example: npx tsx eval/runner/evaluator.ts eval/runner/results/IA-CASE-002-ia-2026...json");
+    console.error("Usage: npx tsx eval/runner/evaluators/quan_evaluator.ts <result_json_path>");
+    console.error("  example: npx tsx eval/runner/evaluators/quan_evaluator.ts eval/runner/results/IA-CASE-002-ia-2026...json");
     process.exit(1);
   }
 
