@@ -71,6 +71,7 @@ async function main() {
     evaluators: [quanEvaluator, qualEvaluator],
     experimentPrefix: "ia-eval",
     maxConcurrency: 1,
+    numRepetitions: 3,
   });
 
   await evaluate(runGPT, {
@@ -78,6 +79,7 @@ async function main() {
     evaluators: [quanEvaluator, qualEvaluator],
     experimentPrefix: "gpt-eval",
     maxConcurrency: 1,
+    numRepetitions: 3,
   });
 
   await evaluate(runClaude, {
@@ -85,6 +87,7 @@ async function main() {
     evaluators: [quanEvaluator, qualEvaluator],
     experimentPrefix: "claude-eval",
     maxConcurrency: 1,
+    numRepetitions: 3,
   });
 }
 
