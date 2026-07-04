@@ -423,7 +423,11 @@ async function extractCollectedFromConversation(
 
 export async function evaluateQuantitativeResult(
   result: ExperimentResult,
-  options?: { openai?: OpenAI; judgeModel?: string },
+  options?: {
+    openai?: OpenAI;
+    judgeModel?: string;
+    groundTruth?: ExperimentResult["ground_truth"];
+  },
 ): Promise<QuanEvaluationReport> {
   // baseline 의 경우 collected 가 빈 배열이면 LLM-as-Judge 로 추출
   let collected = result.final_collected;
@@ -444,6 +448,8 @@ export async function evaluateQuantitativeResult(
     collectedMap.set(item.key, item);
   }
 
+  const groundTruth = options?.groundTruth ?? result.ground_truth;
+
   // GT 의 각 슬롯에 대해 비교
   const slotResults: SlotResult[] = [];
   let matches = 0,
@@ -451,7 +457,7 @@ export async function evaluateQuantitativeResult(
     missing = 0,
     unparseable = 0;
 
-  for (const [slotKey, gtEntry] of Object.entries(result.ground_truth)) {
+  for (const [slotKey, gtEntry] of Object.entries(groundTruth)) {
     const gtValue = (gtEntry as { value: unknown }).value;
     const predicted = collectedMap.get(slotKey);
     const predictedValue = predicted?.value ?? null;
@@ -508,14 +514,41 @@ export async function evaluateQuantitativeResult(
 // LangSmith Evaluator Adapter
 // ============================================================
 
+function isGroundTruthRecord(
+  value: unknown,
+): value is ExperimentResult["ground_truth"] {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    Object.keys(value).length > 0 &&
+    Object.values(value).every(
+      (entry) =>
+        typeof entry === "object" && entry !== null && "value" in entry,
+    )
+  );
+}
+
+function resolveGroundTruth(
+  result: ExperimentResult,
+  referenceOutputs?: Record<string, unknown>,
+): ExperimentResult["ground_truth"] {
+  const candidate = referenceOutputs?.ground_truth ?? referenceOutputs;
+  if (isGroundTruthRecord(candidate)) {
+    return candidate;
+  }
+  return result.ground_truth;
+}
+
 export async function quanEvaluator({
   outputs,
+  referenceOutputs,
 }: {
   outputs: Record<string, unknown>;
   referenceOutputs?: Record<string, unknown>;
 }) {
   const result = outputs as unknown as ExperimentResult;
-  const report = await evaluateQuantitativeResult(result);
+  const groundTruth = resolveGroundTruth(result, referenceOutputs);
+  const report = await evaluateQuantitativeResult(result, { groundTruth });
 
   return {
     key: "recall",
