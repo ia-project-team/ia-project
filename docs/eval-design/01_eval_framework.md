@@ -27,7 +27,7 @@
 
 | 분류 | 지표 | 산출 주체 | 상태 |
 |---|---|---|---|
-| 정량 | 체크리스트 수집률 (Slot Recall) | `eval/runner/evaluator.ts` (룰베이스) | **확정** |
+| 정량 | 체크리스트 수집률 (Slot Recall) | `eval/runner/evaluators/quan_evaluator.ts` (룰베이스) | **확정** |
 | 정량 | 추가 쟁점 탐지율 (Issue Detection Rate) | 동일 evaluator + `issue_tags[]` | **보류** (v2 RAG) |
 | 정성 | Elicitation Efficiency (질문 효율) | GPT LLM-as-Judge | **미확정** |
 | 정성 | Non-redundancy (반복 제어) | GPT LLM-as-Judge | **미확정** |
@@ -275,7 +275,7 @@ IA는 매 턴 `collected[]` (16슬롯의 status·value)를 구조화 출력으�
                   evaluator: 추출된 collected[] vs GT 대조 (IA와 동일 채점기)
 ```
 
-**핵심.** 채점기(`evaluator.ts`)는 동일. 차이는 채점기 **앞단**에서 구조화 형식이 만들어지는 시점뿐 — IA는 inline, baseline은 사후. 이 비대칭은 IA의 설계상 장점(매 턴 structured output)이 평가에서 어떤 의미인지 명시하기 위함이며, baseline에 불리하지 않도록 사후 추출 단계도 GPT-judge라는 동일 품질 자원을 사용
+**핵심.** 정량 채점기(`quan_evaluator.ts`)는 동일. 차이는 채점기 **앞단**에서 구조화 형식이 만들어지는 시점뿐 — IA는 inline, baseline은 사후. 이 비대칭은 IA의 설계상 장점(매 턴 structured output)이 평가에서 어떤 의미인지 명시하기 위함이며, baseline에 불리하지 않도록 사후 추출 단계도 GPT-judge라는 동일 품질 자원을 사용
 
 **룰베이스 evaluator의 한계.** §1.2.1에서 언급한 "톡 캡처 보관 중 → missing" 케이스가 비대칭의 실질적 위험. baseline 측에서 LLM-judge가 의미적으로 정확히 추출했어도, evaluator가 정규화 못 하면 `unparseable`로 빠진다. → **정성 LLM-judge 레이어 (§1.3)는 이 한계를 별도 차원에서 보완**한다 (정량 채점이 놓치는 의미적 성공/실패를 정성에서 잡음).
 
@@ -293,9 +293,9 @@ runExperiment.ts
   ├─ 시스템 호출 (ia.ts | baselines/gpt.ts | baselines/claude.ts)
   └─ 대화 종료 (phase: done 또는 max_turns 도달)
         ↓
-evaluator.ts
-  ├─ [정량] SlotMatch 산정 → Slot Recall
-  └─ [정성, 향후] LLM-Judge 호출 (rubric A~E) → 4개 항목 × 3회 평균
+evaluators/
+  ├─ quan_evaluator.ts: [정량] SlotMatch 산정 → Slot Recall
+  └─ qual_evaluator.ts: [정성] LLM-Judge 호출 (rubric A~E) → rubric별 점수 + 평균
         ↓
 결과 집계 (case × system × run × metric)
 ```

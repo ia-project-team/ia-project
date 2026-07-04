@@ -160,7 +160,7 @@ Full factorial은 2³ = 8 조합(V1·V2·V3). 비용을 감안해 **OAT(One-At-a
 | 케이스 | 골든셋 30개 (`03` §2-4 확장 후) | §6 결정 추적 |
 | `maxTurns` | 12 (`runExperiment.ts` 하드코딩) | 실험 환경 상수 |
 | 반복 횟수 | 3회 / (조건 × 케이스) | `01_eval_framework.md` §2.3 정합 |
-| 평가기 | `evaluator.ts` (룰베이스) + LLM-judge (§5.2) | `01_eval_framework.md` §2.3 |
+| 평가기 | `evaluators/quan_evaluator.ts` (룰베이스) + `evaluators/qual_evaluator.ts` (LLM-judge) | `01_eval_framework.md` §2.3 |
 
 ### 4.3 실험 규모 — P0 / P1 비용
 
