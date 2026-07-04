@@ -2,7 +2,7 @@
  * Quantitative Evaluator - 정량 지표 평가
  *
  * 입력: ExperimentResult (대화 + GT + collected)
- * 출력: EvalReport (슬롯별 매칭 결과 + recall)
+ * 출력: QuanEvaluationReport (슬롯별 매칭 결과 + recall)
  *
  * 핵심 도전:
  *  1. GT type 다양 (boolean / date / number / array / string)
@@ -545,7 +545,7 @@ export function saveQuanEvalReport(
 // 콘솔 출력 헬퍼
 // ============================================================
 
-export function printEvalSummary(report: QuanEvaluationReport): void {
+export function printQuanEvalSummary(report: QuanEvaluationReport): void {
   console.log("\n=== Quantitative Evaluation Report ===");
   console.log(`Case:        ${report.case_id} - ${report.case_title}`);
   console.log(`System:      ${report.system}`);
@@ -595,7 +595,7 @@ async function main() {
   const report = await evaluateQuantitativeResult(result);
   const saved = saveQuanEvalReport(report);
 
-  printEvalSummary(report);
+  printQuanEvalSummary(report);
   console.log(`Eval report saved to: ${saved}\n`);
 }
 

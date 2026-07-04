@@ -5,7 +5,7 @@
 
 export {
   evaluateQuantitativeResult,
-  printEvalSummary,
+  printQuanEvalSummary,
   quanEvaluator,
   saveQuanEvalReport,
 } from "./quan_evaluator";
@@ -17,7 +17,9 @@ export type {
 
 export {
   evaluateQualitativeResult,
-  qualEvaluator
+  printQualEvalSummary,
+  qualEvaluator,
+  saveQualEvalReport,
 } from "./qual_evaluator";
 export type {
   QualEvaluationReport,
