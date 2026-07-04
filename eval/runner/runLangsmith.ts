@@ -7,9 +7,8 @@ import { GPTBaselineRunner } from "./baselines/gpt";
 import { ClaudeBaselineRunner } from "./baselines/claude";
 import { loadCase } from "./simulator";
 import { runSingleExperiment } from "./runExperiment";
-import { evaluateResult } from "./evaluators/quan_evaluator";
+import { quanEvaluator, qualEvaluator } from "./evaluators";
 import { IARunner } from "./ia";
-import type { ExperimentResult } from "./runExperiment";
 
 async function runIA(inputs: Record<string, unknown>) {
   const caseId = inputs.case_id as string;
@@ -27,22 +26,6 @@ async function runIA(inputs: Record<string, unknown>) {
   });
 
   return result;
-}
-
-async function recallEvaluator({
-  outputs,
-  referenceOutputs,
-}: {
-  outputs: Record<string, unknown>;
-  referenceOutputs?: Record<string, unknown>;
-}) {
-  const result = outputs as unknown as ExperimentResult;
-  const report = await evaluateResult(result);
-
-  return {
-    key: "recall",
-    score: report.recall,
-  };
 }
 
 async function runGPT(inputs: Record<string, unknown>) {
@@ -85,21 +68,21 @@ async function runClaude(inputs: Record<string, unknown>) {
 async function main() {
   await evaluate(runIA, {
     data: process.env.LANGSMITH_DATASET_NAME ?? "ia-golden-set",
-    evaluators: [recallEvaluator],
+    evaluators: [quanEvaluator, qualEvaluator],
     experimentPrefix: "ia-eval",
     maxConcurrency: 1,
   });
 
   await evaluate(runGPT, {
     data: process.env.LANGSMITH_DATASET_NAME ?? "ia-golden-set",
-    evaluators: [recallEvaluator],
+    evaluators: [quanEvaluator, qualEvaluator],
     experimentPrefix: "gpt-eval",
     maxConcurrency: 1,
   });
 
   await evaluate(runClaude, {
     data: process.env.LANGSMITH_DATASET_NAME ?? "ia-golden-set",
-    evaluators: [recallEvaluator],
+    evaluators: [quanEvaluator, qualEvaluator],
     experimentPrefix: "claude-eval",
     maxConcurrency: 1,
   });

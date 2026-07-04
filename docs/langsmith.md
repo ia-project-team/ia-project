@@ -1,6 +1,6 @@
 # LangSmith 평가 연결
 
-Golden Set을 LangSmith Dataset으로 올리고, IA / GPT / Claude 를 같은 기준(recall)으로
+Golden Set을 LangSmith Dataset으로 올리고, IA / GPT / Claude 를 같은 기준(recall + rubric A~E)으로
 평가·비교하는 방법입니다. 결과는 LangSmith 대시보드에서 확인합니다.
 
 관련 코드
@@ -53,11 +53,11 @@ npx tsx eval/runner/runLangsmith.ts   # 터미널 2: 평가 실행
 
 | 시스템 | Experiment Prefix | 평가 지표 |
 |--------|-------------------|-----------|
-| IA     | `ia-eval`         | recall    |
-| GPT    | `gpt-eval`        | recall    |
-| Claude | `claude-eval`     | recall    |
+| IA     | `ia-eval`         | recall + qual rubric A~E |
+| GPT    | `gpt-eval`        | recall + qual rubric A~E |
+| Claude | `claude-eval`     | recall + qual rubric A~E |
 
 ## 5. 결과 확인
 
 LangSmith 대시보드 → **Datasets & Experiments** 에서 `ia-golden-set` 을 열면
-`ia-eval` / `gpt-eval` / `claude-eval` Experiment의 recall 점수를 나란히 비교할 수 있습니다.
+`ia-eval` / `gpt-eval` / `claude-eval` Experiment의 recall 및 qualitative rubric 점수를 나란히 비교할 수 있습니다.
