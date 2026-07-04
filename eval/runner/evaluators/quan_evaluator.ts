@@ -1,5 +1,5 @@
 /**
- * Evaluator - 체크리스트 수집 자동 채점.
+ * Quantitative Evaluator - 정량 지표 평가
  *
  * 입력: ExperimentResult (대화 + GT + collected)
  * 출력: EvalReport (슬롯별 매칭 결과 + recall)
@@ -37,7 +37,7 @@ export interface SlotResult {
   reason?: string;                  // mismatch 시 설명
 }
 
-export interface EvalReport {
+export interface QuanEvaluationReport {
   case_id: string;
   case_title: string;
   system: string;
@@ -421,10 +421,10 @@ async function extractCollectedFromConversation(
 // 메인 평가 함수
 // ============================================================
 
-export async function evaluateResult(
+export async function evaluateQuantitativeResult(
   result: ExperimentResult,
   options?: { openai?: OpenAI; judgeModel?: string },
-): Promise<EvalReport> {
+): Promise<QuanEvaluationReport> {
   // baseline 의 경우 collected 가 빈 배열이면 LLM-as-Judge 로 추출
   let collected = result.final_collected;
   if (
@@ -515,7 +515,7 @@ export async function quanEvaluator({
   referenceOutputs?: Record<string, unknown>;
 }) {
   const result = outputs as unknown as ExperimentResult;
-  const report = await evaluateResult(result);
+  const report = await evaluateQuantitativeResult(result);
 
   return {
     key: "recall",
@@ -527,8 +527,8 @@ export async function quanEvaluator({
 // 결과 저장
 // ============================================================
 
-export function saveEvalReport(
-  report: EvalReport,
+export function saveQuanEvalReport(
+  report: QuanEvaluationReport,
   resultsDir: string = "eval/runner/results",
 ): string {
   if (!fs.existsSync(resultsDir)) {
@@ -545,8 +545,8 @@ export function saveEvalReport(
 // 콘솔 출력 헬퍼
 // ============================================================
 
-export function printEvalSummary(report: EvalReport): void {
-  console.log("\n=== Evaluation Report ===");
+export function printEvalSummary(report: QuanEvaluationReport): void {
+  console.log("\n=== Quantitative Evaluation Report ===");
   console.log(`Case:        ${report.case_id} - ${report.case_title}`);
   console.log(`System:      ${report.system}`);
   console.log(`Turns:       ${report.conversation_turns}`);
@@ -592,8 +592,8 @@ async function main() {
   }
 
   const result = JSON.parse(fs.readFileSync(resultPath, "utf-8")) as ExperimentResult;
-  const report = await evaluateResult(result);
-  const saved = saveEvalReport(report);
+  const report = await evaluateQuantitativeResult(result);
+  const saved = saveQuanEvalReport(report);
 
   printEvalSummary(report);
   console.log(`Eval report saved to: ${saved}\n`);

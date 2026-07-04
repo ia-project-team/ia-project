@@ -14,6 +14,6 @@ export type { EvalReport, SlotMatch, SlotResult } from "./quan_evaluator";
 export { evaluateQualitativeResult, qualEvaluator } from "./qual_evaluator";
 export type {
   QualEvaluationReport,
+  QualRubricDetailScore,
   QualRubricKey,
-  QualRubricScore,
 } from "./qual_evaluator";

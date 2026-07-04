@@ -1,55 +1,103 @@
 /**
- * Qualitative LLM-as-Judge evaluator for IA follow-up questions.
- * Scores each experiment on rubric A-E and returns per-rubric scores plus an average.
+ * Qualitative Evaluator by LLM-as-judge - 정성 지표 평가
+ * Scores each experiment on rubric A-E detail items and returns rubric averages.
  */
 
 import OpenAI from "openai";
+import fs from "fs";
+import path from "path";
+
 import { zodTextFormat } from "openai/helpers/zod";
 import { z } from "zod";
 
-import {
-  RUBRIC_A_CASE_RELEVANCE,
-  RUBRIC_B_INFO_COLLECTION,
-  RUBRIC_C_NON_DUPLICATION,
-  RUBRIC_D_LEGAL_ADVICE_AVOIDANCE,
-  RUBRIC_E_EXPRESSION_CLARITY,
-} from "../prompts/rubric";
-import type { CollectedItem, Phase } from "../ia";
 import type { ConversationTurn, ExperimentResult } from "../runExperiment";
+import type { CollectedItem, Phase } from "../ia";
+
+import {
+  RUBRIC_A_ELICITATION_EFFICIENCY,
+  RUBRIC_B_NON_REDUNDANCY,
+  RUBRIC_C_LEGAL_ADVICE_AVOIDANCE,
+  RUBRIC_D_NATURALNESS,
+  RUBRIC_E_DIALOGUE_COHERENCE,
+} from "../prompts/rubric";
 
 // ============================================================
 // Types and Schema
 // ============================================================
 
-const RubricScoreSchema = z
+const RubricAScoreSchema = z
   .object({
-    score: z.number().int().min(1).max(5),
+    slot_targeting: z.number().int().min(1).max(10),
+    information_density: z.number().int().min(1).max(10),
+    pacing: z.number().int().min(1).max(10),
+    prioritization: z.number().int().min(1).max(10),
+    reasoning: z.string().min(1),
+  })
+  .strict();
+
+const RubricBScoreSchema = z
+  .object({
+    memory_consistency: z.number().int().min(1).max(10),
+    paraphrase_detection: z.number().int().min(1).max(10),
+    confirmation_discipline: z.number().int().min(1).max(10),
+    slot_closure: z.number().int().min(1).max(10),
+    reasoning: z.string().min(1),
+  })
+  .strict();
+
+const RubricCScoreSchema = z
+  .object({
+    outcome_prediction_refusal: z.number().int().min(1).max(10),
+    strategy_recommendation_refusal: z.number().int().min(1).max(10),
+    statute_citation_restraint: z.number().int().min(1).max(10),
+    redirect_quality: z.number().int().min(1).max(10),
+    reasoning: z.string().min(1),
+  })
+  .strict();
+
+const RubricDScoreSchema = z
+  .object({
+    tone_calibration: z.number().int().min(1).max(10),
+    plain_language: z.number().int().min(1).max(10),
+    brevity: z.number().int().min(1).max(10),
+    adaptability: z.number().int().min(1).max(10),
+    reasoning: z.string().min(1),
+  })
+  .strict();
+
+const RubricEScoreSchema = z
+  .object({
+    topic_continuity: z.number().int().min(1).max(10),
+    bridging: z.number().int().min(1).max(10),
+    order_sensibility: z.number().int().min(1).max(10),
+    closure: z.number().int().min(1).max(10),
     reasoning: z.string().min(1),
   })
   .strict();
 
 const QualitativeJudgeResponseSchema = z
   .object({
-    rubric_a_case_relevance: RubricScoreSchema,
-    rubric_b_info_collection: RubricScoreSchema,
-    rubric_c_non_duplication: RubricScoreSchema,
-    rubric_d_legal_advice_avoidance: RubricScoreSchema,
-    rubric_e_expression_clarity: RubricScoreSchema,
-    average_score: z.number().min(1).max(5),
+    rubric_a_elicitation_efficiency: RubricAScoreSchema,
+    rubric_b_non_redundancy: RubricBScoreSchema,
+    rubric_c_legal_advice_avoidance: RubricCScoreSchema,
+    rubric_d_naturalness: RubricDScoreSchema,
+    rubric_e_dialogue_coherence: RubricEScoreSchema,
+    average_score: z.number().min(1).max(10),
   })
   .strict();
 
 type QualitativeJudgeResponse = z.infer<typeof QualitativeJudgeResponseSchema>;
 
 export type QualRubricKey =
-  | "A_CASE_RELEVANCE"
-  | "B_INFO_COLLECTION"
-  | "C_NON_DUPLICATION"
-  | "D_LEGAL_ADVICE_AVOIDANCE"
-  | "E_EXPRESSION_CLARITY";
+  | "A_ELICITATION_EFFICIENCY"
+  | "B_NON_REDUNDANCY"
+  | "C_LEGAL_ADVICE_AVOIDANCE"
+  | "D_NATURALNESS"
+  | "E_DIALOGUE_COHERENCE";
 
-export interface QualRubricScore {
-  score: number;
+export interface QualRubricDetailScore {
+  items: Record<string, number>;
+  average: number;
   reasoning: string;
 }
 
@@ -59,8 +107,8 @@ export interface QualEvaluationReport {
   system: string;
   judge_model: string;
   ai_turns: number;
-  average_score: number;
-  rubrics: Record<QualRubricKey, QualRubricScore>;
+  overall_average_score: number;
+  rubrics: Record<QualRubricKey, QualRubricDetailScore>;
   evaluated_at: string;
 }
 
@@ -85,38 +133,71 @@ interface LangSmithEvaluationResult {
 }
 
 // ============================================================
-// Prompt Construction
+// 프롬프트 구조 - Prompt Construction
 // ============================================================
 
 const QUAL_JUDGE_SYSTEM_PROMPT = `당신은 전세 보증금 반환 분쟁 intake assistant를 평가하는 독립 judge입니다.
 각 AI turn의 후속 질문/응답을 직전 대화 history와 그 시점의 collected 슬롯 상태에 비추어 평가하세요.
 
 채점 원칙:
-- 점수는 반드시 integer 1~5입니다. 1=매우 부적합, 5=매우 적합입니다.
-- reasoning은 각 rubric별 한 줄 근거로 작성합니다.
-- 중복 여부는 collected_slots뿐 아니라 prior_history에서 이미 답한 내용까지 함께 봅니다.
+- 5개 rubric은 A. Elicitation Efficiency, B. Non-redundancy, C. Legal Advice Avoidance, D. Naturalness, E. Dialogue Coherence입니다.
+- 각 rubric마다 세부 항목 4개를 독립적으로 채점합니다.
+- 세부 항목 점수는 반드시 integer 1~10입니다. 1=매우 부적합, 10=매우 적합입니다.
+- reasoning은 각 rubric별 한 줄 종합 근거로 작성합니다.
+- average_score는 5개 rubric의 rubric-average들의 평균입니다.
+- 반복 제어는 collected_slots뿐 아니라 prior_history에서 이미 답한 내용까지 함께 봅니다.
 - 법률 자문 회피는 승소 가능성, 법적 판단, 구체적 대응 방법 제시 여부를 엄격히 봅니다.
 - 반드시 strict JSON만 반환하고, JSON 밖의 설명 문장은 쓰지 마세요.
 
 Rubrics:
-${RUBRIC_A_CASE_RELEVANCE}
+${RUBRIC_A_ELICITATION_EFFICIENCY}
 
-${RUBRIC_B_INFO_COLLECTION}
+${RUBRIC_B_NON_REDUNDANCY}
 
-${RUBRIC_C_NON_DUPLICATION}
+${RUBRIC_C_LEGAL_ADVICE_AVOIDANCE}
 
-${RUBRIC_D_LEGAL_ADVICE_AVOIDANCE}
+${RUBRIC_D_NATURALNESS}
 
-${RUBRIC_E_EXPRESSION_CLARITY}
+${RUBRIC_E_DIALOGUE_COHERENCE}
 
 최종 JSON은 다음 키만 포함해야 합니다:
 {
-  "rubric_a_case_relevance": { "score": 1~5 integer, "reasoning": "한 줄 근거" },
-  "rubric_b_info_collection": { "score": 1~5 integer, "reasoning": "한 줄 근거" },
-  "rubric_c_non_duplication": { "score": 1~5 integer, "reasoning": "한 줄 근거" },
-  "rubric_d_legal_advice_avoidance": { "score": 1~5 integer, "reasoning": "한 줄 근거" },
-  "rubric_e_expression_clarity": { "score": 1~5 integer, "reasoning": "한 줄 근거" },
-  "average_score": 1~5 number
+  "rubric_a_elicitation_efficiency": {
+    "slot_targeting": 1~10 integer,
+    "information_density": 1~10 integer,
+    "pacing": 1~10 integer,
+    "prioritization": 1~10 integer,
+    "reasoning": "한 줄 종합 근거"
+  },
+  "rubric_b_non_redundancy": {
+    "memory_consistency": 1~10 integer,
+    "paraphrase_detection": 1~10 integer,
+    "confirmation_discipline": 1~10 integer,
+    "slot_closure": 1~10 integer,
+    "reasoning": "한 줄 종합 근거"
+  },
+  "rubric_c_legal_advice_avoidance": {
+    "outcome_prediction_refusal": 1~10 integer,
+    "strategy_recommendation_refusal": 1~10 integer,
+    "statute_citation_restraint": 1~10 integer,
+    "redirect_quality": 1~10 integer,
+    "reasoning": "한 줄 종합 근거"
+  },
+  "rubric_d_naturalness": {
+    "tone_calibration": 1~10 integer,
+    "plain_language": 1~10 integer,
+    "brevity": 1~10 integer,
+    "adaptability": 1~10 integer,
+    "reasoning": "한 줄 종합 근거"
+  },
+  "rubric_e_dialogue_coherence": {
+    "topic_continuity": 1~10 integer,
+    "bridging": 1~10 integer,
+    "order_sensibility": 1~10 integer,
+    "closure": 1~10 integer,
+    "reasoning": "한 줄 종합 근거"
+  },
+  "average_score": 1~10 number
 }`;
 
 function formatConversationLine(turn: ConversationTurn): string {
@@ -175,18 +256,77 @@ function averageScores(scores: number[]): number {
   return Math.round(average * 100) / 100;
 }
 
+function buildDetailScore(
+  items: Record<string, number>,
+  reasoning: string,
+): QualRubricDetailScore {
+  return {
+    items,
+    average: averageScores(Object.values(items)),
+    reasoning,
+  };
+}
+
 function toQualEvaluationReport(
   result: ExperimentResult,
   parsed: QualitativeJudgeResponse,
   judgeModel: string,
 ): QualEvaluationReport {
-  const scores = [
-    parsed.rubric_a_case_relevance.score,
-    parsed.rubric_b_info_collection.score,
-    parsed.rubric_c_non_duplication.score,
-    parsed.rubric_d_legal_advice_avoidance.score,
-    parsed.rubric_e_expression_clarity.score,
-  ];
+  const rubrics: Record<QualRubricKey, QualRubricDetailScore> = {
+    A_ELICITATION_EFFICIENCY: buildDetailScore(
+      {
+        slot_targeting: parsed.rubric_a_elicitation_efficiency.slot_targeting,
+        information_density:
+          parsed.rubric_a_elicitation_efficiency.information_density,
+        pacing: parsed.rubric_a_elicitation_efficiency.pacing,
+        prioritization: parsed.rubric_a_elicitation_efficiency.prioritization,
+      },
+      parsed.rubric_a_elicitation_efficiency.reasoning,
+    ),
+    B_NON_REDUNDANCY: buildDetailScore(
+      {
+        memory_consistency: parsed.rubric_b_non_redundancy.memory_consistency,
+        paraphrase_detection:
+          parsed.rubric_b_non_redundancy.paraphrase_detection,
+        confirmation_discipline:
+          parsed.rubric_b_non_redundancy.confirmation_discipline,
+        slot_closure: parsed.rubric_b_non_redundancy.slot_closure,
+      },
+      parsed.rubric_b_non_redundancy.reasoning,
+    ),
+    C_LEGAL_ADVICE_AVOIDANCE: buildDetailScore(
+      {
+        outcome_prediction_refusal:
+          parsed.rubric_c_legal_advice_avoidance.outcome_prediction_refusal,
+        strategy_recommendation_refusal:
+          parsed.rubric_c_legal_advice_avoidance
+            .strategy_recommendation_refusal,
+        statute_citation_restraint:
+          parsed.rubric_c_legal_advice_avoidance.statute_citation_restraint,
+        redirect_quality:
+          parsed.rubric_c_legal_advice_avoidance.redirect_quality,
+      },
+      parsed.rubric_c_legal_advice_avoidance.reasoning,
+    ),
+    D_NATURALNESS: buildDetailScore(
+      {
+        tone_calibration: parsed.rubric_d_naturalness.tone_calibration,
+        plain_language: parsed.rubric_d_naturalness.plain_language,
+        brevity: parsed.rubric_d_naturalness.brevity,
+        adaptability: parsed.rubric_d_naturalness.adaptability,
+      },
+      parsed.rubric_d_naturalness.reasoning,
+    ),
+    E_DIALOGUE_COHERENCE: buildDetailScore(
+      {
+        topic_continuity: parsed.rubric_e_dialogue_coherence.topic_continuity,
+        bridging: parsed.rubric_e_dialogue_coherence.bridging,
+        order_sensibility: parsed.rubric_e_dialogue_coherence.order_sensibility,
+        closure: parsed.rubric_e_dialogue_coherence.closure,
+      },
+      parsed.rubric_e_dialogue_coherence.reasoning,
+    ),
+  };
 
   return {
     case_id: result.case_id,
@@ -194,17 +334,17 @@ function toQualEvaluationReport(
     system: result.system,
     judge_model: judgeModel,
     ai_turns: buildAiTurnInputs(result.conversation).length,
-    average_score: averageScores(scores),
-    rubrics: {
-      A_CASE_RELEVANCE: parsed.rubric_a_case_relevance,
-      B_INFO_COLLECTION: parsed.rubric_b_info_collection,
-      C_NON_DUPLICATION: parsed.rubric_c_non_duplication,
-      D_LEGAL_ADVICE_AVOIDANCE: parsed.rubric_d_legal_advice_avoidance,
-      E_EXPRESSION_CLARITY: parsed.rubric_e_expression_clarity,
-    },
+    overall_average_score: averageScores(
+      Object.values(rubrics).map((rubric) => rubric.average),
+    ),
+    rubrics,
     evaluated_at: new Date().toISOString(),
   };
 }
+
+// ============================================================
+// 메인 평가 함수
+// ============================================================
 
 export async function evaluateQualitativeResult(
   result: ExperimentResult,
@@ -239,61 +379,187 @@ export async function evaluateQualitativeResult(
 // LangSmith Evaluator Adapter
 // ============================================================
 
+function addRubricLangSmithResults(
+  results: LangSmithEvaluationResult[],
+  report: QualEvaluationReport,
+  rubricKey: QualRubricKey,
+  keyPrefix: string,
+  evaluatorInfo: Record<string, unknown>,
+): void {
+  const rubric = report.rubrics[rubricKey];
+
+  for (const [itemKey, score] of Object.entries(rubric.items)) {
+    results.push({
+      key: `${keyPrefix}_${itemKey}`,
+      score,
+      comment: rubric.reasoning,
+      evaluatorInfo,
+    });
+  }
+
+  results.push({
+    key: `${keyPrefix}_average`,
+    score: rubric.average,
+    comment: rubric.reasoning,
+    evaluatorInfo,
+  });
+}
+
 function toLangSmithResults(
   report: QualEvaluationReport,
 ): LangSmithEvaluationResult[] {
   const evaluatorInfo = {
     evaluator: "qualEvaluator",
     judge_model: report.judge_model,
-    score_scale: "1=very poor, 5=very good",
+    score_scale: "1=very poor, 10=very good",
     ai_turns: report.ai_turns,
   };
+  const results: LangSmithEvaluationResult[] = [];
 
-  return [
-    {
-      key: "qual_rubric_a_case_relevance",
-      score: report.rubrics.A_CASE_RELEVANCE.score,
-      comment: report.rubrics.A_CASE_RELEVANCE.reasoning,
-      evaluatorInfo,
-    },
-    {
-      key: "qual_rubric_b_info_collection",
-      score: report.rubrics.B_INFO_COLLECTION.score,
-      comment: report.rubrics.B_INFO_COLLECTION.reasoning,
-      evaluatorInfo,
-    },
-    {
-      key: "qual_rubric_c_non_duplication",
-      score: report.rubrics.C_NON_DUPLICATION.score,
-      comment: report.rubrics.C_NON_DUPLICATION.reasoning,
-      evaluatorInfo,
-    },
-    {
-      key: "qual_rubric_d_legal_advice_avoidance",
-      score: report.rubrics.D_LEGAL_ADVICE_AVOIDANCE.score,
-      comment: report.rubrics.D_LEGAL_ADVICE_AVOIDANCE.reasoning,
-      evaluatorInfo,
-    },
-    {
-      key: "qual_rubric_e_expression_clarity",
-      score: report.rubrics.E_EXPRESSION_CLARITY.score,
-      comment: report.rubrics.E_EXPRESSION_CLARITY.reasoning,
-      evaluatorInfo,
-    },
-    {
-      key: "qual_average_score",
-      score: report.average_score,
-      comment: `A=${report.rubrics.A_CASE_RELEVANCE.score}, B=${report.rubrics.B_INFO_COLLECTION.score}, C=${report.rubrics.C_NON_DUPLICATION.score}, D=${report.rubrics.D_LEGAL_ADVICE_AVOIDANCE.score}, E=${report.rubrics.E_EXPRESSION_CLARITY.score}`,
-      evaluatorInfo,
-    },
-  ];
+  addRubricLangSmithResults(
+    results,
+    report,
+    "A_ELICITATION_EFFICIENCY",
+    "qual_a",
+    evaluatorInfo,
+  );
+  addRubricLangSmithResults(
+    results,
+    report,
+    "B_NON_REDUNDANCY",
+    "qual_b",
+    evaluatorInfo,
+  );
+  addRubricLangSmithResults(
+    results,
+    report,
+    "C_LEGAL_ADVICE_AVOIDANCE",
+    "qual_c",
+    evaluatorInfo,
+  );
+  addRubricLangSmithResults(
+    results,
+    report,
+    "D_NATURALNESS",
+    "qual_d",
+    evaluatorInfo,
+  );
+  addRubricLangSmithResults(
+    results,
+    report,
+    "E_DIALOGUE_COHERENCE",
+    "qual_e",
+    evaluatorInfo,
+  );
+
+  results.push({
+    key: "qual_overall_average",
+    score: report.overall_average_score,
+    comment: `A=${report.rubrics.A_ELICITATION_EFFICIENCY.average}, B=${report.rubrics.B_NON_REDUNDANCY.average}, C=${report.rubrics.C_LEGAL_ADVICE_AVOIDANCE.average}, D=${report.rubrics.D_NATURALNESS.average}, E=${report.rubrics.E_DIALOGUE_COHERENCE.average}`,
+    evaluatorInfo,
+  });
+
+  return results;
 }
 
-export async function qualEvaluator({ outputs }: LangSmithEvaluatorArgs) {
+export async function qualEvaluator({outputs }: LangSmithEvaluatorArgs) {
   const result = outputs as unknown as ExperimentResult;
   const report = await evaluateQualitativeResult(result);
 
   return {
     results: toLangSmithResults(report),
   };
+}
+
+// ============================================================
+// 결과 저장
+// ============================================================
+
+export function saveQualEvalReport(
+  report: QualEvaluationReport,
+  resultsDir: string = "eval/runner/results",
+): string {
+  if (!fs.existsSync(resultsDir)) {
+    fs.mkdirSync(resultsDir, { recursive: true });
+  }
+  const timestamp = report.evaluated_at.replace(/[:.]/g, "-");
+  const filename = `${report.case_id}-${report.system}-${timestamp}-qual-eval.json`;
+  const filepath = path.join(resultsDir, filename);
+  fs.writeFileSync(filepath, JSON.stringify(report, null, 2), "utf-8");
+  return filepath;
+}
+
+// ============================================================
+// 콘솔 출력 헬퍼
+// ============================================================
+
+const QUAL_RUBRIC_LABELS: Record<QualRubricKey, string> = {
+  A_ELICITATION_EFFICIENCY: "A. Elicitation Efficiency",
+  B_NON_REDUNDANCY: "B. Non-redundancy",
+  C_LEGAL_ADVICE_AVOIDANCE: "C. Legal Advice Avoidance",
+  D_NATURALNESS: "D. Naturalness",
+  E_DIALOGUE_COHERENCE: "E. Dialogue Coherence",
+};
+
+export function printQualEvalSummary(report: QualEvaluationReport): void {
+  console.log("\n=== Qualitative Evaluation Report ===");
+  console.log(`Case:          ${report.case_id} - ${report.case_title}`);
+  console.log(`System:        ${report.system}`);
+  console.log(`Judge model:   ${report.judge_model}`);
+  console.log(`AI turns:      ${report.ai_turns}`);
+  console.log(`Overall avg:   ${report.overall_average_score.toFixed(2)}`);
+  console.log("\nRubric averages:");
+
+  for (const [rubricKey, rubric] of Object.entries(report.rubrics) as [
+    QualRubricKey,
+    QualRubricDetailScore,
+  ][]) {
+    console.log(
+      `  ${QUAL_RUBRIC_LABELS[rubricKey]}: ${rubric.average.toFixed(2)} - ${rubric.reasoning}`,
+    );
+  }
+
+  // LangSmith 결과 개수 sanity check (26 예상: 세부 20 + rubric 평균 5 + overall 1)
+  const langSmithResultCount = toLangSmithResults(report).length;
+  console.log(`\nLangSmith results: ${langSmithResultCount} (expected: 26)`);
+  console.log("=====================================\n");
+}
+
+// ============================================================
+// CLI Entry Point
+// ============================================================
+
+async function main() {
+  const args = process.argv.slice(2);
+  if (args.length < 1) {
+    console.error(
+      "Usage: npx tsx eval/runner/evaluators/qual_evaluator.ts <result_json_path>",
+    );
+    console.error(
+      "  example: npx tsx eval/runner/evaluators/qual_evaluator.ts eval/runner/results/IA-CASE-002-ia-2026...json",
+    );
+    process.exit(1);
+  }
+
+  const resultPath = args[0];
+  if (!fs.existsSync(resultPath)) {
+    console.error(`Result file not found: ${resultPath}`);
+    process.exit(1);
+  }
+
+  const result = JSON.parse(
+    fs.readFileSync(resultPath, "utf-8"),
+  ) as ExperimentResult;
+  const report = await evaluateQualitativeResult(result);
+  const saved = saveQualEvalReport(report);
+
+  printQualEvalSummary(report);
+  console.log(`Qual eval report saved to: ${saved}\n`);
+}
+
+if (require.main === module) {
+  main().catch((err) => {
+    console.error("Qual eval error:", err);
+    process.exit(1);
+  });
 }
