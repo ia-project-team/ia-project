@@ -7,6 +7,7 @@ import OpenAI from "openai";
 import fs from "fs";
 import path from "path";
 
+import { loadEnvConfig } from "@next/env";
 import { zodTextFormat } from "openai/helpers/zod";
 import { z } from "zod";
 
@@ -20,6 +21,8 @@ import {
   RUBRIC_D_NATURALNESS,
   RUBRIC_E_DIALOGUE_COHERENCE,
 } from "../prompts/rubric";
+
+loadEnvConfig(process.cwd());
 
 // ============================================================
 // Types and Schema
@@ -246,9 +249,7 @@ function buildConversationJudgeInput(
   };
 }
 
-function buildJudgeUserPrompt(result: ExperimentResult): string {
-  const judgeInput = buildConversationJudgeInput(result);
-
+function buildJudgeUserPrompt(judgeInput: ConversationJudgeInput): string {
   return `아래 JSON 입력을 기준으로 rubric A~E를 종합 채점하세요.
 conversation_full은 전체 대화를 한 번만 담은 원문입니다.
 final_collected_slots는 대화 종료 시점의 최종 슬롯 상태입니다.
@@ -280,7 +281,7 @@ function buildDetailScore(
 }
 
 function toQualEvaluationReport(
-  result: ExperimentResult,
+  judgeInput: ConversationJudgeInput,
   parsed: QualitativeJudgeResponse,
   judgeModel: string,
 ): QualEvaluationReport {
@@ -341,11 +342,11 @@ function toQualEvaluationReport(
   };
 
   return {
-    case_id: result.case_id,
-    case_title: result.case_title,
-    system: result.system,
+    case_id: judgeInput.case_id,
+    case_title: judgeInput.case_title,
+    system: judgeInput.system,
     judge_model: judgeModel,
-    ai_turns: buildConversationJudgeInput(result).ai_turn_deltas.length,
+    ai_turns: judgeInput.ai_turn_deltas.length,
     overall_average_score: averageScores(
       Object.values(rubrics).map((rubric) => rubric.average),
     ),
@@ -365,12 +366,13 @@ export async function evaluateQualitativeResult(
   const client = options?.openai ?? new OpenAI();
   const judgeModel =
     options?.judgeModel ?? process.env.OPENAI_JUDGE_MODEL ?? "gpt-5-mini";
+  const judgeInput = buildConversationJudgeInput(result);
 
   const response = await client.responses.parse({
     model: judgeModel,
     input: [
       { role: "system", content: QUAL_JUDGE_SYSTEM_PROMPT },
-      { role: "user", content: buildJudgeUserPrompt(result) },
+      { role: "user", content: buildJudgeUserPrompt(judgeInput) },
     ],
     text: {
       format: zodTextFormat(
@@ -384,7 +386,7 @@ export async function evaluateQualitativeResult(
     throw new Error("Qualitative judge returned no parsed JSON output.");
   }
 
-  return toQualEvaluationReport(result, response.output_parsed, judgeModel);
+  return toQualEvaluationReport(judgeInput, response.output_parsed, judgeModel);
 }
 
 // ============================================================
