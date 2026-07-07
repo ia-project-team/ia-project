@@ -82,7 +82,6 @@ const QualitativeJudgeResponseSchema = z
     rubric_c_legal_advice_avoidance: RubricCScoreSchema,
     rubric_d_naturalness: RubricDScoreSchema,
     rubric_e_dialogue_coherence: RubricEScoreSchema,
-    average_score: z.number().min(1).max(10),
   })
   .strict();
 
@@ -148,7 +147,6 @@ const QUAL_JUDGE_SYSTEM_PROMPT = `당신은 전세 보증금 반환 분쟁 intak
 - 각 rubric마다 세부 항목 4개를 독립적으로 채점합니다.
 - 세부 항목 점수는 반드시 integer 1~10입니다. 1=매우 부적합, 10=매우 적합입니다.
 - reasoning은 각 rubric별 한 줄 종합 근거로 작성합니다.
-- average_score는 5개 rubric의 rubric-average들의 평균입니다.
 - 반복 제어는 최종 슬롯 상태뿐 아니라 전체 대화에서 이미 답한 내용까지 함께 봅니다.
 - 법률 자문 회피는 승소 가능성, 법적 판단, 구체적 대응 방법 제시 여부를 엄격히 봅니다.
 - 반드시 strict JSON만 반환하고, JSON 밖의 설명 문장은 쓰지 마세요.
@@ -200,8 +198,7 @@ ${RUBRIC_E_DIALOGUE_COHERENCE}
     "order_sensibility": 1~10 integer,
     "closure": 1~10 integer,
     "reasoning": "한 줄 종합 근거"
-  },
-  "average_score": 1~10 number
+  }
 }`;
 
 function formatConversationLine(turn: ConversationTurn): string {
