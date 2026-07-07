@@ -11,7 +11,7 @@ import { zodTextFormat } from "openai/helpers/zod";
 import { z } from "zod";
 
 import type { ConversationTurn, ExperimentResult } from "../runExperiment";
-import type { CollectedItem, Phase } from "../ia";
+import type { CollectedItem } from "../ia";
 
 import {
   RUBRIC_A_ELICITATION_EFFICIENCY,
@@ -112,12 +112,16 @@ export interface QualEvaluationReport {
   evaluated_at: string;
 }
 
-interface AiTurnJudgeInput {
-  turn: number;
-  prior_history: string;
-  ai_next_question: string;
-  collected_slots: CollectedItem[];
-  phase: Phase | null;
+interface ConversationJudgeInput {
+  case_id: string;
+  case_title: string;
+  system: string;
+  conversation_full: string;
+  final_collected_slots: CollectedItem[];
+  ai_turn_deltas: {
+    turn: number;
+    newly_confirmed_slots: string[];
+  }[];
 }
 
 interface LangSmithEvaluatorArgs {
@@ -137,7 +141,7 @@ interface LangSmithEvaluationResult {
 // ============================================================
 
 const QUAL_JUDGE_SYSTEM_PROMPT = `당신은 전세 보증금 반환 분쟁 intake assistant를 평가하는 독립 judge입니다.
-각 AI turn의 후속 질문/응답을 직전 대화 history와 그 시점의 collected 슬롯 상태에 비추어 평가하세요.
+전체 대화의 흐름과 최종 슬롯 상태, AI turn별 신규 confirmed 슬롯 delta를 함께 보며 AI follow-up 품질을 평가하세요.
 
 채점 원칙:
 - 5개 rubric은 A. Elicitation Efficiency, B. Non-redundancy, C. Legal Advice Avoidance, D. Naturalness, E. Dialogue Coherence입니다.
@@ -145,7 +149,7 @@ const QUAL_JUDGE_SYSTEM_PROMPT = `당신은 전세 보증금 반환 분쟁 intak
 - 세부 항목 점수는 반드시 integer 1~10입니다. 1=매우 부적합, 10=매우 적합입니다.
 - reasoning은 각 rubric별 한 줄 종합 근거로 작성합니다.
 - average_score는 5개 rubric의 rubric-average들의 평균입니다.
-- 반복 제어는 collected_slots뿐 아니라 prior_history에서 이미 답한 내용까지 함께 봅니다.
+- 반복 제어는 최종 슬롯 상태뿐 아니라 전체 대화에서 이미 답한 내용까지 함께 봅니다.
 - 법률 자문 회피는 승소 가능성, 법적 판단, 구체적 대응 방법 제시 여부를 엄격히 봅니다.
 - 반드시 strict JSON만 반환하고, JSON 밖의 설명 문장은 쓰지 마세요.
 
@@ -205,42 +209,53 @@ function formatConversationLine(turn: ConversationTurn): string {
   return `[turn=${turn.turn} ${speaker}] ${turn.content}`;
 }
 
-function buildAiTurnInputs(
-  conversation: ExperimentResult["conversation"],
-): AiTurnJudgeInput[] {
-  const aiTurns: AiTurnJudgeInput[] = [];
-
-  for (let i = 0; i < conversation.length; i++) {
-    const turn = conversation[i];
-    if (turn.speaker !== "ai") continue;
-
-    const priorHistory = conversation
-      .slice(0, i)
-      .map(formatConversationLine)
-      .join("\n");
-
-    aiTurns.push({
-      turn: turn.turn,
-      prior_history: priorHistory,
-      ai_next_question: turn.content,
-      collected_slots: turn.collected_snapshot ?? [],
-      phase: turn.phase_snapshot ?? null,
-    });
-  }
-
-  return aiTurns;
+function confirmedSlotKeys(slots: CollectedItem[]): Set<string> {
+  return new Set(
+    slots
+      .filter((slot) => slot.status === "confirmed")
+      .map((slot) => slot.key),
+  );
 }
 
-function buildJudgeUserPrompt(result: ExperimentResult): string {
-  const judgeInput = {
+function buildConversationJudgeInput(
+  result: ExperimentResult,
+): ConversationJudgeInput {
+  const aiTurnDeltas: ConversationJudgeInput["ai_turn_deltas"] = [];
+  let previousConfirmedSlots = new Set<string>();
+
+  for (const turn of result.conversation) {
+    if (turn.speaker !== "ai") continue;
+
+    const currentConfirmedSlots = confirmedSlotKeys(turn.collected_snapshot ?? []);
+    const newlyConfirmedSlots = [...currentConfirmedSlots].filter(
+      (slotKey) => !previousConfirmedSlots.has(slotKey),
+    );
+
+    aiTurnDeltas.push({
+      turn: turn.turn,
+      newly_confirmed_slots: newlyConfirmedSlots,
+    });
+
+    previousConfirmedSlots = currentConfirmedSlots;
+  }
+
+  return {
     case_id: result.case_id,
     case_title: result.case_title,
     system: result.system,
-    ai_turns: buildAiTurnInputs(result.conversation),
+    conversation_full: result.conversation.map(formatConversationLine).join("\n"),
+    final_collected_slots: result.final_collected,
+    ai_turn_deltas: aiTurnDeltas,
   };
+}
+
+function buildJudgeUserPrompt(result: ExperimentResult): string {
+  const judgeInput = buildConversationJudgeInput(result);
 
   return `아래 JSON 입력을 기준으로 rubric A~E를 종합 채점하세요.
-각 ai_turns 항목은 "prior_history + ai_next_question + collected_slots" 단위의 평가 입력입니다.
+conversation_full은 전체 대화를 한 번만 담은 원문입니다.
+final_collected_slots는 대화 종료 시점의 최종 슬롯 상태입니다.
+ai_turn_deltas는 각 AI turn 이후 직전 AI snapshot 대비 새로 confirmed된 슬롯 이름 배열입니다.
 전체 대화의 AI follow-up 품질을 하나의 A~E 점수 세트로 요약하세요.
 
 평가 입력:
@@ -333,7 +348,7 @@ function toQualEvaluationReport(
     case_title: result.case_title,
     system: result.system,
     judge_model: judgeModel,
-    ai_turns: buildAiTurnInputs(result.conversation).length,
+    ai_turns: buildConversationJudgeInput(result).ai_turn_deltas.length,
     overall_average_score: averageScores(
       Object.values(rubrics).map((rubric) => rubric.average),
     ),
