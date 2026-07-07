@@ -477,41 +477,11 @@ function toLangSmithResults(
   return results;
 }
 
-function isGroundTruthRecord(
-  value: unknown,
-): value is ExperimentResult["ground_truth"] {
-  return (
-    typeof value === "object" &&
-    value !== null &&
-    Object.keys(value).length > 0 &&
-    Object.values(value).every(
-      (entry) =>
-        typeof entry === "object" && entry !== null && "value" in entry,
-    )
-  );
-}
-
-function resolveGroundTruth(
-  result: ExperimentResult,
-  referenceOutputs?: Record<string, unknown>,
-): ExperimentResult["ground_truth"] {
-  const candidate = referenceOutputs?.ground_truth ?? referenceOutputs;
-  if (isGroundTruthRecord(candidate)) {
-    return candidate;
-  }
-  return result.ground_truth;
-}
-
 export async function qualEvaluator({
   outputs,
-  referenceOutputs,
 }: LangSmithEvaluatorArgs) {
   const result = outputs as unknown as ExperimentResult;
-  const groundTruth = resolveGroundTruth(result, referenceOutputs);
-  const report = await evaluateQualitativeResult({
-    ...result,
-    ground_truth: groundTruth,
-  });
+  const report = await evaluateQualitativeResult(result);
 
   return {
     results: toLangSmithResults(report),
