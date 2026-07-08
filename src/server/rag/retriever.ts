@@ -4,11 +4,9 @@ import "server-only";
 
 import { embed } from "ai";
 
-import type { RetrievedChunk } from "@/core/rag/types";
+import { EMBEDDING_MODEL, type RetrievedChunk } from "@/core/rag/types";
 import { getOpenAI } from "@/server/llm/provider";
 import { getSupabase } from "@/server/supabase/client";
-
-const EMBEDDING_MODEL = "text-embedding-3-small";
 
 /** 사용자 발화·정황을 받아 관련 가이드 문서 상위 k개를 반환한다. */
 export async function retrieve(query: string, k = 3): Promise<RetrievedChunk[]> {

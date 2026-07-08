@@ -8,8 +8,9 @@ import { createOpenAI } from "@ai-sdk/openai";
 import { createClient } from "@supabase/supabase-js";
 import { embedMany } from "ai";
 
+import { EMBEDDING_DIM, EMBEDDING_MODEL } from "../src/core/rag/types";
+
 const CORPUS_DIR = "src/server/rag/corpus";
-const EMBEDDING_MODEL = "text-embedding-3-small";
 
 /** frontmatter(---로 감싼 메타)와 본문을 분리한다. */
 function parseDoc(raw: string): { meta: Record<string, string>; body: string } {

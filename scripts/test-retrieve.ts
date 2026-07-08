@@ -4,6 +4,8 @@ import { createOpenAI } from "@ai-sdk/openai";
 import { createClient } from "@supabase/supabase-js";
 import { embed } from "ai";
 
+import { EMBEDDING_MODEL } from "../src/core/rag/types";
+
 async function main() {
   const query = process.argv[2];
   if (!query) throw new Error('사용법: test-retrieve.ts "검색할 발화"');
@@ -15,7 +17,7 @@ async function main() {
 
   const openai = createOpenAI({ apiKey: OPENAI_API_KEY });
   const { embedding } = await embed({
-    model: openai.textEmbedding("text-embedding-3-small"),
+    model: openai.textEmbedding(EMBEDDING_MODEL),
     value: query,
   });
 
