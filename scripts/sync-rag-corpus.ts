@@ -56,12 +56,27 @@ async function main() {
     model: openai.textEmbedding(EMBEDDING_MODEL),
     values: docs.map((d) => `${d.topic}\n${d.keywords.join(", ")}\n${d.content}`),
   });
+  if (embeddings.some((e) => e.length !== EMBEDDING_DIM)) {
+    throw new Error(`임베딩 차원이 ${EMBEDDING_DIM}이 아닙니다. 모델·마이그레이션 차원을 확인하세요.`);
+  }
 
   const rows = docs.map((d, i) => ({ ...d, embedding: embeddings[i] }));
   const { error } = await supabase.from("rag_documents").upsert(rows);
   if (error) throw new Error(`upsert 실패: ${error.message}`);
 
-  console.log(`${rows.length}개 문서 동기화 완료`);
+  // corpus에 없는 문서를 정리해 파일 목록 = DB 상태가 되게 한다.
+  // (upsert 성공 후에 지워야 임베딩 실패 시 기존 데이터가 보존된다.)
+  const { data: removed, error: delError } = await supabase
+    .from("rag_documents")
+    .delete()
+    .not("id", "in", `(${rows.map((r) => `"${r.id}"`).join(",")})`)
+    .select("id");
+  if (delError) throw new Error(`stale 문서 삭제 실패: ${delError.message}`);
+
+  const removedNote = removed?.length
+    ? `, ${removed.map((r) => r.id).join(", ")} 삭제`
+    : "";
+  console.log(`${rows.length}개 문서 동기화 완료${removedNote}`);
 }
 
 main().catch((err) => {
