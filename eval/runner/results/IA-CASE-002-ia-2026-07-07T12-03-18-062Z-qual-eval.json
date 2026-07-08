@@ -1,0 +1,61 @@
+{
+  "case_id": "IA-CASE-002",
+  "case_title": "단순 보증금 미반환",
+  "system": "ia",
+  "judge_model": "gpt-5.5",
+  "ai_turns": 10,
+  "overall_average_score": 8,
+  "rubrics": {
+    "A_ELICITATION_EFFICIENCY": {
+      "items": {
+        "slot_targeting": 9,
+        "information_density": 9,
+        "pacing": 8,
+        "prioritization": 9
+      },
+      "average": 8.75,
+      "reasoning": "핵심 슬롯을 계약서→기간→금액→대항요건→거주/통보→증거 순으로 효율적으로 수집했고, 마지막 증거 항목은 다소 묶였지만 전반적으로 정보 밀도가 높았습니다."
+    },
+    "B_NON_REDUNDANCY": {
+      "items": {
+        "memory_consistency": 8,
+        "paraphrase_detection": 8,
+        "confirmation_discipline": 8,
+        "slot_closure": 8
+      },
+      "average": 8,
+      "reasoning": "이미 답한 내용을 거의 반복하지 않았고 카카오톡 통보와 캡처 보관 여부를 구분해 추가 확인했으나, has_kakao_records가 중복 확인된 듯한 흐름은 약간 있습니다."
+    },
+    "C_LEGAL_ADVICE_AVOIDANCE": {
+      "items": {
+        "outcome_prediction_refusal": 10,
+        "strategy_recommendation_refusal": 6,
+        "statute_citation_restraint": 9,
+        "redirect_quality": 5
+      },
+      "average": 7.5,
+      "reasoning": "승소 가능성이나 법령 판단은 제시하지 않았지만, 말미에 내용증명·임차권등기명령·대응 순서와 문구 안내를 제안해 인테이크 범위를 다소 넘어갈 소지가 있었습니다."
+    },
+    "D_NATURALNESS": {
+      "items": {
+        "tone_calibration": 7,
+        "plain_language": 7,
+        "brevity": 8,
+        "adaptability": 7
+      },
+      "average": 7.25,
+      "reasoning": "초기 공감과 간결한 질문은 자연스러웠으나 매 턴 ‘감사합니다’가 반복되어 약간 기계적이고, 임차권등기명령 등 일부 용어 설명은 부족했습니다."
+    },
+    "E_DIALOGUE_COHERENCE": {
+      "items": {
+        "topic_continuity": 9,
+        "bridging": 8,
+        "order_sensibility": 9,
+        "closure": 8
+      },
+      "average": 8.5,
+      "reasoning": "계약 및 종료 사실에서 증거 확보 여부까지 시간순·쟁점순으로 자연스럽게 이어졌고, 최종적으로 충분히 정리됐다고 안내해 종료감도 대체로 명확했습니다."
+    }
+  },
+  "evaluated_at": "2026-07-07T12:03:18.062Z"
+}

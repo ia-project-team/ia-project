@@ -1,8 +1,8 @@
 /**
- * Evaluator - 체크리스트 수집 자동 채점.
+ * Quantitative Evaluator - 정량 지표 평가
  *
  * 입력: ExperimentResult (대화 + GT + collected)
- * 출력: EvalReport (슬롯별 매칭 결과 + recall)
+ * 출력: QuanEvaluationReport (슬롯별 매칭 결과 + recall)
  *
  * 핵심 도전:
  *  1. GT type 다양 (boolean / date / number / array / string)
@@ -14,8 +14,8 @@ import OpenAI from "openai";
 import fs from "fs";
 import path from "path";
 
-import type { ExperimentResult } from "./runExperiment";
-import type { CollectedItem, CollectedStatus } from "./ia";
+import type { ExperimentResult } from "../runExperiment";
+import type { CollectedItem, CollectedStatus } from "../ia";
 
 // ============================================================
 // Types
@@ -37,7 +37,7 @@ export interface SlotResult {
   reason?: string;                  // mismatch 시 설명
 }
 
-export interface EvalReport {
+export interface QuanEvaluationReport {
   case_id: string;
   case_title: string;
   system: string;
@@ -421,10 +421,14 @@ async function extractCollectedFromConversation(
 // 메인 평가 함수
 // ============================================================
 
-export async function evaluateResult(
+export async function evaluateQuantitativeResult(
   result: ExperimentResult,
-  options?: { openai?: OpenAI; judgeModel?: string },
-): Promise<EvalReport> {
+  options?: {
+    openai?: OpenAI;
+    judgeModel?: string;
+    groundTruth?: ExperimentResult["ground_truth"];
+  },
+): Promise<QuanEvaluationReport> {
   // baseline 의 경우 collected 가 빈 배열이면 LLM-as-Judge 로 추출
   let collected = result.final_collected;
   if (
@@ -444,6 +448,8 @@ export async function evaluateResult(
     collectedMap.set(item.key, item);
   }
 
+  const groundTruth = options?.groundTruth ?? result.ground_truth;
+
   // GT 의 각 슬롯에 대해 비교
   const slotResults: SlotResult[] = [];
   let matches = 0,
@@ -451,7 +457,7 @@ export async function evaluateResult(
     missing = 0,
     unparseable = 0;
 
-  for (const [slotKey, gtEntry] of Object.entries(result.ground_truth)) {
+  for (const [slotKey, gtEntry] of Object.entries(groundTruth)) {
     const gtValue = (gtEntry as { value: unknown }).value;
     const predicted = collectedMap.get(slotKey);
     const predictedValue = predicted?.value ?? null;
@@ -505,11 +511,57 @@ export async function evaluateResult(
 }
 
 // ============================================================
+// LangSmith Evaluator Adapter
+// ============================================================
+
+function isGroundTruthRecord(
+  value: unknown,
+): value is ExperimentResult["ground_truth"] {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    Object.keys(value).length > 0 &&
+    Object.values(value).every(
+      (entry) =>
+        typeof entry === "object" && entry !== null && "value" in entry,
+    )
+  );
+}
+
+function resolveGroundTruth(
+  result: ExperimentResult,
+  referenceOutputs?: Record<string, unknown>,
+): ExperimentResult["ground_truth"] {
+  const candidate = referenceOutputs?.ground_truth ?? referenceOutputs;
+  if (isGroundTruthRecord(candidate)) {
+    return candidate;
+  }
+  return result.ground_truth;
+}
+
+export async function quanEvaluator({
+  outputs,
+  referenceOutputs,
+}: {
+  outputs: Record<string, unknown>;
+  referenceOutputs?: Record<string, unknown>;
+}) {
+  const result = outputs as unknown as ExperimentResult;
+  const groundTruth = resolveGroundTruth(result, referenceOutputs);
+  const report = await evaluateQuantitativeResult(result, { groundTruth });
+
+  return {
+    key: "recall",
+    score: report.recall,
+  };
+}
+
+// ============================================================
 // 결과 저장
 // ============================================================
 
-export function saveEvalReport(
-  report: EvalReport,
+export function saveQuanEvalReport(
+  report: QuanEvaluationReport,
   resultsDir: string = "eval/runner/results",
 ): string {
   if (!fs.existsSync(resultsDir)) {
@@ -526,8 +578,8 @@ export function saveEvalReport(
 // 콘솔 출력 헬퍼
 // ============================================================
 
-export function printEvalSummary(report: EvalReport): void {
-  console.log("\n=== Evaluation Report ===");
+export function printQuanEvalSummary(report: QuanEvaluationReport): void {
+  console.log("\n=== Quantitative Evaluation Report ===");
   console.log(`Case:        ${report.case_id} - ${report.case_title}`);
   console.log(`System:      ${report.system}`);
   console.log(`Turns:       ${report.conversation_turns}`);
@@ -561,8 +613,8 @@ export function printEvalSummary(report: EvalReport): void {
 async function main() {
   const args = process.argv.slice(2);
   if (args.length < 1) {
-    console.error("Usage: npx tsx eval/runner/evaluator.ts <result_json_path>");
-    console.error("  example: npx tsx eval/runner/evaluator.ts eval/runner/results/IA-CASE-002-ia-2026...json");
+    console.error("Usage: npx tsx eval/runner/evaluators/quan_evaluator.ts <result_json_path>");
+    console.error("  example: npx tsx eval/runner/evaluators/quan_evaluator.ts eval/runner/results/IA-CASE-002-ia-2026...json");
     process.exit(1);
   }
 
@@ -573,10 +625,10 @@ async function main() {
   }
 
   const result = JSON.parse(fs.readFileSync(resultPath, "utf-8")) as ExperimentResult;
-  const report = await evaluateResult(result);
-  const saved = saveEvalReport(report);
+  const report = await evaluateQuantitativeResult(result);
+  const saved = saveQuanEvalReport(report);
 
-  printEvalSummary(report);
+  printQuanEvalSummary(report);
   console.log(`Eval report saved to: ${saved}\n`);
 }
 
