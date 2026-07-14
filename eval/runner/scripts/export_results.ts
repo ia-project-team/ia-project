@@ -16,8 +16,8 @@
  *
  * 사용:
  *   npx tsx eval/runner/scripts/export_results.ts \
- *     --experiments=ia-eval-d6338bd0,gpt-eval-dc784b31,claude-eval-xxxx \
- *     --output=docs/eval-design/05_experiment-1-result.md
+ *     --experiments=ia-eval-d5fa4c69,gpt-eval-b07ff505,claude-eval-9c692daf \
+ *     --output=docs/eval-design/05_experiment-3-result.md
  *
  *   npx tsx eval/runner/scripts/export_results.ts \
  *     --dataset=ia-golden-set-dryrun \
