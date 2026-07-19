@@ -398,33 +398,15 @@ export async function evaluateQualitativeResult(
 // LangSmith Evaluator Adapter
 // ============================================================
 
-function addRubricLangSmithResults(
-  results: LangSmithEvaluationResult[],
-  report: QualEvaluationReport,
-  rubricKey: QualRubricKey,
-  keyPrefix: string,
-  evaluatorInfo: Record<string, unknown>,
-): void {
-  const rubric = report.rubrics[rubricKey];
-
-  for (const [itemKey, score] of Object.entries(rubric.items)) {
-    results.push({
-      key: `${keyPrefix}_${itemKey}`,
-      score,
-      comment: rubric.reasoning,
-      evaluatorInfo,
-    });
-  }
-
-  results.push({
-    key: `${keyPrefix}_average`,
-    score: rubric.average,
-    comment: rubric.reasoning,
-    evaluatorInfo,
-  });
-}
-
-function toLangSmithResults(
+/**
+ * LangSmith에 업로드할 요약 결과 6개를 생성한다.
+ * - Rubric A~E 평균 5개
+ * - Overall 평균 1개
+ *
+ * 세부 20개 항목은 LangSmith에 올리지 않고 로컬 JSONL 파일에만 보존한다.
+ * LangSmith 업로드 부하를 대화당 27개 → 7개로 축소해 evaluator TimeoutError 방지.
+ */
+function toLangSmithResultsSummary(
   report: QualEvaluationReport,
 ): LangSmithEvaluationResult[] {
   const evaluatorInfo = {
@@ -435,41 +417,23 @@ function toLangSmithResults(
   };
   const results: LangSmithEvaluationResult[] = [];
 
-  addRubricLangSmithResults(
-    results,
-    report,
-    "A_ELICITATION_EFFICIENCY",
-    "qual_a",
-    evaluatorInfo,
-  );
-  addRubricLangSmithResults(
-    results,
-    report,
-    "B_NON_REDUNDANCY",
-    "qual_b",
-    evaluatorInfo,
-  );
-  addRubricLangSmithResults(
-    results,
-    report,
-    "C_LEGAL_ADVICE_AVOIDANCE",
-    "qual_c",
-    evaluatorInfo,
-  );
-  addRubricLangSmithResults(
-    results,
-    report,
-    "D_NATURALNESS",
-    "qual_d",
-    evaluatorInfo,
-  );
-  addRubricLangSmithResults(
-    results,
-    report,
-    "E_DIALOGUE_COHERENCE",
-    "qual_e",
-    evaluatorInfo,
-  );
+  const rubricEntries: Array<[QualRubricKey, string]> = [
+    ["A_ELICITATION_EFFICIENCY", "qual_a"],
+    ["B_NON_REDUNDANCY", "qual_b"],
+    ["C_LEGAL_ADVICE_AVOIDANCE", "qual_c"],
+    ["D_NATURALNESS", "qual_d"],
+    ["E_DIALOGUE_COHERENCE", "qual_e"],
+  ];
+
+  for (const [rubricKey, keyPrefix] of rubricEntries) {
+    const rubric = report.rubrics[rubricKey];
+    results.push({
+      key: `${keyPrefix}_average`,
+      score: rubric.average,
+      comment: rubric.reasoning,
+      evaluatorInfo,
+    });
+  }
 
   results.push({
     key: "qual_overall_average",
@@ -494,11 +458,11 @@ export async function qualEvaluator({
   }
 
   // 세부 20개 항목을 포함한 전체 report를 로컬 JSONL에 저장
-  // LangSmith에는 요약만 올라가지만, 로컬 파일에 세부 데이터 보존
+  // LangSmith에는 요약 6개만 올라가지만, 로컬 파일에 세부 데이터 보존
   saveQualEvalReportToJsonl(report);
 
   return {
-    results: toLangSmithResults(report),
+    results: toLangSmithResultsSummary(report),
   };
 }
 
@@ -572,9 +536,9 @@ export function printQualEvalSummary(report: QualEvaluationReport): void {
     );
   }
 
-  // LangSmith 결과 개수 sanity check (26 예상: 세부 20 + rubric 평균 5 + overall 1)
-  const langSmithResultCount = toLangSmithResults(report).length;
-  console.log(`\nLangSmith results: ${langSmithResultCount} (expected: 26)`);
+  // LangSmith 결과 개수 sanity check (6 예상: rubric 평균 5 + overall 1)
+  const langSmithResultCount = toLangSmithResultsSummary(report).length;
+  console.log(`\nLangSmith results: ${langSmithResultCount} (expected: 6)`);
   console.log("=====================================\n");
 }
 
