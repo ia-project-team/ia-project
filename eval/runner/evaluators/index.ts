@@ -20,6 +20,7 @@ export {
   printQualEvalSummary,
   qualEvaluator,
   saveQualEvalReport,
+  saveQualEvalReportToJsonl,
 } from "./qual_evaluator";
 export type {
   QualEvaluationReport,

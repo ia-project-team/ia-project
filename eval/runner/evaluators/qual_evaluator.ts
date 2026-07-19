@@ -10,6 +10,7 @@ import path from "path";
 import { loadEnvConfig } from "@next/env";
 import { zodTextFormat } from "openai/helpers/zod";
 import { z } from "zod";
+import type { Run } from "langsmith";
 
 import type { ConversationTurn, ExperimentResult } from "../runExperiment";
 import type { CollectedItem } from "../ia";
@@ -112,6 +113,8 @@ export interface QualEvaluationReport {
   overall_average_score: number;
   rubrics: Record<QualRubricKey, QualRubricDetailScore>;
   evaluated_at: string;
+  /** LangSmith run ID - LangSmith adapter 경로에서만 주입됨 (CLI 경로에서는 undefined) */
+  run_id?: string;
 }
 
 interface ConversationJudgeInput {
@@ -129,6 +132,8 @@ interface ConversationJudgeInput {
 interface LangSmithEvaluatorArgs {
   outputs: Record<string, unknown>;
   referenceOutputs?: Record<string, unknown>;
+  /** LangSmith SDK가 evaluator 호출 시 주입하는 Run 객체. run_id 추출용. */
+  run?: Run;
 }
 
 interface LangSmithEvaluationResult {
@@ -478,9 +483,19 @@ function toLangSmithResults(
 
 export async function qualEvaluator({
   outputs,
+  run,
 }: LangSmithEvaluatorArgs) {
   const result = outputs as unknown as ExperimentResult;
   const report = await evaluateQualitativeResult(result);
+
+  // LangSmith Run ID 기록 — 사후 정렬 시 run 추적용 (evaluated_at + run_id로 rep 판단)
+  if (run?.id) {
+    report.run_id = run.id;
+  }
+
+  // 세부 20개 항목을 포함한 전체 report를 로컬 JSONL에 저장
+  // LangSmith에는 요약만 올라가지만, 로컬 파일에 세부 데이터 보존
+  saveQualEvalReportToJsonl(report);
 
   return {
     results: toLangSmithResults(report),
@@ -502,6 +517,28 @@ export function saveQualEvalReport(
   const filename = `${report.case_id}-${report.system}-${timestamp}-qual-eval.json`;
   const filepath = path.join(resultsDir, filename);
   fs.writeFileSync(filepath, JSON.stringify(report, null, 2), "utf-8");
+  return filepath;
+}
+
+/**
+ * LangSmith 실험 실행 시 케이스별 JSONL 파일에 report를 append 저장.
+ *
+ * - 파일 경로: `eval/runner/results/qual-cases/{case_id}-qual-eval.jsonl`
+ * - 한 줄당 하나의 QualEvaluationReport (JSON)
+ * - 같은 case_id의 여러 system × rep 결과가 한 파일에 순차 append됨
+ * - rep 번호는 저장하지 않음 — 사후에 case_id + system으로 그룹핑 후
+ *   evaluated_at 오름차순 정렬로 rep 1, 2, 3 판단
+ */
+export function saveQualEvalReportToJsonl(
+  report: QualEvaluationReport,
+  resultsDir: string = "eval/runner/results/qual-cases",
+): string {
+  if (!fs.existsSync(resultsDir)) {
+    fs.mkdirSync(resultsDir, { recursive: true });
+  }
+  const filename = `${report.case_id}-qual-eval.jsonl`;
+  const filepath = path.join(resultsDir, filename);
+  fs.appendFileSync(filepath, JSON.stringify(report) + "\n", "utf-8");
   return filepath;
 }
 
