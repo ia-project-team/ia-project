@@ -1,3 +1,12 @@
+// 전역 timeout
+import { Agent, setGlobalDispatcher } from "undici";
+
+setGlobalDispatcher(new Agent({
+  headersTimeout: 30000,
+  bodyTimeout: 60000,
+  connect: { timeout: 10000 },
+}))
+
 import { loadEnvConfig } from "@next/env";
 loadEnvConfig(process.cwd());
 

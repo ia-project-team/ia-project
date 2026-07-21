@@ -1,0 +1,10 @@
+Starting evaluation of experiment: claude-eval-d23ebe76
+View results at https://smith.langchain.com/o/543d6c81-9f2e-4109-aff9-e88c41a5bd3f/datasets/22497b05-d699-4756-a57d-eb008a66fd8b/compare?selectedSessions=f335984b-66ea-444b-b0d6-b6ddf73db908
+Error running evaluator evaluateRun on run 019f84f3-1d5f-7000-8000-03650d1a8eda: Error: Request timed out.
+    at OpenAI.makeRequest (/Users/jinnysmacbookair/DEV/ia-project/node_modules/openai/src/client.ts:790:15)
+    at async extractCollectedFromConversation (/Users/jinnysmacbookair/DEV/ia-project/eval/runner/evaluators/quan_evaluator.ts:395:22)
+    at async evaluateQuantitativeResult (/Users/jinnysmacbookair/DEV/ia-project/eval/runner/evaluators/quan_evaluator.ts:438:17)
+    at async quanEvaluator (/Users/jinnysmacbookair/DEV/ia-project/eval/runner/evaluators/quan_evaluator.ts:551:18)
+    at async DynamicRunEvaluator.evaluateRun (/Users/jinnysmacbookair/DEV/ia-project/node_modules/langsmith/dist/evaluation/evaluator.cjs:90:24)
+    at async _ExperimentManager._runEvaluators (/Users/jinnysmacbookair/DEV/ia-project/node_modules/langsmith/dist/evaluation/_runner.cjs:544:43)
+    at async run (/Users/jinnysmacbookair/DEV/ia-project/node_modules/p-queue/dist/index.js:163:29)
