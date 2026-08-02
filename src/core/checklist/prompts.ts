@@ -36,7 +36,8 @@ ${checklistToText()}
     { "key": "contract_start_date", "status": "unknown", "value": null },
     // ... 체크리스트의 나머지 항목 전부 포함
   ],
-  "phase": "collecting"
+  "phase": "collecting",
+  "pendingRagAnswer": null
 }
 
 - reply: 다음 발화 텍스트
@@ -44,7 +45,8 @@ ${checklistToText()}
   아직 확인 안 된 항목도 status: "unknown", value: null로 반드시 포함해야 합니다.
   - status: "confirmed"(확인됨) | "unknown"(아직 모름) | "not_applicable"(해당없음)
   - value: 확인된 값 문자열, 없으면 null
-- phase: "collecting" | "ready_to_advise" | "done"`;
+- phase: "collecting" | "ready_to_advise" | "done"
+- pendingRagAnswer: 문자열 또는 null. 네 필드 모두 매 턴 반드시 포함하세요.`;
 
 /** 일반 채팅용 시스템 프롬프트 */
 export const CHAT_SYSTEM_PROMPT =

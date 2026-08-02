@@ -31,6 +31,13 @@ export const TurnOutputSchema = z
     phase: z
       .enum(["collecting", "ready_to_advise", "done"])
       .describe("대화 단계. AI가 스스로 판단해 선언"),
+    pendingRagAnswer: z
+      .string()
+      .nullable()
+      .describe(
+        "직전 턴에 물어본 특이 사례 질문에 사용자가 답했으면 그 답의 짧은 요약. " +
+          "답하지 않았거나 대기 중인 질문이 없으면 null",
+      ),
   })
   .strict();
 

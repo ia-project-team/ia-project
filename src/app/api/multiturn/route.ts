@@ -41,7 +41,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const result = await runSingleTurn(message, session.history, MULTITURN_MODEL);
+    const result = await runSingleTurn(message, session, MULTITURN_MODEL);
     const duration_ms = Date.now() - t0;
     console.log(`[multiturn] sessionId=${sessionId} phase=${result.phase} duration_ms=${duration_ms}`);
 
