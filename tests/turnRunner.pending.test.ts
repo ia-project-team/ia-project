@@ -18,8 +18,9 @@ vi.mock("@/server/llm/multiturn", () => ({
 }));
 
 import { runSingleTurn } from "@/server/llm/turnRunner";
+import { CHECKLIST } from "@/core/checklist";
 import type { PendingRagQuestion } from "@/core/rag/types";
-import type { TurnOutput } from "@/core/schemas/turn";
+import type { CollectedItem, TurnOutput } from "@/core/schemas/turn";
 import type { Session } from "@/server/session/sessionStore";
 
 const PENDING: PendingRagQuestion = {
@@ -53,6 +54,16 @@ function modelOutput(pendingRagAnswer: string | null): TurnOutput {
   };
 }
 
+function completedRequiredItems(): CollectedItem[] {
+  return CHECKLIST
+    .filter((item) => item.required)
+    .map((item) => ({
+      key: item.key,
+      status: "confirmed" as const,
+      value: "확인됨",
+    }));
+}
+
 beforeEach(() => {
   vi.clearAllMocks();
   retrieveMock.mockResolvedValue([]);
@@ -66,6 +77,32 @@ beforeEach(() => {
 });
 
 describe("runSingleTurn — 대기 중 특이 질문 확정", () => {
+  it("필수 항목이 남아 있으면 모델의 done을 collecting으로 보정한다", async () => {
+    runTurnMock.mockResolvedValue({
+      ...modelOutput(null),
+      phase: "done",
+      collected: [
+        { key: "deposit_amount", status: "confirmed", value: "2억원" },
+      ],
+    });
+
+    const result = await runSingleTurn("보증금은 2억원입니다.", session(), "m");
+
+    expect(result.phase).toBe("collecting");
+  });
+
+  it("필수 항목이 모두 충족된 경우에만 done을 허용한다", async () => {
+    runTurnMock.mockResolvedValue({
+      ...modelOutput(null),
+      phase: "done",
+      collected: completedRequiredItems(),
+    });
+
+    const result = await runSingleTurn("필수 내용을 모두 말씀드렸습니다.", session(), "m");
+
+    expect(result.phase).toBe("done");
+  });
+
   it("collected를 누적하고 confirmed 상태를 unknown으로 되돌리지 않는다", async () => {
     runTurnMock.mockResolvedValue({
       ...modelOutput(null),
