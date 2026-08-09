@@ -9,6 +9,8 @@ import { MULTITURN_MODEL } from "@/server/llm/provider";
 
 export const runtime = "nodejs";
 
+const MAX_TURNS = 20;
+
 export async function POST(request: Request) {
   const t0 = Date.now();
   let sessionId: string | undefined;
@@ -28,7 +30,18 @@ export async function POST(request: Request) {
     }
 
     const session = store.getOrCreate(sessionId);
-    const result = await runSingleTurn(message, session.history, MULTITURN_MODEL);
+    const turnCount = session.history.filter(
+      (item) => item.role === "user",
+    ).length;
+
+    if (turnCount >= MAX_TURNS) {
+      return NextResponse.json(
+        { error: `대화는 최대 ${MAX_TURNS}턴까지 가능합니다.` },
+        { status: 429 },
+      );
+    }
+
+    const result = await runSingleTurn(message, session, MULTITURN_MODEL);
     const duration_ms = Date.now() - t0;
     console.log(`[multiturn] sessionId=${sessionId} phase=${result.phase} duration_ms=${duration_ms}`);
 

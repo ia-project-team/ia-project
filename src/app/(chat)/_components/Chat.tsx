@@ -21,13 +21,20 @@ const PHASE_LABEL: Record<Phase, string> = {
   done: "상담 종료",
 };
 
+function createId(): string {
+  if (
+    typeof globalThis.crypto !== "undefined" &&
+    typeof globalThis.crypto.randomUUID === "function"
+  ) {
+    return globalThis.crypto.randomUUID();
+  }
+
+  return `id-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+}
+
 export function Chat() {
   // 세션 ID는 마운트 시 한 번만 생성 — 서버가 이 ID로 history를 유지한다.
-  const sessionIdRef = useRef<string>(
-    typeof crypto !== "undefined" && crypto.randomUUID
-      ? crypto.randomUUID()
-      : `session-${Date.now()}`,
-  );
+  const sessionIdRef = useRef<string>(createId());
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -38,7 +45,7 @@ export function Chat() {
     setError(null);
     setMessages((prev) => [
       ...prev,
-      { id: crypto.randomUUID(), role: "user", text },
+      { id: createId(), role: "user", text },
     ]);
     setIsLoading(true);
 
@@ -58,7 +65,7 @@ export function Chat() {
       setPhase(data.phase);
       setMessages((prev) => [
         ...prev,
-        { id: crypto.randomUUID(), role: "assistant", text: data.reply },
+        { id: createId(), role: "assistant", text: data.reply },
       ]);
     } catch (err) {
       setError(err instanceof Error ? err.message : "알 수 없는 오류가 발생했습니다.");

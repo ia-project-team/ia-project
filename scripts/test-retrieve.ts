@@ -24,14 +24,23 @@ async function main() {
   const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
     auth: { persistSession: false },
   });
-  const { data, error } = await supabase.rpc("match_rag_documents", {
+  const { data, error } = await supabase.rpc("match_rag_cases", {
     query_embedding: embedding,
-    match_count: 3,
+    match_count: 8,
   });
   if (error) throw new Error(error.message);
 
-  for (const r of data as { topic: string; score: number }[]) {
-    console.log(`[${r.score.toFixed(3)}] ${r.topic}`);
+  for (const r of data as {
+    id: string;
+    issue: string | null;
+    service_fit: string;
+    question: string;
+    score: number;
+  }[]) {
+    console.log(
+      `[${r.score.toFixed(3)}] ${r.id} / ${r.service_fit} / ${r.issue ?? "미분류"}\n` +
+      `  ${r.question.slice(0, 160)}`,
+    );
   }
 }
 
