@@ -19,7 +19,7 @@ export interface TurnResult {
   collected: TurnOutput["collected"];
 }
 
-function mergeChecklist(
+function mergeCollected(
   saved: CollectedItem[],
   latest: CollectedItem[],
 ): CollectedItem[] {
@@ -54,7 +54,7 @@ export async function runSingleTurn(
     .filter((message) => message.role === "user")
     .slice(-5)
     .map((message) => message.content);
-  const savedChecklistFacts = session.checklist
+  const savedCollectedFacts = session.collected
     .filter((item) => item.status === "confirmed" && item.value)
     .map((item) => `${item.key}: ${item.value}`);
   // 이번 턴 답변은 userMessage에 이미 들어 있으므로 확정된 사실만 넣는다.
@@ -64,7 +64,7 @@ export async function runSingleTurn(
     userMessage,
     userMessage,
     ...recentUserFacts,
-    ...savedChecklistFacts,
+    ...savedCollectedFacts,
     ...savedRagFacts,
   ].join("\n");
 
@@ -95,7 +95,7 @@ export async function runSingleTurn(
           model,
           history: messages,
           cases: ragCases,
-          checklist: session.checklist,
+          checklist: session.collected,
           ragFacts: session.ragFacts,
           pendingQuestion: pendingRagQuestion,
           unansweredFacts: session.unansweredRagFacts,
@@ -111,13 +111,13 @@ export async function runSingleTurn(
     model,
     messages,
     ragQuestion,
-    session.checklist,
+    session.collected,
     session.ragFacts,
     pendingRagQuestion,
   );
 
   // 모든 모델 호출이 성공한 뒤에만 세션 상태를 한꺼번에 반영한다.
-  session.checklist = mergeChecklist(session.checklist, output.collected);
+  session.collected = mergeCollected(session.collected, output.collected);
 
   // 모델이 답변으로 인정한 경우에만 사실로 저장한다.
   // 답을 얻지 못한 질문은 저장하지 않되, 같은 질문을 반복하지 않도록 따로 기록한다.
@@ -155,7 +155,7 @@ export async function runSingleTurn(
   history.push({ role: "assistant", content: output.reply });
 
   console.log("[session] state", {
-    checklistConfirmed: session.checklist.filter(
+    collectedConfirmed: session.collected.filter(
       (item) => item.status === "confirmed",
     ).length,
     ragFacts: session.ragFacts.map((fact) => fact.targetFact),
@@ -166,6 +166,6 @@ export async function runSingleTurn(
   return {
     reply: output.reply,
     phase: output.phase,
-    collected: session.checklist,
+    collected: session.collected,
   };
 }
