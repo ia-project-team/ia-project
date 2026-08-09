@@ -8,7 +8,8 @@ import type { CollectedItem, ConversationMessage } from "@/core/schemas/turn";
 export interface Session {
   sessionId: string;
   history: ConversationMessage[];
-  checklist: CollectedItem[];
+  /** 지금까지 누적된 체크리스트 수집 결과. */
+  collected: CollectedItem[];
   /** 질문하고 답변까지 확인된 특이 사실. */
   ragFacts: StoredRagFact[];
   /** 물었지만 사용자가 답하지 않은 특이 질문의 targetFact. 같은 질문 반복을 막는다. */
@@ -25,7 +26,7 @@ class SessionStore {
       session = {
         sessionId,
         history: [],
-        checklist: [],
+        collected: [],
         ragFacts: [],
         unansweredRagFacts: [],
         pendingRagQuestion: null,

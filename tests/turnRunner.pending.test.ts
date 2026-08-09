@@ -36,7 +36,7 @@ function session(overrides: Partial<Session> = {}): Session {
       { role: "user", content: "작년에 보증금을 3천만원 올려줬어요." },
       { role: "assistant", content: PENDING.question },
     ],
-    checklist: [],
+    collected: [],
     ragFacts: [],
     unansweredRagFacts: [],
     pendingRagQuestion: null,
@@ -66,6 +66,29 @@ beforeEach(() => {
 });
 
 describe("runSingleTurn — 대기 중 특이 질문 확정", () => {
+  it("collected를 누적하고 confirmed 상태를 unknown으로 되돌리지 않는다", async () => {
+    runTurnMock.mockResolvedValue({
+      ...modelOutput(null),
+      collected: [
+        { key: "deposit_amount", status: "unknown", value: null },
+        { key: "contract_end_date", status: "confirmed", value: "2026-12-31" },
+      ],
+    });
+    const s = session({
+      collected: [
+        { key: "deposit_amount", status: "confirmed", value: "2억원" },
+      ],
+    });
+
+    const result = await runSingleTurn("계약 종료일은 올해 말이에요.", s, "m");
+
+    expect(s.collected).toEqual([
+      { key: "deposit_amount", status: "confirmed", value: "2억원" },
+      { key: "contract_end_date", status: "confirmed", value: "2026-12-31" },
+    ]);
+    expect(result.collected).toEqual(s.collected);
+  });
+
   it("모델이 답변으로 인정하면 ragFacts에 저장한다", async () => {
     runTurnMock.mockResolvedValue(modelOutput("증액분에도 확정일자를 받음"));
     const s = session({ pendingRagQuestion: PENDING });
