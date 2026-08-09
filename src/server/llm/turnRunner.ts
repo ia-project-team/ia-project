@@ -1,8 +1,9 @@
 // 턴 진행 — gh/multiturn-design의 orchestrator/turnRunner.ts에서 이전.
 // LLM 호출이 성공한 턴만 history에 반영한다 (실패 시 세션 무변경).
-// 서버는 AI의 phase 판단을 신뢰한다 (거부권 없음).
+// 모델 phase는 후보일 뿐이며, 서버가 누적 수집 상태를 기준으로 최종 보정한다.
 import "server-only";
 
+import { CHECKLIST } from "@/core/checklist";
 import { retrieve } from "@/server/rag/retriever";
 import {
   selectRagQuestion,
@@ -31,6 +32,29 @@ function mergeCollected(
     merged.set(item.key, item);
   }
   return [...merged.values()];
+}
+
+function missingRequiredKeys(collected: CollectedItem[]): string[] {
+  const collectedByKey = new Map(collected.map((item) => [item.key, item]));
+
+  return CHECKLIST
+    .filter((item) => {
+      if (!item.required) return false;
+      const current = collectedByKey.get(item.key);
+      return current?.status !== "confirmed" && current?.status !== "not_applicable";
+    })
+    .map((item) => item.key);
+}
+
+/** 모델이 조기에 종료하거나 완료를 선언해도 서버가 최종 phase를 보정한다. */
+function resolveServerPhase(
+  requestedPhase: TurnOutput["phase"],
+  collected: CollectedItem[],
+): TurnOutput["phase"] {
+  const missingRequired = missingRequiredKeys(collected);
+  if (missingRequired.length > 0) return "collecting";
+
+  return requestedPhase;
 }
 
 export async function runSingleTurn(
@@ -118,6 +142,7 @@ export async function runSingleTurn(
 
   // 모든 모델 호출이 성공한 뒤에만 세션 상태를 한꺼번에 반영한다.
   session.collected = mergeCollected(session.collected, output.collected);
+  const phase = resolveServerPhase(output.phase, session.collected);
 
   // 모델이 답변으로 인정한 경우에만 사실로 저장한다.
   // 답을 얻지 못한 질문은 저장하지 않되, 같은 질문을 반복하지 않도록 따로 기록한다.
@@ -165,7 +190,7 @@ export async function runSingleTurn(
 
   return {
     reply: output.reply,
-    phase: output.phase,
+    phase,
     collected: session.collected,
   };
 }
