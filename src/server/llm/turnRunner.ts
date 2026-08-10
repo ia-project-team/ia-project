@@ -3,7 +3,7 @@
 // 모델 phase는 후보일 뿐이며, 서버가 누적 수집 상태를 기준으로 최종 보정한다.
 import "server-only";
 
-import { CHECKLIST } from "@/core/checklist";
+import { CHECKLIST, getFallbackQuestion } from "@/core/checklist";
 import { retrieve } from "@/server/rag/retriever";
 import {
   selectRagQuestion,
@@ -53,6 +53,7 @@ function resolveServerPhase(
 ): TurnOutput["phase"] {
   const missingRequired = missingRequiredKeys(collected);
   if (missingRequired.length > 0) return "collecting";
+  if (requestedPhase === "done") return "ready_to_advise";
 
   return requestedPhase;
 }
@@ -143,6 +144,13 @@ export async function runSingleTurn(
   // 모든 모델 호출이 성공한 뒤에만 세션 상태를 한꺼번에 반영한다.
   session.collected = mergeCollected(session.collected, output.collected);
   const phase = resolveServerPhase(output.phase, session.collected);
+  const missingRequired = missingRequiredKeys(session.collected);
+  const reply =
+    phase === "collecting" &&
+    output.phase !== "collecting" &&
+    missingRequired.length > 0
+      ? getFallbackQuestion(missingRequired[0])
+      : output.reply;
 
   // 모델이 답변으로 인정한 경우에만 사실로 저장한다.
   // 답을 얻지 못한 질문은 저장하지 않되, 같은 질문을 반복하지 않도록 따로 기록한다.
@@ -177,7 +185,7 @@ export async function runSingleTurn(
         }
       : null;
   history.push({ role: "user", content: userMessage });
-  history.push({ role: "assistant", content: output.reply });
+  history.push({ role: "assistant", content: reply });
 
   console.log("[session] state", {
     collectedConfirmed: session.collected.filter(
@@ -189,7 +197,7 @@ export async function runSingleTurn(
   });
 
   return {
-    reply: output.reply,
+    reply,
     phase,
     collected: session.collected,
   };

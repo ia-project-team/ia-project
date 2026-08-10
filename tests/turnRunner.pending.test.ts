@@ -91,7 +91,38 @@ describe("runSingleTurn — 대기 중 특이 질문 확정", () => {
     expect(result.phase).toBe("collecting");
   });
 
-  it("필수 항목이 모두 충족된 경우에만 done을 허용한다", async () => {
+  it("collecting으로 보정할 때 종료 문구를 누락 필수 항목 질문으로 교체한다", async () => {
+    runTurnMock.mockResolvedValue({
+      ...modelOutput(null),
+      reply: "감사합니다. 필요한 정보가 모두 정리되었습니다.",
+      phase: "done",
+      collected: [
+        { key: "deposit_amount", status: "confirmed", value: "2억원" },
+      ],
+    });
+    const s = session();
+
+    const result = await runSingleTurn("보증금은 2억원입니다.", s, "m");
+
+    expect(result.reply).toBe("임대차 계약서는 가지고 계신가요?");
+    expect(result.reply).not.toContain("감사합니다");
+    expect(result.reply.endsWith("?")).toBe(true);
+    expect(s.history.at(-1)?.content).toBe(result.reply);
+  });
+
+  it("필수 항목이 모두 충족되면 모델의 ready_to_advise를 유지한다", async () => {
+    runTurnMock.mockResolvedValue({
+      ...modelOutput(null),
+      phase: "ready_to_advise",
+      collected: completedRequiredItems(),
+    });
+
+    const result = await runSingleTurn("필수 내용을 모두 말씀드렸습니다.", session(), "m");
+
+    expect(result.phase).toBe("ready_to_advise");
+  });
+
+  it("필수 항목이 모두 충족돼도 모델의 done을 ready_to_advise로 강등한다", async () => {
     runTurnMock.mockResolvedValue({
       ...modelOutput(null),
       phase: "done",
@@ -100,7 +131,7 @@ describe("runSingleTurn — 대기 중 특이 질문 확정", () => {
 
     const result = await runSingleTurn("필수 내용을 모두 말씀드렸습니다.", session(), "m");
 
-    expect(result.phase).toBe("done");
+    expect(result.phase).toBe("ready_to_advise");
   });
 
   it("collected를 누적하고 confirmed 상태를 unknown으로 되돌리지 않는다", async () => {
