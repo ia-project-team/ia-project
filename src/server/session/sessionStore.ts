@@ -2,11 +2,19 @@
 // 서버리스 환경 배포 시 Redis·Supabase 등으로 교체 예정.
 import "server-only";
 
-import type { ConversationMessage } from "@/core/schemas/turn";
+import type { PendingRagQuestion, StoredRagFact } from "@/core/rag/types";
+import type { CollectedItem, ConversationMessage } from "@/core/schemas/turn";
 
 export interface Session {
   sessionId: string;
   history: ConversationMessage[];
+  /** 지금까지 누적된 체크리스트 수집 결과. */
+  collected: CollectedItem[];
+  /** 질문하고 답변까지 확인된 특이 사실. */
+  ragFacts: StoredRagFact[];
+  /** 물었지만 사용자가 답하지 않은 특이 질문의 targetFact. 같은 질문 반복을 막는다. */
+  unansweredRagFacts: string[];
+  pendingRagQuestion: PendingRagQuestion | null;
 }
 
 class SessionStore {
@@ -15,7 +23,14 @@ class SessionStore {
   getOrCreate(sessionId: string): Session {
     let session = this.sessions.get(sessionId);
     if (!session) {
-      session = { sessionId, history: [] };
+      session = {
+        sessionId,
+        history: [],
+        collected: [],
+        ragFacts: [],
+        unansweredRagFacts: [],
+        pendingRagQuestion: null,
+      };
       this.sessions.set(sessionId, session);
     }
     return session;

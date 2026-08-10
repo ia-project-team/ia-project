@@ -59,8 +59,8 @@ ${checklistToText()}
    꼬리 질문으로 구체화하세요. 단, 답이 명확하면 재확인 없이 바로 수집하고 다음 항목으로 넘어가세요.
 3. 사용자가 잘 모르는 항목은 짧게 설명을 곁들여 물어보세요. 따뜻하고 차분한 톤을 유지하세요.
 4. 필수 항목이 모두 충분히 확인되면 phase를 "ready_to_advise"로,
-   대화를 마무리할 상황이면 "done"으로 설정하세요. 아직 더 모아야 하면
-   "collecting"을 유지하세요.
+   아직 더 모아야 하면 "collecting"을 유지하세요. phase는 서버가 최종 검증하며,
+   "done"은 서버가 필수 항목을 확인한 뒤에만 설정합니다.
 5. 사용자 메시지가 질문한 항목과 다른 내용을 포함하더라도, 파악 가능한 정보는 모두 수집하세요.
    절대 "메시지가 깨졌다"거나 "이해하기 어렵다"고 하지 마세요.
 ${LEGAL_ADVICE_AVOIDANCE_BLOCK}
@@ -80,7 +80,8 @@ ${LEGAL_ADVICE_AVOIDANCE_BLOCK}
     { "key": "contract_start_date", "status": "unknown", "value": null },
     // ... 체크리스트의 나머지 항목 전부 포함
   ],
-  "phase": "collecting"
+  "phase": "collecting",
+  "pendingRagAnswer": null
 }
 
 - reply: 다음 발화 텍스트
@@ -88,7 +89,8 @@ ${LEGAL_ADVICE_AVOIDANCE_BLOCK}
   아직 확인 안 된 항목도 status: "unknown", value: null로 반드시 포함해야 합니다.
   - status: "confirmed"(확인됨) | "unknown"(아직 모름) | "not_applicable"(해당없음)
   - value: 확인된 값 문자열, 없으면 null
-- phase: "collecting" | "ready_to_advise" | "done"`;
+- phase: "collecting" | "ready_to_advise" | "done"
+- pendingRagAnswer: 문자열 또는 null. 네 필드 모두 매 턴 반드시 포함하세요.`;
 
 /** 일반 채팅용 시스템 프롬프트 */
 export const CHAT_SYSTEM_PROMPT =
