@@ -20,7 +20,20 @@ export interface RetrievedCase {
   answer: string | null;
   answerStatus: RagAnswerStatus;
   decisionReason: string | null;
-  score: number; // 코사인 유사도 (1에 가까울수록 관련)
+  score: number; // 최종 검색 관련도 (검색 백엔드에 따라 코사인 또는 하이브리드 상대 점수)
+  recordType?: string;
+  applicabilityGate?: string[];
+  userSignals?: string[];
+  targetFact?: string;
+  whyMaterial?: string;
+  statutes?: string[];
+  sourceTitle?: string;
+  sourceUrl?: string;
+  vectorScore?: number;
+  lexicalScore?: number;
+  vectorRank?: number;
+  lexicalRank?: number;
+  matchedGates?: string[];
 }
 
 /** 실제로 사용자에게 물어본 RAG 특이 질문에 대한 확인 완료 사실. */

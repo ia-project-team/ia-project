@@ -4,6 +4,10 @@
 import "server-only";
 
 import { CHECKLIST, getFallbackQuestion } from "@/core/checklist";
+import {
+  buildRagSearchQuery,
+  selectRagCandidates,
+} from "@/core/rag/retrievalPolicy";
 import { retrieve } from "@/server/rag/retriever";
 import {
   selectRagQuestion,
@@ -66,6 +70,7 @@ export async function runSingleTurn(
   const history = session.history;
   const turnNumber =
     history.filter((message) => message.role === "user").length + 1;
+
   // 답변 여부는 모델이 판정하므로 이 시점에는 미해소 상태로 둔다.
   const pendingRagQuestion = session.pendingRagQuestion;
   const messages = [
@@ -74,7 +79,6 @@ export async function runSingleTurn(
   ];
 
   // 상담자 질문은 검색 주제를 일반 체크리스트 쪽으로 희석하므로 사용자 진술만 사용한다.
-  // 최신 진술을 한 번 더 넣어 이번 턴에 새로 등장한 특이 사실의 비중을 높인다.
   const recentUserFacts = history
     .filter((message) => message.role === "user")
     .slice(-5)
@@ -85,22 +89,20 @@ export async function runSingleTurn(
   // 이번 턴 답변은 userMessage에 이미 들어 있으므로 확정된 사실만 넣는다.
   const savedRagFacts = session.ragFacts
     .map((fact) => `${fact.targetFact}: ${fact.answer}`);
-  const searchQuery = [
-    userMessage,
-    userMessage,
-    ...recentUserFacts,
-    ...savedCollectedFacts,
-    ...savedRagFacts,
-  ].join("\n");
+  const searchQuery = buildRagSearchQuery({
+    currentMessage: userMessage,
+    recentUserMessages: recentUserFacts,
+    collectedFacts: savedCollectedFacts,
+    ragFacts: savedRagFacts,
+  });
 
   let ragCases: RetrievedCase[] = [];
   let ragQuestion: RagQuestionDecision | null = null;
 
   try {
     const cases = await retrieve(searchQuery, 16);
-
-    // 관련성이 낮은 사례는 LLM에 전달하지 않는다. 실제 평가셋으로 조정할 초기값이다.
-    ragCases = cases.filter((caseItem) => caseItem.score >= 0.35).slice(0, 12);
+    const selection = selectRagCandidates(cases);
+    ragCases = selection.cases;
 
     console.log(
       "[rag] matches",
@@ -112,20 +114,17 @@ export async function runSingleTurn(
       })),
     );
 
-    // 첫 일반 발화는 사건 맥락이 부족하고 체크리스트와 중복된 질문을 만들기 쉬우므로
-    // 기본 인테이크로 시작한다. 두 번째 사용자 발화부터 사례 기반 질문을 검토한다.
-    const hasPriorUserMessage = history.some((message) => message.role === "user");
-    ragQuestion = hasPriorUserMessage
-      ? await selectRagQuestion({
-          model,
-          history: messages,
-          cases: ragCases,
-          checklist: session.collected,
-          ragFacts: session.ragFacts,
-          pendingQuestion: pendingRagQuestion,
-          unansweredFacts: session.unansweredRagFacts,
-        })
-      : null;
+    // 첫 사용자 발화에도 사건의 핵심 단서가 들어올 수 있으므로 첫 턴부터
+    // 검색 사례를 이용해 추가로 확인할 인테이크 질문이 있는지 검토한다.
+    ragQuestion = await selectRagQuestion({
+      model,
+      history: messages,
+      cases: ragCases,
+      checklist: session.collected,
+      ragFacts: session.ragFacts,
+      pendingQuestion: pendingRagQuestion,
+      unansweredFacts: session.unansweredRagFacts,
+    });
     console.log("[rag] question", ragQuestion);
   } catch (error) {
     // RAG 장애가 전체 상담을 막지 않도록 일단 RAG 없이 계속한다.

@@ -30,7 +30,8 @@ curl http://127.0.0.1:10532/v1/models
 ```
 
 지원 모델 목록을 확인한 뒤, 목록에 있는 모델만 사용해야 합니다.
-(`gpt-4o`, `gpt-5` 등은 지원되지 않을 수 있습니다.)
+이 프로젝트는 생성 모델을 `gpt-5.6-luna`로 고정하므로, 프록시가 해당 모델을
+지원하지 않으면 공식 OpenAI API를 사용해야 합니다.
 
 ## 4. .env.local 설정
 
@@ -43,7 +44,6 @@ cp .env.local.example .env.local
 ```env
 OPENAI_API_KEY=dummy
 OPENAI_BASE_URL=http://127.0.0.1:10532/v1
-MULTITURN_MODEL=gpt-5.5
 ```
 
 이후 `npm run dev`로 개발 서버를 실행하면 openai-oauth를 통해 OpenAI가 호출됩니다.

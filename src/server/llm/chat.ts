@@ -3,7 +3,11 @@ import "server-only";
 
 import { convertToModelMessages, streamText, type UIMessage } from "ai";
 
-import { getOpenAI, DEFAULT_CHAT_MODEL } from "./provider";
+import {
+  getOpenAI,
+  DEFAULT_CHAT_MODEL,
+  LUNA_PROVIDER_OPTIONS,
+} from "./provider";
 import { CHAT_SYSTEM_PROMPT } from "@/core/checklist/prompts";
 
 export interface StreamChatInput {
@@ -14,9 +18,10 @@ export async function streamChat({ messages }: StreamChatInput): Promise<Respons
   const openai = getOpenAI();
 
   const result = streamText({
-    model: openai(DEFAULT_CHAT_MODEL),
+    model: openai.responses(DEFAULT_CHAT_MODEL),
     system: CHAT_SYSTEM_PROMPT,
     messages: await convertToModelMessages(messages),
+    providerOptions: LUNA_PROVIDER_OPTIONS,
   });
 
   return result.toUIMessageStreamResponse();
