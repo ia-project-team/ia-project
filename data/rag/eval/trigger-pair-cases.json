@@ -1,0 +1,138 @@
+{
+  "schemaVersion": "1.0",
+  "description": "22개 질문 트리거별 조건 충족 사례와 핵심 조건 하나가 빠진 오탐 방지 사례",
+  "pairs": [
+    {
+      "triggerId": "hug-casebook-trigger-01-loan-delinquency-guarantor",
+      "positiveInput": "집주인이 연락되지 않고 보증금을 돌려받지 못한 채 전세대출 만기가 다음 달로 다가오고 있어요.",
+      "negativeInput": "전세대출 만기가 다음 달이지만 보증금은 이미 전액 돌려받았고 집주인과도 연락이 됩니다.",
+      "negativeMissingGates": ["deposit_unreturned"]
+    },
+    {
+      "triggerId": "hug-casebook-trigger-02-interest-free-loan-eligibility",
+      "positiveInput": "보증금을 못 받아 새 집 보증금을 마련하기 어렵고 당장 이사할 자금이 없어요.",
+      "negativeInput": "다음 달 이사 예정이고 새 집 보증금과 이사 비용은 충분히 마련해 두었습니다.",
+      "negativeMissingGates": ["needs_relocation_funding"]
+    },
+    {
+      "triggerId": "hug-casebook-trigger-03-relocation-reason",
+      "positiveInput": "회사 발령으로 직장이 멀어져서 보증금 받기 전에 이사해야 합니다.",
+      "negativeInput": "보증금은 이미 돌려받았고 회사 발령에 맞춰 다음 달에 이사할 예정입니다.",
+      "negativeMissingGates": ["must_move_before_refund"]
+    },
+    {
+      "triggerId": "hug-casebook-trigger-04-property-instead-of-deposit-value",
+      "positiveInput": "집주인이 보증금 대신 집을 넘기겠다고 해서 피해주택을 인수할지 고민하고 있습니다.",
+      "negativeInput": "집주인은 현금으로 보증금을 반환하겠다고 했고 소유권 이전에 관한 이야기는 없었습니다.",
+      "negativeMissingGates": ["ownership_transfer_proposed"]
+    },
+    {
+      "triggerId": "hug-casebook-trigger-05-litigation-support-status",
+      "positiveInput": "보증금 반환 소송을 고민 중인데 변호사 비용이 부담되고 법률구조 지원을 받고 싶어요.",
+      "negativeInput": "아직 집주인과 협의로 해결하고 싶고 재판 절차는 생각하지 않고 있습니다.",
+      "negativeMissingGates": ["considering_litigation"]
+    },
+    {
+      "triggerId": "hug-casebook-trigger-06-auction-enforcement-title",
+      "positiveInput": "보증금 반환을 위해 제가 직접 경매를 신청하고 강제집행을 시작하고 싶습니다.",
+      "negativeInput": "집주인에게 문자로 보증금 반환을 요청하는 중이고 법원을 통한 집행 절차는 생각하지 않고 있습니다.",
+      "negativeMissingGates": ["considering_forced_auction"]
+    },
+    {
+      "triggerId": "hug-casebook-trigger-07-auction-distribution-demand",
+      "positiveInput": "법원에서 경매개시결정문과 배당요구 안내를 받았습니다.",
+      "negativeInput": "등기부만 확인했을 뿐 법원에서 집의 매각이나 배당에 관한 통지를 받은 적은 없습니다.",
+      "negativeMissingGates": ["auction_or_public_sale_started"]
+    },
+    {
+      "triggerId": "hug-casebook-trigger-08-urgent-auction-date",
+      "positiveInput": "전세사기 피해자 신청 중이라 아직 결정을 못 받았는데 매각기일이 잡혔습니다.",
+      "negativeInput": "전세사기 피해자 신청 중이지만 법원이나 매각 절차에 관한 통지는 아직 없습니다.",
+      "negativeMissingGates": ["auction_or_public_sale_started"]
+    },
+    {
+      "triggerId": "hug-casebook-trigger-09-priority-purchase-assignment",
+      "positiveInput": "전세사기 피해자로 우선매수권이 있고 그 권리를 LH에 넘기고 싶습니다.",
+      "negativeInput": "LH의 임대주택이나 다른 주거 지원을 알아보는 중입니다.",
+      "negativeMissingGates": ["has_priority_purchase_right"]
+    },
+    {
+      "triggerId": "hug-casebook-trigger-10-multifamily-priority-purchase-coordination",
+      "positiveInput": "다가구주택이고 피해 임차인이 여러 명이며 다른 세입자도 우선매수권이 있습니다.",
+      "negativeInput": "다가구주택이지만 피해를 본 임차인은 저 한 명뿐입니다.",
+      "negativeMissingGates": ["multiple_affected_tenants"]
+    },
+    {
+      "triggerId": "hug-casebook-trigger-11-lh-purchase-rejection-reason",
+      "positiveInput": "우선매수권을 양도하려 했지만 LH가 피해주택을 매입하지 않는다고 안내했습니다.",
+      "negativeInput": "LH에 피해주택 관련 상담 예약만 했고 매입 가능 여부는 아직 안내받지 못했습니다.",
+      "negativeMissingGates": ["priority_purchase_assignment_failed"]
+    },
+    {
+      "triggerId": "hug-casebook-trigger-12-trustee-consent",
+      "positiveInput": "등기명의가 신탁회사이고 계약할 때 수탁자 동의 여부를 확인하지 못했습니다.",
+      "negativeInput": "등기부상 소유자는 계약서에 적힌 임대인 개인과 동일합니다.",
+      "negativeMissingGates": ["trust_property"]
+    },
+    {
+      "triggerId": "hug-casebook-trigger-13-senior-tenant-short-distribution",
+      "positiveInput": "경매가 이미 끝났고 저는 선순위인데도 보증금 전액을 배당받지 못했습니다.",
+      "negativeInput": "경매가 이미 끝났고 저는 선순위 임차인으로 보증금 전액을 배당받았습니다.",
+      "negativeMissingGates": ["distribution_shortfall"]
+    },
+    {
+      "triggerId": "hug-casebook-trigger-14-junior-tenant-priority-basis",
+      "positiveInput": "경매가 이미 끝났고 후순위라 배당을 거의 못 받아 미회수 보증금이 남았습니다.",
+      "negativeInput": "경매가 이미 끝났고 후순위 임차인이지만 보증금을 전액 배당받았습니다.",
+      "negativeMissingGates": ["distribution_shortfall"]
+    },
+    {
+      "triggerId": "hug-casebook-trigger-15-auction-eviction-demand",
+      "positiveInput": "경매가 이미 끝난 뒤 낙찰자가 나가라고 하며 퇴거를 요구했습니다.",
+      "negativeInput": "경매가 이미 끝났지만 새 소유자는 당분간 계속 거주해도 된다고 했습니다.",
+      "negativeMissingGates": ["eviction_requested"]
+    },
+    {
+      "triggerId": "hug-casebook-trigger-16-self-auction-ownership-date",
+      "positiveInput": "전세대출이 있는 상태에서 피해주택을 직접 낙찰받았습니다.",
+      "negativeInput": "피해주택을 직접 낙찰받았고 금융기관에서 빌린 돈 없이 제 자금만 사용했습니다.",
+      "negativeMissingGates": ["has_jeonse_loan"]
+    },
+    {
+      "triggerId": "hug-casebook-trigger-17-existing-home-ownership",
+      "positiveInput": "피해주택을 인수하려고 하는데 이미 주택이나 분양권이 제 명의로 있습니다.",
+      "negativeInput": "피해주택을 인수할지 고민 중이고 현재 무주택자입니다.",
+      "negativeMissingGates": ["owns_other_home"]
+    },
+    {
+      "triggerId": "hug-casebook-trigger-18-credit-damage-start",
+      "positiveInput": "전세대출 연체가 시작되어 신용점수가 떨어졌습니다.",
+      "negativeInput": "전세대출은 매달 정상 납부 중이고 신용점수 변동도 없습니다.",
+      "negativeMissingGates": ["jeonse_loan_delinquent"]
+    },
+    {
+      "triggerId": "hug-casebook-trigger-19-landlord-death-heirs",
+      "positiveInput": "임대인이 사망했고 상속인이 누군지 모르겠습니다.",
+      "negativeInput": "임대인은 생존해 있지만 연락이 되지 않습니다.",
+      "negativeMissingGates": ["landlord_deceased"]
+    },
+    {
+      "triggerId": "hug-casebook-trigger-20-landlord-insolvency-claim-deadline",
+      "positiveInput": "임대인이 회생절차에 들어갔다는 법원 통지와 채권 신고 안내를 받았습니다.",
+      "negativeInput": "임대인이 자금 사정이 어렵다고 하지만 법원 절차가 시작됐다는 통지는 없습니다.",
+      "negativeMissingGates": ["landlord_rehabilitation_or_bankruptcy"]
+    },
+    {
+      "triggerId": "hug-casebook-trigger-21-criminal-complaint-evidence",
+      "positiveInput": "계약 당시 거짓 설명을 한 임대인을 사기로 고소하려고 합니다.",
+      "negativeInput": "임대인에게 보증금 반환을 요청하고 있지만 경찰 신고는 생각하지 않고 있습니다.",
+      "negativeMissingGates": ["considering_criminal_complaint"]
+    },
+    {
+      "triggerId": "hug-casebook-trigger-22-multifamily-prior-deposit-disclosure",
+      "positiveInput": "다가구주택 계약 당시 집주인이 선순위 보증금을 속였고 확인설명서 내용과 실제가 다릅니다.",
+      "negativeInput": "다가구주택이고 계약 당시 선순위 임차보증금 총액을 서면으로 정확히 안내받았습니다.",
+      "negativeMissingGates": ["suspected_false_prior_deposit_disclosure"]
+    }
+  ]
+}

@@ -8,11 +8,15 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
-    "rag:inspect": "node --import tsx scripts/sync-rag-corpus.ts --dry-run",
-    "rag:sync": "node --env-file=.env.local --import tsx scripts/sync-rag-corpus.ts"
+    "rag:inspect": "node --import tsx scripts/sync-rag-jsonl.ts",
+    "rag:sync": "node --env-file=.env.local --import tsx scripts/sync-rag-jsonl.ts --apply",
+    "rag:inspect:triggers": "node --import tsx scripts/sync-rag-jsonl.ts --only-triggers",
+    "rag:sync:triggers": "node --env-file=.env.local --import tsx scripts/sync-rag-jsonl.ts --only-triggers --apply",
+    "rag:inspect:legacy": "node --import tsx scripts/sync-rag-corpus.ts --dry-run",
+    "rag:sync:legacy": "node --env-file=.env.local --import tsx scripts/sync-rag-corpus.ts"
   },
   "dependencies": {
-    "@ai-sdk/openai": "^3.0.67",
+    "@ai-sdk/openai": "^3.0.99",
     "@ai-sdk/react": "^3.0.195",
     "@supabase/supabase-js": "^2.110.0",
     "ai": "^6.0.193",
