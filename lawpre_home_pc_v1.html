@@ -1,0 +1,175 @@
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,400..700,0..100&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap');
+
+.mkw { padding: 1rem 0; }
+.mk { font-family: 'Noto Sans KR', sans-serif; color: #1B2422; background: #FFFFFF; border-radius: 12px; overflow: hidden; border: 0.5px solid rgba(0,0,0,0.1); line-height: 1.5; }
+.mk *, .mk *::before, .mk *::after { box-sizing: border-box; }
+
+.hdr { border-bottom: 0.5px solid #E8ECEA; padding: 16px 32px; background: #FFFFFF; }
+.hdrin { display: flex; align-items: center; justify-content: space-between; }
+.nv { display: flex; align-items: center; gap: 24px; }
+.nv a { font-size: 13px; color: #1B2422; text-decoration: none; font-weight: 400; }
+.btnp { background: #1F5F5D; color: #FFFFFF; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 500; border: none; cursor: pointer; }
+
+.hero { padding: 64px 32px 56px; background: #FFFFFF; }
+.hin { display: grid; grid-template-columns: 1.15fr 1fr; gap: 40px; align-items: center; }
+.eyb { display: inline-block; font-size: 11px; color: #1F5F5D; background: #D2F1E8; padding: 5px 10px; border-radius: 4px; font-weight: 500; letter-spacing: 0.02em; margin-bottom: 20px; }
+.hero h1 { font-size: 38px; font-weight: 600; line-height: 1.25; margin: 0 0 20px; color: #1B2422; letter-spacing: -0.025em; }
+.hdesc { font-size: 14px; color: #4a5551; line-height: 1.7; margin: 0 0 28px; }
+.cta { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+.btnl { background: #1F5F5D; color: #FFFFFF; padding: 13px 22px; border-radius: 8px; font-size: 14px; font-weight: 500; border: none; cursor: pointer; }
+.btnt { background: transparent; color: #1B2422; padding: 13px 8px; font-size: 14px; font-weight: 500; border: none; cursor: pointer; }
+.trs { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #7a7a75; }
+.trs .ti { color: #4DCDD2; font-weight: 700; }
+
+.cprv { background: #F5F9F8; border-radius: 12px; padding: 20px; border: 0.5px solid #E8ECEA; box-shadow: 0 4px 24px -8px rgba(31,95,93,0.12); }
+.chh { display: flex; align-items: center; gap: 8px; padding-bottom: 14px; border-bottom: 0.5px solid #E8ECEA; margin-bottom: 16px; }
+.cav { width: 22px; height: 22px; background: #4DCDD2; border-radius: 6px; color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; }
+.chn { font-family: 'Fraunces', serif; font-weight: 500; font-size: 15px; color: #1F5F5D; font-variation-settings: 'opsz' 144, 'SOFT' 100; }
+.cmsg { margin-bottom: 12px; font-size: 13px; line-height: 1.6; }
+.cmsg.ai { padding-left: 32px; position: relative; color: #1B2422; }
+.cmsg.ai::before { content: '✓'; position: absolute; left: 0; top: 0; width: 22px; height: 22px; background: #4DCDD2; color: white; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; }
+.cmsg.usr { display: flex; justify-content: flex-end; }
+.cmsg.usr span { background: #D2F1E8; padding: 8px 14px; border-radius: 12px; color: #1F5F5D; max-width: 70%; }
+.prg { margin-top: 16px; padding-top: 14px; border-top: 0.5px solid #E8ECEA; display: flex; align-items: center; gap: 12px; }
+.prgb { flex: 1; height: 4px; background: #E8ECEA; border-radius: 2px; overflow: hidden; }
+.prgbf { height: 100%; background: #4DCDD2; border-radius: 2px; }
+.prgt { font-size: 11px; color: #7a7a75; font-weight: 500; white-space: nowrap; }
+
+.ftrs { padding: 72px 32px; background: #F5F9F8; }
+.sth { font-size: 26px; font-weight: 600; color: #1B2422; text-align: center; margin: 0 0 8px; letter-spacing: -0.02em; }
+.sts { font-size: 13px; color: #7a7a75; text-align: center; margin: 0 0 44px; }
+.fg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.fc { background: #FFFFFF; padding: 28px 22px; border-radius: 12px; border: 0.5px solid #E8ECEA; }
+.fi { width: 38px; height: 38px; background: #D2F1E8; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 18px; color: #1F5F5D; }
+.fc h3 { font-size: 16px; font-weight: 600; color: #1B2422; margin: 0 0 8px; }
+.fc p { font-size: 13px; color: #4a5551; line-height: 1.6; margin: 0; }
+
+.prc { padding: 72px 32px; background: #FFFFFF; }
+.stp { display: grid; grid-template-columns: 1fr 32px 1fr 32px 1fr; gap: 8px; align-items: center; max-width: 780px; margin: 0 auto; }
+.st { text-align: center; padding: 20px 14px; }
+.stn { font-family: 'Fraunces', serif; font-size: 30px; font-weight: 500; color: #4DCDD2; margin-bottom: 10px; font-variation-settings: 'opsz' 144, 'SOFT' 100; line-height: 1; }
+.st h4 { font-size: 15px; font-weight: 600; color: #1B2422; margin: 0 0 6px; }
+.st p { font-size: 12px; color: #7a7a75; line-height: 1.5; margin: 0; }
+.sar { color: #B4C4C2; font-size: 16px; text-align: center; }
+
+.ctab { background: #1F5F5D; color: #FFFFFF; padding: 64px 32px; text-align: center; }
+.ctab h2 { font-size: 28px; font-weight: 600; margin: 0 0 8px; letter-spacing: -0.02em; }
+.ctab p { font-size: 13px; color: rgba(255,255,255,0.7); margin: 0 0 28px; }
+.btnxl { background: #4DCDD2; color: #1F5F5D; padding: 15px 30px; border-radius: 8px; font-size: 14px; font-weight: 600; border: none; cursor: pointer; }
+
+.ftr { background: #FFFFFF; padding: 24px 32px; border-top: 0.5px solid #E8ECEA; }
+.ftrin { display: flex; align-items: center; justify-content: space-between; font-size: 11px; color: #7a7a75; }
+.fll { display: flex; gap: 18px; }
+.fll a { color: #7a7a75; text-decoration: none; }
+</style>
+
+<div class="mkw"><div class="mk">
+
+  <header class="hdr">
+    <div class="hdrin">
+      <svg viewBox="0 0 230 64" width="118" height="33" xmlns="http://www.w3.org/2000/svg">
+        <path d="M 6 26 L 22 40 L 50 6" stroke="#1F5F5D" stroke-width="6.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="56" y="42" style="font-family: 'Fraunces', serif; font-weight: 500; font-size: 36px; font-variation-settings: 'opsz' 144, 'SOFT' 100;" fill="#1F5F5D">LawPre</text>
+        <path d="M 22 40 Q 22 58 42 58 L 208 58" stroke="#1F5F5D" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.6"/>
+      </svg>
+      <nav class="nv">
+        <a href="#">서비스 소개</a>
+        <a href="#">이용 방법</a>
+        <a href="#">도움말</a>
+        <button class="btnp">시작하기</button>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hin">
+      <div>
+        <span class="eyb">전세 보증금 반환 분쟁 사전 정리</span>
+        <h1>변호사 상담 전,<br/>사실관계 정리부터.</h1>
+        <p class="hdesc">AI가 하나씩 물어보면 답만 하세요.<br/>필요한 자료가 무엇인지, 무엇이 빠졌는지<br/>자동으로 정리해드립니다.</p>
+        <div class="cta">
+          <button class="btnl">무료로 시작하기 →</button>
+          <button class="btnt">샘플 리포트 보기</button>
+        </div>
+        <div class="trs">
+          <span class="ti">✓</span>
+          <span>상담 준비 시간 평균 30분 → 5분</span>
+        </div>
+      </div>
+      <div>
+        <div class="cprv">
+          <div class="chh">
+            <div class="cav">✓</div>
+            <div class="chn">LawPre</div>
+          </div>
+          <div class="cmsg ai">안녕하세요. 시작 전에 몇 가지 확인부터 드릴게요.<br/>임대차 계약서 원본을 갖고 계신가요?</div>
+          <div class="cmsg usr"><span>네, PDF로 있어요</span></div>
+          <div class="cmsg ai">좋습니다. 계약 종료일이 언제였는지 알려주세요.</div>
+          <div class="prg">
+            <div class="prgb"><div class="prgbf" style="width: 35%"></div></div>
+            <span class="prgt">6 / 17 수집</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="ftrs">
+    <h2 class="sth">왜 LawPre인가요</h2>
+    <p class="sts">상담 준비의 방식을 바꿉니다</p>
+    <div class="fg">
+      <div class="fc">
+        <div class="fi"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+        <h3>답만 하시면 돼요</h3>
+        <p>AI가 상황에 맞춰 하나씩 물어봅니다. 어렵게 정리할 필요 없어요.</p>
+      </div>
+      <div class="fc">
+        <div class="fi"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+        <h3>빠진 자료를 짚어드려요</h3>
+        <p>계약서, 이체 내역, 카톡 기록. 어떤 자료가 필요한지 알려드립니다.</p>
+      </div>
+      <div class="fc">
+        <div class="fi"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/><line x1="9" y1="11" x2="15" y2="11"/></svg></div>
+        <h3>상담용 리포트로 정리해요</h3>
+        <p>변호사가 바로 이해할 수 있는 형식으로 정리해드립니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="prc">
+    <h2 class="sth">이렇게 진행됩니다</h2>
+    <p class="sts">시작에서 리포트까지, 대화 하나로</p>
+    <div class="stp">
+      <div class="st"><div class="stn">01</div><h4>시작</h4><p>지금 어떤 상황인지<br/>짧게 알려주세요</p></div>
+      <div class="sar">→</div>
+      <div class="st"><div class="stn">02</div><h4>AI와 대화</h4><p>물어보는 대로 답만<br/>하시면 자동 정리됩니다</p></div>
+      <div class="sar">→</div>
+      <div class="st"><div class="stn">03</div><h4>리포트 완성</h4><p>상담에 바로 쓸 수 있는<br/>정리본을 받아보세요</p></div>
+    </div>
+  </section>
+
+  <section class="ctab">
+    <h2>5분이면 충분합니다</h2>
+    <p>지금 무료로 시작해서 상담을 준비하세요</p>
+    <button class="btnxl">시작하기 →</button>
+  </section>
+
+  <footer class="ftr">
+    <div class="ftrin">
+      <svg viewBox="0 0 230 64" width="72" height="20" xmlns="http://www.w3.org/2000/svg">
+        <path d="M 6 26 L 22 40 L 50 6" stroke="#7a7a75" stroke-width="6.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="56" y="42" style="font-family: 'Fraunces', serif; font-weight: 500; font-size: 36px; font-variation-settings: 'opsz' 144, 'SOFT' 100;" fill="#7a7a75">LawPre</text>
+      </svg>
+      <div class="fll">
+        <a href="#">서비스 소개</a>
+        <a href="#">이용약관</a>
+        <a href="#">개인정보처리방침</a>
+        <a href="#">문의</a>
+      </div>
+      <div>© 2025 LawPre</div>
+    </div>
+  </footer>
+
+</div></div>
