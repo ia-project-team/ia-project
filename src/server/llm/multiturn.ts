@@ -1,10 +1,10 @@
 // 멀티턴 한 턴 처리 — Vercel AI SDK 사용.
 //
-// OPENAI_BASE_URL 설정 시(프록시): generateText + 수동 JSON 파싱
-// 미설정(공식 OpenAI): generateObject (JSON 스키마 강제)
+// OPENAI_BASE_URL 설정 시(기존 팀 프록시): generateText 구조화 출력 + JSON 파싱 보완
+// 미설정(공식 OpenAI): Responses API + 구조화 출력
 import "server-only";
 
-import { generateObject, generateText } from "ai";
+import { generateText, Output } from "ai";
 
 import { MULTITURN_SYSTEM_PROMPT } from "@/core/checklist/prompts";
 import {
@@ -13,12 +13,16 @@ import {
   type ConversationMessage,
   type TurnOutput,
 } from "@/core/schemas/turn";
-import type { PendingRagQuestion, StoredRagFact } from "@/core/rag/types";
+import type {
+  PendingRagQuestion,
+  StoredRagFact,
+} from "@/core/rag/types";
+import type { RagQuestionDecision } from "@/server/rag/questionSelector";
 import {
-  normalizeForQuote,
-  type RagQuestionDecision,
-} from "@/server/rag/questionSelector";
-import { getOpenAI } from "./provider";
+  getOpenAI,
+  getOpenAIMaxRetries,
+  LUNA_PROVIDER_OPTIONS,
+} from "./provider";
 
 /**
  * 직전 턴의 특이 질문에 사용자가 답했는지 모델이 판정하게 한다.
@@ -50,7 +54,7 @@ function formatForcedRagQuestion(decision: RagQuestionDecision | null): string {
   if (!decision?.shouldAsk || !decision.question) return "";
 
   // 질문 문구 자체는 questionSelector의 검증을 통과한 것이므로 모델이 바꾸면 안 된다.
-  // 모델에는 앞에 붙일 공감 문장만 맡기고, 실제 반영 여부는 finalizeReply가 검증한다.
+  // 최종 응답도 서버가 이 원문으로 고정해 검색 사례의 법률 답변이 섞이지 않게 한다.
   return `
 
 # 이번 턴의 특이 사례 질문
@@ -59,14 +63,11 @@ function formatForcedRagQuestion(decision: RagQuestionDecision | null): string {
 - 확인할 사실: ${decision.targetFact}
 - 질문: ${decision.question}
 
-이번 reply는 다음 두 부분으로만 구성하세요.
-1) 사용자가 방금 말한 내용에 대한 짧은 공감·확인 한 문장 (여기서 질문하지 마세요)
-2) 위 질문을 한 글자도 바꾸지 말고 그대로 이어붙이기
-
+이번 reply에는 위 질문을 한 글자도 바꾸지 말고 그대로 넣으세요.
+사용자가 법률 질문을 했더라도 답변·해결책·절차 안내를 앞에 붙이지 마세요.
 질문 문구를 고치거나 다른 질문을 덧붙이면 안 됩니다.
 일반 체크리스트 질문은 이번 턴에 하지 마세요.
-분석 과정이나 법률적 결론은 말하지 마세요.
-collected는 현재 사용자 발화에서 확인된 체크리스트 사실을 평소처럼 모두 갱신하세요.`;
+collected에는 체크리스트의 최신 상태를 누락 없이 반영하세요.`;
 }
 
 function formatSavedSessionContext(
@@ -96,25 +97,9 @@ ${checklistText}
 ${ragFactText}`;
 }
 
-function countQuestionMarks(value: string): number {
-  return value.match(/[?？]/g)?.length ?? 0;
-}
-
-/**
- * 모델이 다듬은 reply를 그대로 써도 되는지 판단한다.
- * 검증된 질문을 글자 그대로 담고, 그 밖의 질문을 덧붙이지 않아야 한다.
- */
-function acceptsModelReply(reply: string, question: string): boolean {
-  const normalizedReply = normalizeForQuote(reply);
-  const normalizedQuestion = normalizeForQuote(question);
-  if (!normalizedReply.includes(normalizedQuestion)) return false;
-
-  return countQuestionMarks(normalizedReply) <= countQuestionMarks(normalizedQuestion);
-}
-
 /**
  * 특이 사례 질문이 있는 턴의 출력을 확정한다.
- * 모델 문장이 검증을 통과하면 그대로 쓰고, 실패하면 검증된 질문 원문으로 되돌린다.
+ * 검색 사례의 답변은 사용자에게 전달하지 않고, 검증된 질문 원문만 사용한다.
  */
 function finalizeReply(
   output: TurnOutput,
@@ -122,15 +107,43 @@ function finalizeReply(
 ): TurnOutput {
   if (!ragQuestion?.shouldAsk || !ragQuestion.question) return output;
 
-  if (acceptsModelReply(output.reply, ragQuestion.question)) {
-    return { ...output, phase: "collecting" };
-  }
+  return {
+    ...output,
+    reply: ragQuestion.question,
+    phase: "collecting",
+  };
+}
 
-  console.log("[rag] model reply rejected, falling back to raw question", {
-    targetFact: ragQuestion.targetFact,
-    modelReply: output.reply,
-  });
-  return { ...output, reply: ragQuestion.question, phase: "collecting" };
+function parseJsonText(text: string): unknown {
+  const trimmed = text.trim();
+  const withoutFence = trimmed
+    .replace(/^```(?:json)?\s*/iu, "")
+    .replace(/\s*```$/u, "")
+    .trim();
+  const firstBrace = withoutFence.indexOf("{");
+  const lastBrace = withoutFence.lastIndexOf("}");
+  const candidate = firstBrace >= 0 && lastBrace > firstBrace
+    ? withoutFence.slice(firstBrace, lastBrace + 1)
+    : withoutFence;
+  return JSON.parse(candidate) as unknown;
+}
+
+function normalizeUserFacingOutput(output: TurnOutput): TurnOutput {
+  let reply = output.reply.trim();
+  // 사용자용 답변 대신 내부 메모 문장으로 시작하는 예외 응답만 제거한다.
+  const metaLeadPatterns = [
+    /^사용자가\s*말했다[.!]?\s*/u,
+    /^사용자가\s*말한\s*내용을\s*정리해보니,[^.!?？]*[.!]\s*/u,
+    /^사용자가[^.!?？]*(?:말씀하셨습니다|설명했습니다|질문했습니다|요청했습니다|묻고\s*있습니다|물어보셨습니다|궁금해\s*보여요)[.!]\s*/u,
+    /^사용자가\s*물어보신[^.!?？]*답변해\s*드리겠습니다[.!]\s*/u,
+    /^(?:따라서\s*)?사용자에게[^.!?？]*(?:제공|설명|안내|수집)[^.!?？]*[.!]\s*/u,
+  ];
+  for (const pattern of metaLeadPatterns) reply = reply.replace(pattern, "");
+
+  return {
+    ...output,
+    reply: reply || output.reply,
+  };
 }
 
 /** 대화 기록 전체를 넘겨 한 턴을 처리한다. */
@@ -150,24 +163,37 @@ export async function runTurn(
     formatForcedRagQuestion(ragQuestion);
 
   if (process.env.OPENAI_BASE_URL) {
-    const { text } = await generateText({
+    const result = await generateText({
       model: openai.chat(model),
+      output: Output.object({
+        schema: TurnOutputSchema,
+        name: "turn_output",
+        description: "주택임대차 상담 한 턴의 구조화된 결과",
+      }),
       system:
         systemPrompt +
         "\n\n반드시 JSON 형식으로만 응답하세요. 다른 텍스트 없이 JSON만 출력하세요.",
       messages: history,
+      maxRetries: getOpenAIMaxRetries(),
     });
-
-    const json = JSON.parse(text.trim()) as unknown;
-    return finalizeReply(TurnOutputSchema.parse(json), ragQuestion);
+    const rawOutput = TurnOutputSchema.parse(
+      result.output ?? parseJsonText(result.text),
+    );
+    return finalizeReply(normalizeUserFacingOutput(rawOutput), ragQuestion);
   }
 
-  const { object } = await generateObject({
-    model: openai(model),
-    schema: TurnOutputSchema,
+  const result = await generateText({
+    model: openai.responses(model),
+    output: Output.object({
+      schema: TurnOutputSchema,
+      name: "turn_output",
+      description: "주택임대차 상담 한 턴의 구조화된 결과",
+    }),
     system: systemPrompt,
     messages: history,
+    maxRetries: getOpenAIMaxRetries(),
+    providerOptions: LUNA_PROVIDER_OPTIONS,
   });
-
-  return finalizeReply(object, ragQuestion);
+  const output = TurnOutputSchema.parse(result.output);
+  return finalizeReply(normalizeUserFacingOutput(output), ragQuestion);
 }

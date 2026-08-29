@@ -20,8 +20,27 @@ export function getOpenAI(): OpenAIProvider {
   return cached;
 }
 
-/** 일반 채팅용 기본 모델 */
-export const DEFAULT_CHAT_MODEL = "gpt-4o-mini";
+/** 테스트 등에서 AI SDK의 자동 재시도 횟수를 명시적으로 제한한다. */
+export function getOpenAIMaxRetries(): number | undefined {
+  const configured = process.env.OPENAI_MAX_RETRIES;
+  if (configured === undefined) return undefined;
 
-/** 멀티턴 상담용 모델 (환경변수로 덮어쓸 수 있음) */
-export const MULTITURN_MODEL = process.env.MULTITURN_MODEL ?? "gpt-4o";
+  const parsed = Number(configured);
+  if (!Number.isInteger(parsed) || parsed < 0) {
+    throw new Error("OPENAI_MAX_RETRIES must be a non-negative integer.");
+  }
+  return parsed;
+}
+
+/** 생성 작업은 검증한 GPT-5.6 Luna 한 모델로 통일한다. */
+export const LUNA_MODEL = "gpt-5.6-luna";
+export const DEFAULT_CHAT_MODEL = LUNA_MODEL;
+export const MULTITURN_MODEL = LUNA_MODEL;
+
+/** 공식 가이드의 기본값과 기존 Luna 평가 조건을 명시적으로 고정한다. */
+export const LUNA_PROVIDER_OPTIONS = {
+  openai: {
+    reasoningEffort: "medium",
+    textVerbosity: "low",
+  },
+} as const;

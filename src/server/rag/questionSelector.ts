@@ -1,7 +1,7 @@
-// 검색된 실제 상담사례에서 체크리스트 밖의 특이 확인질문 하나를 고른다.
+// 서버가 적용 조건을 확인한 질문 트리거에서 체크리스트 밖의 질문 하나를 고른다.
 import "server-only";
 
-import { generateObject, generateText } from "ai";
+import { generateText, Output } from "ai";
 import { z } from "zod";
 
 import { CHECKLIST, checklistToText } from "@/core/checklist";
@@ -10,8 +10,13 @@ import type {
   RetrievedCase,
   StoredRagFact,
 } from "@/core/rag/types";
+import { isQuestionTriggerApplicable } from "@/core/rag/retrievalPolicy";
 import type { CollectedItem, ConversationMessage } from "@/core/schemas/turn";
-import { getOpenAI } from "@/server/llm/provider";
+import {
+  getOpenAI,
+  getOpenAIMaxRetries,
+  LUNA_PROVIDER_OPTIONS,
+} from "@/server/llm/provider";
 
 /** selectRagQuestion 입력. 인자가 많아 객체로 받는다. */
 export type RagQuestionInput = {
@@ -73,8 +78,8 @@ function normalizeForComparison(value: string): string {
   return value.normalize("NFC").replace(/\s+/g, "").replace(/[?？.,·/()]/g, "");
 }
 
-/** 공백만 정규화해 원문 대조에 쓴다. 선택된 질문이 reply에 그대로 담겼는지 확인할 때도 사용. */
-export function normalizeForQuote(value: string): string {
+/** 공백만 정규화해 저장된 질문 트리거 원문을 대조한다. */
+function normalizeForQuote(value: string): string {
   return value.normalize("NFC").replace(/\s+/g, " ").trim();
 }
 
@@ -133,19 +138,43 @@ function findBlockingFact(
 
 function validateCandidate(
   candidate: RagQuestionCandidate,
-  allowedCaseIds: Set<string>,
+  allowedCases: Map<string, RetrievedCase>,
   userText: string,
   blockedFacts: string[],
 ): { decision?: RagQuestionDecision; rejection?: string } {
-  const question = candidate.question.trim();
-  const targetFact = candidate.targetFact.trim();
+  let question = candidate.question.trim();
+  let targetFact = candidate.targetFact.trim();
+  let reason = candidate.reason.trim();
   const evidenceQuote = normalizeForQuote(candidate.evidenceQuote);
   const sourceCaseIds = [...new Set(candidate.sourceCaseIds)]
-    .filter((id) => allowedCaseIds.has(id));
+    .filter((id) => allowedCases.has(id));
 
   if (!question || !targetFact) return { rejection: "질문 또는 targetFact가 비어 있음" };
   if (sourceCaseIds.length === 0) return { rejection: "검색 결과에 없는 사례 ID" };
-  if (isGenericChecklistFact(`${targetFact} ${question}`)) {
+
+  const referencedTriggers = sourceCaseIds
+    .map((id) => allowedCases.get(id))
+    .filter((caseItem): caseItem is RetrievedCase =>
+      caseItem?.recordType === "question_trigger"
+    );
+  const matchingTrigger = referencedTriggers.find((caseItem) =>
+    caseItem.targetFact &&
+    normalizeForQuote(caseItem.question) === normalizeForQuote(question) &&
+    normalizeForQuote(caseItem.targetFact) === normalizeForQuote(targetFact)
+  );
+
+  if (referencedTriggers.length > 0 && !matchingTrigger) {
+    return { rejection: "조건부 질문 트리거의 질문·targetFact 원문 불일치" };
+  }
+  if (matchingTrigger?.targetFact) {
+    // 모델이 문장을 바꾸어도 사용자에게는 검수된 원문만 전달한다.
+    question = matchingTrigger.question;
+    targetFact = matchingTrigger.targetFact;
+    reason = matchingTrigger.whyMaterial ?? reason;
+    sourceCaseIds.splice(0, sourceCaseIds.length, matchingTrigger.id);
+  }
+
+  if (isGenericChecklistFact(targetFact) || isGenericChecklistFact(question)) {
     return { rejection: `체크리스트 중복: ${targetFact}` };
   }
   const blockingFact = findBlockingFact(targetFact, blockedFacts);
@@ -155,7 +184,12 @@ function validateCandidate(
   if (isCompoundQuestion(question)) return { rejection: "두 가지 이상을 묻는 복합 질문" };
   const repeatedFact = repeatsExplicitUserFact(question, userText);
   if (repeatedFact) return { rejection: `사용자가 이미 언급한 사실 반복: ${repeatedFact}` };
-  if (!evidenceQuote || !normalizeForQuote(userText).includes(evidenceQuote)) {
+  const hasServerVerifiedTriggerEvidence = matchingTrigger !== undefined &&
+    isQuestionTriggerApplicable(matchingTrigger);
+  if (
+    !hasServerVerifiedTriggerEvidence &&
+    (!evidenceQuote || !normalizeForQuote(userText).includes(evidenceQuote))
+  ) {
     return { rejection: `사용자 발화에서 근거 문구를 찾을 수 없음: ${candidate.evidenceQuote}` };
   }
 
@@ -165,25 +199,42 @@ function validateCandidate(
       question,
       targetFact,
       sourceCaseIds,
-      reason: candidate.reason.trim(),
+      reason,
     },
   };
 }
 
 function formatCases(cases: RetrievedCase[]): string {
-  return cases.map((caseItem, index) => [
-    `<case index="${index + 1}" id="${caseItem.id}" fit="${caseItem.serviceFit}" answer-status="${caseItem.answerStatus}">`,
-    `법률분류: ${caseItem.legalCategory}`,
-    `핵심쟁점: ${caseItem.issue ?? "미분류"}`,
-    `사례질문: ${caseItem.question}`,
-    caseItem.answer
-      ? `사례답변 요지: ${caseItem.answer.slice(0, 1000)}`
-      : "사례답변: 없음",
-    caseItem.decisionReason
-      ? `서비스 관련성: ${caseItem.decisionReason}`
-      : null,
-    "</case>",
-  ].filter((line): line is string => line !== null).join("\n")).join("\n\n");
+  return cases.map((caseItem, index) => {
+    const opening = `<case index="${index + 1}" id="${caseItem.id}" type="${caseItem.recordType ?? "case"}" fit="${caseItem.serviceFit}" answer-status="${caseItem.answerStatus}">`;
+    if (caseItem.recordType === "question_trigger") {
+      return [
+        opening,
+        "문서종류: 조건부 질문 트리거",
+        `핵심쟁점: ${caseItem.issue ?? "미분류"}`,
+        `사용자 단서 예시: ${(caseItem.userSignals ?? []).join(" / ")}`,
+        `확인할 사실(원문): ${caseItem.targetFact ?? "없음"}`,
+        `질문 원문: ${caseItem.question}`,
+        `질문 이유: ${caseItem.whyMaterial ?? caseItem.decisionReason ?? "없음"}`,
+        "이 트리거를 고르면 targetFact와 질문 원문을 글자 그대로 복사하세요.",
+        "</case>",
+      ].join("\n");
+    }
+
+    return [
+      opening,
+      `법률분류: ${caseItem.legalCategory}`,
+      `핵심쟁점: ${caseItem.issue ?? "미분류"}`,
+      `사례질문: ${caseItem.question}`,
+      caseItem.answer
+        ? `사례답변 요지: ${caseItem.answer.slice(0, 1000)}`
+        : "사례답변: 없음",
+      caseItem.decisionReason
+        ? `서비스 관련성: ${caseItem.decisionReason}`
+        : null,
+      "</case>",
+    ].filter((line): line is string => line !== null).join("\n");
+  }).join("\n\n");
 }
 
 function formatSessionContext(
@@ -227,37 +278,29 @@ function systemPrompt(
   pendingQuestion: PendingRagQuestion | null,
   unansweredFacts: string[],
 ): string {
-  return `당신은 전세보증금 반환 상담의 '특이 사례 질문 분석기'입니다.
+  return `당신은 전세보증금 반환 상담의 '검증된 추가 질문 선택기'입니다.
 
-일반 체크리스트가 놓칠 수 있는 예외적 사실을 검색된 실제 상담사례에서 발견해,
-현재 사용자에게 지금 확인할 가치가 있는 추가 질문이 있는지를 판단합니다.
+서버가 사용자 상황과 적용 조건을 대조해 아래 질문 트리거만 허용했습니다.
+새 질문을 만들지 말고, 허용된 트리거 중 지금 물을 한 가지를 고르세요.
 
 # 일반 체크리스트
 ${checklistToText()}
 
-# 검색된 실제 상담사례
+# 서버가 적용 조건을 확인한 질문 트리거
 ${formatCases(cases)}
 
 ${formatSessionContext(checklist, ragFacts, pendingQuestion, unansweredFacts)}
 
 # 판단 규칙
-1. 대화 전체와 검색 사례의 사실관계가 실질적으로 유사해야 합니다. 단순히 임대차·보증금·경매라는 단어만 같은 것은 부족합니다.
-2. 일반 체크리스트와 의미가 같은 질문은 만들지 마세요.
-3. 사용자가 이미 답했거나 대화에서 명확히 추론되는 사실은 다시 묻지 마세요.
-4. 검색 사례에서 법적 판단·대응을 달라지게 하는 구별 사실만 질문 후보로 삼으세요.
-5. 현재 사건에서 발생할 단서가 없는 희귀 상황을 억지로 묻지 마세요.
-6. 질문은 한 번에 한 가지 사실만, 사용자가 이해하기 쉬운 한국어로 물으세요.
-7. 사례의 법률적 결론을 설명하거나 사용자 사건에 적용하지 마세요.
-8. 답변 없는 사례는 사실관계 비교에만 사용할 수 있습니다.
-9. 적절한 특이 질문이 없으면 candidates를 빈 배열로 반환하세요. 질문을 만들지 않는 것도 정상입니다.
-10. '계약서 보유, 계약일, 보증금·미반환액, 전입신고, 일반 확정일자, 퇴거, 종료 통보, 증거자료,
-    임차권등기명령 신청, 등기부 선순위 권리' 자체를 묻는 것은 금지합니다. 이는 체크리스트 질문입니다.
-    다만 '보증금 증액분에 확정일자를 다시 받았는지'처럼 검색 사례 때문에 생긴 더 좁고 구체적인 질문은 허용합니다.
-11. 중요도 순서대로 최대 3개의 후보를 반환하세요. 각 후보의 evidenceQuote에는 그 질문이 현재 사건에서
-    필요한 이유가 드러나는 사용자의 실제 발화 일부를 글자 그대로 복사하세요. evidenceQuote가 질문의
-    targetFact 자체에 이미 답하고 있다면 그 후보는 만들지 마세요.
-12. 각 후보는 서로 다른 한 가지 사실을 물어야 하며 question, targetFact, sourceCaseIds, reason,
-    evidenceQuote를 모두 채우세요.`;
+1. 아래에 제시된 question_trigger 이외의 사례나 상식에서 질문을 만들지 마세요.
+2. 선택한 트리거 하나의 ID만 sourceCaseIds에 넣으세요.
+3. '확인할 사실(원문)'과 '질문 원문'을 요약하거나 고치지 말고 그대로 복사하세요.
+4. 사용자가 이미 답했거나 이미 물어본 사실은 다시 선택하지 마세요.
+5. 일반 체크리스트와 의미가 같은 질문은 선택하지 마세요.
+6. 질문에 법률적 결론·절차·대응 방법을 덧붙이지 마세요.
+7. 현재 대화에서 가장 먼저 확인할 가치가 있는 순서대로 최대 3개 후보를 반환하세요.
+8. 각 후보의 evidenceQuote에는 해당 트리거가 필요한 단서가 드러나는 사용자 발화 일부를 그대로 복사하세요.
+9. 물을 트리거가 없으면 candidates를 빈 배열로 반환하세요. 질문하지 않는 것도 정상입니다.`;
 }
 
 function noQuestion(): RagQuestionDecision {
@@ -268,6 +311,20 @@ function noQuestion(): RagQuestionDecision {
     sourceCaseIds: [],
     reason: null,
   };
+}
+
+function parseJsonText(text: string): unknown {
+  const trimmed = text.trim()
+    .replace(/^```(?:json)?\s*/iu, "")
+    .replace(/\s*```$/u, "")
+    .trim();
+  const firstBrace = trimmed.indexOf("{");
+  const lastBrace = trimmed.lastIndexOf("}");
+  return JSON.parse(
+    firstBrace >= 0 && lastBrace > firstBrace
+      ? trimmed.slice(firstBrace, lastBrace + 1)
+      : trimmed,
+  ) as unknown;
 }
 
 export async function selectRagQuestion(
@@ -284,45 +341,99 @@ export async function selectRagQuestion(
   } = input;
   if (cases.length === 0) return noQuestion();
 
-  const openai = getOpenAI();
-  const system = systemPrompt(
-    cases,
-    checklist,
-    ragFacts,
-    pendingQuestion,
-    unansweredFacts,
-  );
-  const allowedCaseIds = new Set(cases.map((caseItem) => caseItem.id));
-
   // 확인 완료·대기 중·미응답을 모두 재질문 금지 대상으로 본다.
   const blockedFacts = [
     ...ragFacts.map((fact) => fact.targetFact),
     ...(pendingQuestion ? [pendingQuestion.targetFact] : []),
     ...unansweredFacts,
   ];
+  const userText = history
+    .filter((message) => message.role === "user")
+    .map((message) => message.content)
+    .join("\n");
+  const applicableTriggers = cases.filter(
+    (caseItem) =>
+      caseItem.recordType === "question_trigger" &&
+      isQuestionTriggerApplicable(caseItem),
+  );
+  // 일반 사례는 검색 참고자료일 뿐 사용자 질문의 직접 근거로 사용하지 않는다.
+  // 서버가 적용 조건을 확인한 question_trigger가 없으면 Luna가 새 전제를
+  // 만들어 질문하지 못하도록 여기서 종료한다.
+  if (applicableTriggers.length === 0) return noQuestion();
 
-  if (process.env.OPENAI_BASE_URL) {
-    const { text } = await generateText({
-      model: openai.chat(model),
-      system: `${system}\n\n반드시 JSON 형식으로만 응답하세요. 다른 텍스트는 출력하지 마세요.`,
-      messages: history,
+  const allowedCases = new Map(
+    applicableTriggers.map((caseItem) => [caseItem.id, caseItem]),
+  );
+
+  if (applicableTriggers.length === 1) {
+    const [trigger] = applicableTriggers;
+    const validated = validateCandidate(
+      {
+        question: trigger.question,
+        targetFact: trigger.targetFact ?? "",
+        sourceCaseIds: [trigger.id],
+        reason: trigger.whyMaterial ?? trigger.decisionReason ?? "조건 일치 질문 트리거",
+        evidenceQuote: "",
+      },
+      allowedCases,
+      userText,
+      blockedFacts,
+    );
+    if (validated.decision) return validated.decision;
+    console.log("[rag] deterministic trigger rejected", {
+      id: trigger.id,
+      rejection: validated.rejection,
     });
-    const selection = RagQuestionSelectionSchema.parse(JSON.parse(text.trim()));
-    return chooseCandidate(selection.candidates, allowedCaseIds, history, blockedFacts);
+    // 일반 사례로 우회해 새 질문을 만들지 않는다.
+    return noQuestion();
   }
 
-  const { object } = await generateObject({
-    model: openai(model),
-    schema: RagQuestionSelectionSchema,
+  const openai = getOpenAI();
+  const system = systemPrompt(
+    applicableTriggers,
+    checklist,
+    ragFacts,
+    pendingQuestion,
+    unansweredFacts,
+  );
+
+  if (process.env.OPENAI_BASE_URL) {
+    const result = await generateText({
+      model: openai.chat(model),
+      output: Output.object({
+        schema: RagQuestionSelectionSchema,
+        name: "rag_question_selection",
+        description: "검색 사례에서 고른 추가 확인 질문 후보",
+      }),
+      system: `${system}\n\n반드시 JSON 형식으로만 응답하세요. 다른 텍스트는 출력하지 마세요.`,
+      messages: history,
+      maxRetries: getOpenAIMaxRetries(),
+    });
+    const selection = RagQuestionSelectionSchema.parse(
+      result.output ?? parseJsonText(result.text),
+    );
+    return chooseCandidate(selection.candidates, allowedCases, history, blockedFacts);
+  }
+
+  const result = await generateText({
+    model: openai.responses(model),
+    output: Output.object({
+      schema: RagQuestionSelectionSchema,
+      name: "rag_question_selection",
+      description: "검증된 추가 질문 트리거에서 고른 질문 후보",
+    }),
     system,
     messages: history,
+    maxRetries: getOpenAIMaxRetries(),
+    providerOptions: LUNA_PROVIDER_OPTIONS,
   });
-  return chooseCandidate(object.candidates, allowedCaseIds, history, blockedFacts);
+  const selection = RagQuestionSelectionSchema.parse(result.output);
+  return chooseCandidate(selection.candidates, allowedCases, history, blockedFacts);
 }
 
 function chooseCandidate(
   candidates: RagQuestionCandidate[],
-  allowedCaseIds: Set<string>,
+  allowedCases: Map<string, RetrievedCase>,
   history: ConversationMessage[],
   blockedFacts: string[],
 ): RagQuestionDecision {
@@ -332,7 +443,7 @@ function chooseCandidate(
     .join("\n");
 
   for (const candidate of candidates) {
-    const result = validateCandidate(candidate, allowedCaseIds, userText, blockedFacts);
+    const result = validateCandidate(candidate, allowedCases, userText, blockedFacts);
     if (result.decision) return result.decision;
     console.log("[rag] candidate rejected", {
       question: candidate.question,

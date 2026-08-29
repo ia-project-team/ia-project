@@ -17,7 +17,10 @@ export const CollectedItemSchema = z.object({
   key: z.string().describe("체크리스트 항목 식별자"),
   status: z
     .enum(["confirmed", "unknown", "not_applicable"])
-    .describe("confirmed=확인됨, unknown=아직, not_applicable=해당없음/모름"),
+    .describe(
+      "confirmed=답변 받음(모름·기억나지 않음 포함), " +
+      "unknown=아직 답변받지 못함, not_applicable=해당없음",
+    ),
   value: z.string().nullable().describe("확인된 값 또는 메모. 없으면 null"),
 });
 
