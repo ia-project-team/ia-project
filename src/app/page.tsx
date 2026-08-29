@@ -130,7 +130,7 @@ export default function HomePage() {
 
         <section id="features" className={styles.featuresSection}>
           <div className={styles.sectionInner}>
-            <h2 className={styles.sectionTitle}>왜 LawPre인가요</h2>
+            <h2 className={styles.sectionTitle}>왜 LawPre인가요?</h2>
             <p className={styles.sectionSubtitle}>
               상담 준비의 방식을 바꿉니다
             </p>
@@ -193,8 +193,8 @@ export default function HomePage() {
                 <span className={styles.stepNumber}>01</span>
                 <h3>시작</h3>
                 <p>
-                  지금 어떤 상황인지
-                  <br /> 짧게 알려주세요
+                  지금 어떤 상황을 겪고 있는지
+                  <br /> 편하게 채팅으로 알려주세요
                 </p>
               </article>
               <span className={styles.stepArrow} aria-hidden="true" />
@@ -202,8 +202,8 @@ export default function HomePage() {
                 <span className={styles.stepNumber}>02</span>
                 <h3>AI와 대화</h3>
                 <p>
-                  물어보는 대로 답만
-                  <br /> 하시면 자동 정리됩니다
+                  물어보는 대로 답변만 하시면
+                  <br /> AI가 자동으로 정리해 줍니다
                 </p>
               </article>
               <span className={styles.stepArrow} aria-hidden="true" />
@@ -212,7 +212,7 @@ export default function HomePage() {
                 <h3>리포트 완성</h3>
                 <p>
                   상담에 바로 쓸 수 있는
-                  <br /> 정리본을 받아보세요
+                  <br /> 정리본을 PDF로 받아보세요
                 </p>
               </article>
             </div>

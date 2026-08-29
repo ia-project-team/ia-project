@@ -500,6 +500,55 @@
   outline-offset: 3px;
 }
 
+@media (min-width: 768px) {
+  .headerInner {
+    height: 64px;
+    padding-block: 0;
+  }
+
+  .hero {
+    display: flex;
+    height: 600px;
+    align-items: center;
+    padding-block: 0;
+  }
+
+  .heroInner {
+    height: 100%;
+  }
+
+  .featuresSection,
+  .processSection {
+    display: flex;
+    align-items: center;
+    padding-block: 0;
+  }
+
+  .featuresSection {
+    height: 600px;
+  }
+
+  .processSection {
+    height: 600px;
+  }
+
+  .finalCta {
+    display: flex;
+    height: 600px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-block: 0;
+  }
+
+  .footer {
+    display: flex;
+    height: 120px;
+    align-items: center;
+    padding-block: 0;
+  }
+}
+
 @media (max-width: 767px) {
   .headerInner {
     padding: 14px 20px;
