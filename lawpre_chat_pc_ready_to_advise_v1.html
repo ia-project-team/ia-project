@@ -1,0 +1,109 @@
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,400..700,0..100&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap');
+
+.mkw { padding: 1rem 0; }
+.mk { font-family: 'Noto Sans KR', sans-serif; color: #1B2422; background: #FFFFFF; border-radius: 12px; overflow: hidden; border: 0.5px solid rgba(0,0,0,0.1); line-height: 1.5; }
+.mk *, .mk *::before, .mk *::after { box-sizing: border-box; }
+.phase-lbl { font-size: 11px; color: #7a7a75; padding: 4px 12px; background: var(--surface-1); border: 0.5px solid var(--border); border-radius: 4px; display: inline-block; margin-bottom: 8px; letter-spacing: 0.02em; }
+
+.hdr { border-bottom: 0.5px solid #E8ECEA; padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; background: #FFFFFF; }
+.hdr-r { display: flex; align-items: center; gap: 20px; }
+.hdr-r a { font-size: 13px; color: #7a7a75; text-decoration: none; }
+.uic { width: 28px; height: 28px; border-radius: 50%; background: #D2F1E8; color: #1F5F5D; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; }
+
+.prg-row { padding: 10px 24px; border-bottom: 0.5px solid #E8ECEA; background: #F5F9F8; }
+.prg-in { display: flex; align-items: center; gap: 14px; max-width: 720px; margin: 0 auto; }
+.prg-tr { flex: 1; height: 3px; background: #E8ECEA; border-radius: 2px; overflow: hidden; }
+.prg-fl { height: 100%; background: #4DCDD2; border-radius: 2px; }
+.prg-tx { font-size: 11px; color: #7a7a75; white-space: nowrap; }
+.prg-cur { color: #1F5F5D; font-weight: 500; }
+
+.msg-area { padding: 40px 24px 40px; max-width: 720px; margin: 0 auto; min-height: 440px; }
+.msg { margin-bottom: 26px; }
+.msg.ai { display: flex; gap: 14px; align-items: flex-start; }
+.av { width: 30px; height: 30px; background: #4DCDD2; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 14px; flex-shrink: 0; }
+.mbd { font-size: 14px; color: #1B2422; line-height: 1.75; padding-top: 3px; }
+.msg.usr { display: flex; justify-content: flex-end; }
+.msg.usr .mbd { background: #D2F1E8; color: #1F5F5D; padding: 10px 16px; border-radius: 12px; max-width: 65%; padding-top: 10px; }
+
+.scroll-hint { text-align: center; font-size: 11px; color: #B4C4C2; margin-bottom: 20px; letter-spacing: 0.05em; }
+
+.rdy-card { background: #F5F9F8; border: 1px solid #4DCDD2; border-radius: 12px; padding: 24px; margin-top: 8px; display: flex; gap: 14px; align-items: flex-start; }
+.rdy-card .av { background: #1F5F5D; }
+.rdy-body { flex: 1; }
+.rdy-ttl { font-size: 15px; font-weight: 600; color: #1B2422; margin: 0 0 8px; padding-top: 3px; }
+.rdy-desc { font-size: 13px; color: #4a5551; line-height: 1.7; margin: 0 0 18px; }
+.rdy-cta { display: flex; gap: 10px; align-items: center; }
+.rdy-btn { background: #1F5F5D; color: white; padding: 10px 20px; border-radius: 8px; font-size: 13px; font-weight: 500; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+.rdy-txt { background: transparent; color: #7a7a75; padding: 10px 8px; font-size: 12px; border: none; cursor: pointer; }
+
+.inp-area { border-top: 0.5px solid #E8ECEA; padding: 18px 24px 20px; background: #FFFFFF; }
+.inp-in { max-width: 720px; margin: 0 auto; display: flex; align-items: center; gap: 6px; background: #F5F9F8; border: 0.5px solid #E8ECEA; border-radius: 12px; padding: 6px 6px 6px 10px; }
+.att-btn { padding: 8px; background: transparent; border: none; color: #7a7a75; cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 6px; }
+.inp-text { flex: 1; font-size: 14px; color: #9a9a95; line-height: 1.5; padding: 10px 4px; min-height: 20px; }
+.sbtn { width: 36px; height: 36px; border-radius: 8px; background: #C4D0CE; color: white; display: flex; align-items: center; justify-content: center; border: none; cursor: not-allowed; flex-shrink: 0; }
+.inp-hint { max-width: 720px; margin: 8px auto 0; font-size: 11px; color: #9a9a95; text-align: center; }
+</style>
+
+<div class="mkw">
+<span class="phase-lbl">Phase 2 · ready_to_advise</span>
+<div class="mk">
+  <header class="hdr">
+    <svg viewBox="0 0 230 64" width="105" height="30" xmlns="http://www.w3.org/2000/svg">
+      <path d="M 6 26 L 22 40 L 50 6" stroke="#1F5F5D" stroke-width="6.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="56" y="42" style="font-family: 'Fraunces', serif; font-weight: 500; font-size: 36px; font-variation-settings: 'opsz' 144, 'SOFT' 100;" fill="#1F5F5D">LawPre</text>
+      <path d="M 22 40 Q 22 58 42 58 L 208 58" stroke="#1F5F5D" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.6"/>
+    </svg>
+    <div class="hdr-r">
+      <a href="#">도움말</a>
+      <div class="uic">최</div>
+    </div>
+  </header>
+
+  <div class="prg-row">
+    <div class="prg-in">
+      <div class="prg-tr"><div class="prg-fl" style="width: 94%"></div></div>
+      <span class="prg-tx">15 / 16 · <span class="prg-cur">모두 확인 완료</span></span>
+    </div>
+  </div>
+
+  <div class="msg-area">
+    <div class="scroll-hint">━━ 이전 대화 ━━</div>
+
+    <div class="msg ai">
+      <div class="av">✓</div>
+      <div class="mbd">마지막으로, 최근 부동산 등기부 등본을 확인해보신 적이 있나요?<br/>선순위 저당권이 걸려있는지 확인이 필요합니다.</div>
+    </div>
+    <div class="msg usr"><div class="mbd">아니요, 확인 못 해봤어요</div></div>
+
+    <div class="rdy-card">
+      <div class="av">✓</div>
+      <div class="rdy-body">
+        <p class="rdy-ttl">필요한 정보가 대부분 모였어요</p>
+        <p class="rdy-desc">지금까지 나눈 대화로 상담용 리포트를 만들어드릴 수 있습니다.<br/>등기부 등본 확인은 리포트에서 "다음 단계"로 함께 안내드릴게요.</p>
+        <div class="rdy-cta">
+          <button class="rdy-btn">
+            리포트 생성하기
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </button>
+          <button class="rdy-txt">조금 더 대화하기</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="inp-area">
+    <div class="inp-in">
+      <button class="att-btn" title="파일 첨부">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+      </button>
+      <div class="inp-text">더 추가할 내용이 있으신가요?</div>
+      <button class="sbtn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+    <div class="inp-hint">비어있으면 전송 비활성화 · 리포트 생성 버튼으로 다음 단계 진행</div>
+  </div>
+</div>
+</div>
