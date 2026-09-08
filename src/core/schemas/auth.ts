@@ -16,6 +16,11 @@ export const SignupFormSchema = z
     path: ["confirmPassword"],
   });
 
+export const LoginFormSchema = z.object({
+  email: z.email({ error: "올바른 이메일 주소를 입력해주세요." }).trim(),
+  password: z.string().min(1, { error: "비밀번호를 입력해주세요." }),
+});
+
 export type SignupFormState =
   | {
       errors?: {
@@ -25,5 +30,15 @@ export type SignupFormState =
       };
       message?: string;
       success?: boolean;
+    }
+  | undefined;
+
+export type LoginFormState =
+  | {
+      errors?: {
+        email?: string[];
+        password?: string[];
+      };
+      message?: string;
     }
   | undefined;

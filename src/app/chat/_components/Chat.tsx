@@ -1,8 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
+import {
+  GUEST_LIMIT_ERROR_CODE,
+  type ChatUsage,
+} from "@/core/chat/limits";
 import type { CollectedItem, Phase } from "@/core/schemas/turn";
 
 import styles from "../chat.module.css";
@@ -15,6 +19,8 @@ interface MultiturnResponse {
   phase: Phase;
   collected: CollectedItem[];
   duration_ms: number;
+  usage?: ChatUsage;
+  code?: string;
   error?: string;
 }
 
@@ -25,6 +31,17 @@ const INITIAL_MESSAGE: ChatMessage = {
   role: "assistant",
   text: "안녕하세요. 상담 전 사실관계 정리를 도와드릴게요.\n현재 상황을 짧게 알려주세요.",
 };
+
+const CHAT_STORAGE_KEY = "lawpre-active-chat-v2";
+const CHAT_STORAGE_TTL_MS = 24 * 60 * 60 * 1000;
+
+interface SavedChat {
+  sessionId: string;
+  messages: ChatMessage[];
+  phase: Phase;
+  collected: CollectedItem[];
+  savedAt: number;
+}
 
 function createId(): string {
   if (
@@ -48,7 +65,24 @@ function getProgressLabel(completed: number, isReady: boolean): string {
   return "등기 정보 확인 중";
 }
 
-export function Chat() {
+interface ChatProps {
+  initialUsage: ChatUsage;
+  userEmail: string | null;
+}
+
+function isSavedChat(value: unknown): value is SavedChat {
+  if (!value || typeof value !== "object") return false;
+  const saved = value as Partial<SavedChat>;
+  return (
+    typeof saved.sessionId === "string" &&
+    Array.isArray(saved.messages) &&
+    typeof saved.phase === "string" &&
+    Array.isArray(saved.collected) &&
+    typeof saved.savedAt === "number"
+  );
+}
+
+export function Chat({ initialUsage, userEmail }: ChatProps) {
   // 세션 ID는 마운트 시 한 번만 생성 — 서버가 이 ID로 history를 유지한다.
   const sessionIdRef = useRef<string>(createId());
 
@@ -58,6 +92,45 @@ export function Chat() {
   const [collected, setCollected] = useState<CollectedItem[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isReadyCardDismissed, setIsReadyCardDismissed] = useState(false);
+  const [usage, setUsage] = useState(initialUsage);
+  const [isStorageReady, setIsStorageReady] = useState(false);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      try {
+        const raw = window.localStorage.getItem(CHAT_STORAGE_KEY);
+        const saved: unknown = raw ? JSON.parse(raw) : null;
+        if (isSavedChat(saved)) {
+          if (Date.now() - saved.savedAt > CHAT_STORAGE_TTL_MS) {
+            window.localStorage.removeItem(CHAT_STORAGE_KEY);
+          } else {
+            sessionIdRef.current = saved.sessionId;
+            setMessages(saved.messages);
+            setPhase(saved.phase);
+            setCollected(saved.collected);
+          }
+        }
+      } catch {
+        window.localStorage.removeItem(CHAT_STORAGE_KEY);
+      } finally {
+        setIsStorageReady(true);
+      }
+    }, 0);
+
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    if (!isStorageReady) return;
+    const saved: SavedChat = {
+      sessionId: sessionIdRef.current,
+      messages,
+      phase,
+      collected,
+      savedAt: Date.now(),
+    };
+    window.localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(saved));
+  }, [collected, isStorageReady, messages, phase]);
 
   const completedCount = useMemo(
     () =>
@@ -73,12 +146,16 @@ export function Chat() {
     Math.round((completedCount / CHECKLIST_TOTAL) * 100),
   );
   const progressLabel = getProgressLabel(completedCount, isReady);
+  const isGuestLocked =
+    !usage.authenticated && usage.remaining !== null && usage.remaining <= 0;
 
   const send = async (text: string) => {
+    if (isGuestLocked) return;
     setError(null);
+    const pendingMessageId = createId();
     setMessages((previous) => [
       ...previous,
-      { id: createId(), role: "user", text },
+      { id: pendingMessageId, role: "user", text },
     ]);
     setIsLoading(true);
 
@@ -94,12 +171,21 @@ export function Chat() {
 
       const data = (await response.json()) as MultiturnResponse;
 
+      if (data.code === GUEST_LIMIT_ERROR_CODE && data.usage) {
+        setUsage(data.usage);
+        setMessages((previous) =>
+          previous.filter((message) => message.id !== pendingMessageId),
+        );
+        return;
+      }
+
       if (!response.ok || data.error) {
         throw new Error(data.error ?? `요청 실패 (HTTP ${response.status})`);
       }
 
       setPhase(data.phase);
       setCollected(data.collected);
+      if (data.usage) setUsage(data.usage);
       setIsReadyCardDismissed(false);
       setMessages((previous) => [
         ...previous,
@@ -149,9 +235,31 @@ export function Chat() {
         </Link>
         <div className={styles.headerActions}>
           <Link href="/#footer">도움말</Link>
-          <span className={styles.userAvatar} aria-label="사용자 최">
-            최
-          </span>
+          {usage.authenticated ? (
+            <>
+              <span className={styles.memberLabel}>회원 이용 중</span>
+              <form
+                action="/auth/logout"
+                method="post"
+                onSubmit={() => window.localStorage.removeItem(CHAT_STORAGE_KEY)}
+              >
+                <button type="submit" className={styles.headerTextButton}>로그아웃</button>
+              </form>
+              <span className={styles.userAvatar} aria-label="로그인 사용자">
+                {(userEmail?.trim().charAt(0) || "회").toUpperCase()}
+              </span>
+            </>
+          ) : (
+            <>
+              <span className={styles.usagePill}>
+                무료 {usage.remaining}회 남음
+              </span>
+              <Link href="/login" className={styles.loginLink}>로그인</Link>
+              <span className={styles.guestAvatar} aria-label="비회원 사용자">
+                G
+              </span>
+            </>
+          )}
         </div>
       </header>
 
@@ -180,6 +288,7 @@ export function Chat() {
         messages={messages}
         isStreaming={isLoading}
         showReadyCard={isReady && !isReadyCardDismissed}
+        showSignupGate={isGuestLocked}
         onContinue={() => setIsReadyCardDismissed(true)}
       />
 
@@ -190,9 +299,10 @@ export function Chat() {
       ) : null}
 
       <MessageInput
-        disabled={isLoading}
+        disabled={isLoading || isGuestLocked}
         isStreaming={isLoading}
         isReady={isReady}
+        isGuestLocked={isGuestLocked}
         onSend={(text) => {
           void send(text);
         }}

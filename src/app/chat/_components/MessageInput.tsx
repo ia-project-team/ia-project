@@ -9,6 +9,7 @@ interface MessageInputProps {
   onSend: (text: string) => void;
   isStreaming: boolean;
   isReady: boolean;
+  isGuestLocked: boolean;
 }
 
 export function MessageInput({
@@ -16,6 +17,7 @@ export function MessageInput({
   onSend,
   isStreaming,
   isReady,
+  isGuestLocked,
 }: MessageInputProps) {
   const [value, setValue] = useState("");
 
@@ -40,6 +42,13 @@ export function MessageInput({
 
   return (
     <form className={styles.inputArea} onSubmit={handleSubmit}>
+      {isGuestLocked ? (
+        <div className={styles.lockedInput} role="status">
+          <span aria-hidden="true">✓</span>
+          <p><strong>대화 내용은 보관되어 있어요.</strong> 가입 후 바로 이어서 답변할 수 있습니다.</p>
+        </div>
+      ) : (
+        <>
       <div className={styles.inputInner}>
         <button
           type="button"
@@ -85,6 +94,8 @@ export function MessageInput({
           ? "내용을 더 추가하거나 리포트 생성 버튼으로 다음 단계에 진행하세요."
           : "Enter로 전송 · Shift + Enter로 줄바꿈"}
       </p>
+        </>
+      )}
     </form>
   );
 }

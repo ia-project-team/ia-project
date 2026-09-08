@@ -1,10 +1,14 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 import { z } from "zod";
 
 import { SignupFormSchema, type SignupFormState } from "@/core/schemas/auth";
-import { getSupabaseAuth } from "@/server/supabase/authClient";
+import {
+  getSupabaseAuth,
+  hasSupabaseAuthConfig,
+} from "@/server/supabase/authClient";
 
 export async function signup(
   _state: SignupFormState,
@@ -21,9 +25,30 @@ export async function signup(
   }
 
   const { email, password } = validated.data;
-  const supabase = await getSupabaseAuth();
+  if (!hasSupabaseAuthConfig()) {
+    return { message: "회원가입 설정을 확인 중입니다. 잠시 후 다시 시도해주세요." };
+  }
 
-  const { data, error } = await supabase.auth.signUp({ email, password });
+  const supabase = await getSupabaseAuth();
+  const headerStore = await headers();
+  const forwardedHost = headerStore.get("x-forwarded-host");
+  const host = forwardedHost ?? headerStore.get("host");
+  const protocol = headerStore.get("x-forwarded-proto") ?? "http";
+  const configuredOrigin = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/+$/, "");
+  const origin = configuredOrigin ??
+    (process.env.NODE_ENV !== "production" && host
+      ? `${protocol}://${host}`
+      : undefined);
+
+  if (!origin) {
+    return { message: "가입 확인 주소가 설정되지 않았습니다. 관리자에게 문의해주세요." };
+  }
+
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: { emailRedirectTo: `${origin}/auth/confirm?next=/chat` },
+  });
 
   if (error) {
     if (error.code === "user_already_exists") {
@@ -46,5 +71,5 @@ export async function signup(
     };
   }
 
-  redirect("/");
+  redirect("/chat?welcome=1");
 }

@@ -40,6 +40,7 @@ export default function HomePage() {
             <a href="#features">서비스 소개</a>
             <a href="#process">이용 방법</a>
             <a href="#footer">도움말</a>
+            <Link href="/login">로그인</Link>
             <Link href="/chat" className={styles.headerButton}>
               시작하기
             </Link>
@@ -55,6 +56,7 @@ export default function HomePage() {
               <a href="#features">서비스 소개</a>
               <a href="#process">이용 방법</a>
               <Link href="/report">샘플 리포트</Link>
+              <Link href="/login">로그인</Link>
               <Link href="/chat">시작하기</Link>
             </nav>
           </details>

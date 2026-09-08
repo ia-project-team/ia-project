@@ -57,6 +57,48 @@
   color: var(--lawpre-primary);
 }
 
+.headerActions form {
+  margin: 0;
+}
+
+.headerTextButton {
+  border: 0;
+  padding: 0;
+  color: #7a7a75;
+  background: transparent;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.headerTextButton:hover {
+  color: var(--lawpre-primary);
+}
+
+.loginLink {
+  font-weight: 600;
+}
+
+.usagePill,
+.memberLabel {
+  display: inline-flex;
+  align-items: center;
+  min-height: 27px;
+  border-radius: 999px;
+  padding: 0 10px;
+  font-size: 10px;
+  font-weight: 650;
+}
+
+.usagePill {
+  color: var(--lawpre-primary);
+  background: var(--lawpre-mint);
+}
+
+.memberLabel {
+  color: #40716e;
+  background: var(--lawpre-surface);
+}
+
 .userAvatar {
   display: flex;
   width: 28px;
@@ -68,6 +110,20 @@
   background: var(--lawpre-mint);
   font-size: 12px;
   font-weight: 600;
+}
+
+.guestAvatar {
+  display: flex;
+  width: 28px;
+  height: 28px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #dbe4e1;
+  border-radius: 50%;
+  color: #77837f;
+  background: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
 }
 
 .progressSection {
@@ -229,6 +285,150 @@
   border: 1px solid var(--lawpre-accent);
   border-radius: 12px;
   background: var(--lawpre-surface);
+}
+
+.signupGate {
+  position: relative;
+  overflow: hidden;
+  margin: 14px 0 10px;
+  padding: 38px 36px 34px;
+  border: 1px solid #c9e4de;
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 100% 0%, rgb(77 205 210 / 17%), transparent 38%),
+    linear-gradient(150deg, #f7fcfa 0%, #edf8f4 100%);
+  text-align: center;
+}
+
+.signupGate::before,
+.signupGate::after {
+  position: absolute;
+  border: 1px solid rgb(31 95 93 / 8%);
+  border-radius: 50%;
+  content: "";
+}
+
+.signupGate::before {
+  top: -75px;
+  right: -60px;
+  width: 180px;
+  height: 180px;
+}
+
+.signupGate::after {
+  top: -43px;
+  right: -28px;
+  width: 116px;
+  height: 116px;
+}
+
+.signupGateIcon {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: 45px;
+  height: 45px;
+  margin: 0 auto 16px;
+  place-items: center;
+  border-radius: 13px;
+  color: #ffffff;
+  background: var(--lawpre-primary);
+  box-shadow: 0 10px 24px rgb(31 95 93 / 18%);
+}
+
+.signupGateIcon svg {
+  width: 21px;
+  height: 21px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.signupGateEyebrow {
+  position: relative;
+  z-index: 1;
+  color: #4c7f7c;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.signupGate h2 {
+  position: relative;
+  z-index: 1;
+  margin: 10px 0 0;
+  color: var(--lawpre-foreground);
+  font-size: 23px;
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.42;
+}
+
+.signupGate > p {
+  position: relative;
+  z-index: 1;
+  max-width: 440px;
+  margin: 14px auto 0;
+  color: #60706c;
+  font-size: 12px;
+  line-height: 1.75;
+}
+
+.signupGateActions {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  max-width: 390px;
+  gap: 9px;
+  margin: 23px auto 0;
+}
+
+.signupPrimary,
+.signupSecondary {
+  display: inline-flex;
+  height: 43px;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9px;
+  font-size: 12px;
+  font-weight: 650;
+  transition: background-color 160ms ease, transform 160ms ease;
+}
+
+.signupPrimary {
+  color: #ffffff;
+  background: var(--lawpre-primary);
+}
+
+.signupPrimary:hover {
+  color: #ffffff;
+  background: #184d4b;
+}
+
+.signupSecondary {
+  border: 1px solid #cfdfdb;
+  color: var(--lawpre-primary);
+  background: rgb(255 255 255 / 72%);
+}
+
+.signupSecondary:hover {
+  background: #ffffff;
+}
+
+.signupPrimary:active,
+.signupSecondary:active {
+  transform: translateY(1px);
+}
+
+.signupGate small {
+  position: relative;
+  z-index: 1;
+  display: block;
+  margin-top: 13px;
+  color: #8a9692;
+  font-size: 9px;
 }
 
 .readyAvatar {
@@ -449,12 +649,59 @@
   text-align: center;
 }
 
+.lockedInput {
+  display: flex;
+  width: 100%;
+  max-width: 720px;
+  min-height: 52px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-inline: auto;
+  border: 1px solid #d8e7e3;
+  border-radius: 11px;
+  padding: 10px 16px;
+  color: #65736f;
+  background: var(--lawpre-surface);
+}
+
+.lockedInput span {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--lawpre-primary);
+  background: var(--lawpre-mint);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.lockedInput p {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.lockedInput strong {
+  color: var(--lawpre-primary);
+  font-weight: 700;
+}
+
 .logoLink:focus-visible,
 .headerActions a:focus-visible,
 .reportButton:focus-visible,
 .continueButton:focus-visible,
 .attachmentButton:focus-visible,
 .sendButton:focus-visible {
+  outline: 2px solid var(--lawpre-accent);
+  outline-offset: 3px;
+}
+
+.headerTextButton:focus-visible,
+.signupPrimary:focus-visible,
+.signupSecondary:focus-visible {
   outline: 2px solid var(--lawpre-accent);
   outline-offset: 3px;
 }
@@ -473,7 +720,19 @@
   }
 
   .headerActions a {
+    font-size: 11px;
+  }
+
+  .headerActions > a:first-child,
+  .memberLabel,
+  .headerActions form {
     display: none;
+  }
+
+  .usagePill {
+    min-height: 24px;
+    padding-inline: 8px;
+    font-size: 9px;
   }
 
   .progressSection {
@@ -525,6 +784,23 @@
     padding: 18px 16px;
   }
 
+  .signupGate {
+    padding: 30px 18px 26px;
+  }
+
+  .signupGate h2 {
+    font-size: 20px;
+  }
+
+  .signupGateActions {
+    flex-direction: column;
+  }
+
+  .signupPrimary,
+  .signupSecondary {
+    flex: none;
+  }
+
   .readyActions {
     align-items: stretch;
     flex-direction: column;
@@ -546,6 +822,11 @@
 
   .inputHint {
     font-size: 10px;
+  }
+
+  .lockedInput {
+    align-items: flex-start;
+    text-align: left;
   }
 }
 

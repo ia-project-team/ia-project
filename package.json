@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
+    "check": "npm run lint && npm test && npm run build",
     "rag:inspect": "node --import tsx scripts/sync-rag-jsonl.ts",
     "rag:sync": "node --env-file=.env.local --import tsx scripts/sync-rag-jsonl.ts --apply",
     "rag:inspect:triggers": "node --import tsx scripts/sync-rag-jsonl.ts --only-triggers",

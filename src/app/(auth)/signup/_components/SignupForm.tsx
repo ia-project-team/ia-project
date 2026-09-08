@@ -1,21 +1,21 @@
 "use client";
 
 import { useActionState } from "react";
+import Link from "next/link";
 
 import { signup } from "../actions";
+import styles from "../../auth.module.css";
 
 export function SignupForm() {
   const [state, action, pending] = useActionState(signup, undefined);
 
   if (state?.success) {
     return (
-      <div className="w-full max-w-sm rounded-2xl border border-zinc-200 bg-white p-8 text-center dark:border-zinc-800 dark:bg-zinc-900">
-        <h1 className="text-lg font-semibold text-black dark:text-zinc-50">
-          이메일을 확인해주세요
-        </h1>
-        <p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-400">
-          {state.message}
-        </p>
+      <div className={styles.successCard}>
+        <span className={styles.successIcon} aria-hidden="true">✓</span>
+        <h1>이메일을 확인해주세요</h1>
+        <p>{state.message}</p>
+        <Link href="/login">이미 확인했다면 로그인하기 →</Link>
       </div>
     );
   }
@@ -23,50 +23,40 @@ export function SignupForm() {
   return (
     <form
       action={action}
-      className="w-full max-w-sm rounded-2xl border border-zinc-200 bg-white p-8 dark:border-zinc-800 dark:bg-zinc-900"
+      className={styles.form}
     >
-      <h1 className="text-lg font-semibold text-black dark:text-zinc-50">회원가입</h1>
+      <h1 className={styles.heading}>무료로 계속하기</h1>
+      <p className={styles.description}>
+        1분이면 가입할 수 있어요. 진행 중인 상담 준비는 그대로 이어집니다.
+      </p>
 
-      <div className="mt-6 flex flex-col gap-4">
-        <div>
-          <label
-            htmlFor="email"
-            className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
-          >
-            이메일
-          </label>
+      <div className={styles.field}>
+          <label htmlFor="email">이메일</label>
           <input
             id="email"
             name="email"
             type="email"
             autoComplete="email"
             placeholder="you@example.com"
-            className="w-full rounded-xl border border-zinc-200 bg-white px-4 py-2 text-sm leading-6 outline-none focus:border-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50"
+            required
           />
           {state?.errors?.email && (
-            <p className="mt-1 text-xs text-red-600 dark:text-red-400">
-              {state.errors.email[0]}
-            </p>
+            <p className={styles.fieldError}>{state.errors.email[0]}</p>
           )}
         </div>
 
-        <div>
-          <label
-            htmlFor="password"
-            className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
-          >
-            비밀번호
-          </label>
+        <div className={styles.field}>
+          <label htmlFor="password">비밀번호</label>
           <input
             id="password"
             name="password"
             type="password"
             autoComplete="new-password"
             placeholder="8자 이상, 영문+숫자"
-            className="w-full rounded-xl border border-zinc-200 bg-white px-4 py-2 text-sm leading-6 outline-none focus:border-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50"
+            required
           />
           {state?.errors?.password && (
-            <ul className="mt-1 text-xs text-red-600 dark:text-red-400">
+            <ul className={styles.fieldError}>
               {state.errors.password.map((error) => (
                 <li key={error}>{error}</li>
               ))}
@@ -74,39 +64,38 @@ export function SignupForm() {
           )}
         </div>
 
-        <div>
-          <label
-            htmlFor="confirmPassword"
-            className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
-          >
-            비밀번호 확인
-          </label>
+        <div className={styles.field}>
+          <label htmlFor="confirmPassword">비밀번호 확인</label>
           <input
             id="confirmPassword"
             name="confirmPassword"
             type="password"
             autoComplete="new-password"
-            className="w-full rounded-xl border border-zinc-200 bg-white px-4 py-2 text-sm leading-6 outline-none focus:border-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50"
+            required
           />
           {state?.errors?.confirmPassword && (
-            <p className="mt-1 text-xs text-red-600 dark:text-red-400">
+            <p className={styles.fieldError}>
               {state.errors.confirmPassword[0]}
             </p>
           )}
         </div>
-      </div>
-
       {state?.message && (
-        <p className="mt-4 text-sm text-red-600 dark:text-red-400">{state.message}</p>
+        <p className={styles.formError} role="alert">{state.message}</p>
       )}
 
       <button
         type="submit"
         disabled={pending}
-        className="mt-6 h-10 w-full rounded-full bg-black text-sm font-medium text-white disabled:cursor-not-allowed disabled:bg-zinc-300 dark:bg-zinc-100 dark:text-black dark:disabled:bg-zinc-700 dark:disabled:text-zinc-400"
+        className={styles.submitButton}
       >
-        {pending ? "가입 중..." : "가입하기"}
+        {pending ? "계정을 만들고 있어요..." : "가입하고 대화 계속하기"}
       </button>
+      <p className={styles.switchText}>
+        이미 계정이 있나요? <Link href="/login">로그인</Link>
+      </p>
+      <p className={styles.terms}>
+        가입을 진행하면 LawPre의 이용약관과 개인정보 처리방침에 동의하게 됩니다.
+      </p>
     </form>
   );
 }

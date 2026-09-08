@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useEffect, useRef } from "react";
 
+import { GUEST_CHAT_LIMIT } from "@/core/chat/limits";
+
 import styles from "../chat.module.css";
 import type { ChatMessage } from "./types";
 
@@ -10,6 +12,7 @@ interface MessageListProps {
   messages: ChatMessage[];
   isStreaming: boolean;
   showReadyCard: boolean;
+  showSignupGate: boolean;
   onContinue: () => void;
 }
 
@@ -17,13 +20,14 @@ export function MessageList({
   messages,
   isStreaming,
   showReadyCard,
+  showSignupGate,
   onContinue,
 }: MessageListProps) {
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, isStreaming, showReadyCard]);
+  }, [messages, isStreaming, showReadyCard, showSignupGate]);
 
   return (
     <div className={styles.messageViewport}>
@@ -93,6 +97,30 @@ export function MessageList({
                 </button>
               </div>
             </div>
+          </section>
+        ) : null}
+
+        {showSignupGate ? (
+          <section className={styles.signupGate} aria-labelledby="signup-gate-title">
+            <div className={styles.signupGateIcon} aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <rect x="5" y="10" width="14" height="11" rx="2" />
+                <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+              </svg>
+            </div>
+            <span className={styles.signupGateEyebrow}>
+              무료 대화 {GUEST_CHAT_LIMIT}회를 모두 사용했어요
+            </span>
+            <h2 id="signup-gate-title">여기까지 정리한 내용,<br />가입하고 그대로 이어가세요</h2>
+            <p>
+              지금 만든 계정으로 로그인하면 대화가 사라지지 않고,
+              상담용 리포트가 완성될 때까지 계속 답변할 수 있어요.
+            </p>
+            <div className={styles.signupGateActions}>
+              <Link href="/signup" className={styles.signupPrimary}>무료 회원가입</Link>
+              <Link href="/login" className={styles.signupSecondary}>이미 계정이 있어요</Link>
+            </div>
+            <small>카드 등록 없이 이메일로 간편하게 시작합니다</small>
           </section>
         ) : null}
 

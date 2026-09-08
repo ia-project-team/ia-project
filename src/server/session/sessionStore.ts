@@ -4,6 +4,7 @@ import "server-only";
 
 import type { PendingRagQuestion, StoredRagFact } from "@/core/rag/types";
 import type { CollectedItem, ConversationMessage } from "@/core/schemas/turn";
+import { getSupabase } from "@/server/supabase/client";
 
 export interface Session {
   sessionId: string;
@@ -20,22 +21,71 @@ export interface Session {
 class SessionStore {
   private sessions = new Map<string, Session>();
 
-  getOrCreate(sessionId: string): Session {
+  private create(sessionId: string): Session {
+    return {
+      sessionId,
+      history: [],
+      collected: [],
+      ragFacts: [],
+      unansweredRagFacts: [],
+      pendingRagQuestion: null,
+    };
+  }
+
+  private hasPersistentStore(): boolean {
+    return Boolean(
+      process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY,
+    );
+  }
+
+  async getOrCreate(sessionId: string, userId: string | null): Promise<Session> {
+    if (this.hasPersistentStore()) {
+      const { data, error } = await getSupabase()
+        .from("chat_sessions")
+        .select("session_id,user_id,state")
+        .eq("session_id", sessionId)
+        .maybeSingle();
+
+      if (error) throw error;
+      if (data) {
+        if (data.user_id && data.user_id !== userId) {
+          throw new Error("이 대화에 접근할 권한이 없습니다.");
+        }
+
+        const saved = data.state as Omit<Session, "sessionId">;
+        return { ...saved, sessionId };
+      }
+
+      return this.create(sessionId);
+    }
+
     let session = this.sessions.get(sessionId);
     if (!session) {
-      session = {
-        sessionId,
-        history: [],
-        collected: [],
-        ragFacts: [],
-        unansweredRagFacts: [],
-        pendingRagQuestion: null,
-      };
+      session = this.create(sessionId);
       this.sessions.set(sessionId, session);
     }
     return session;
   }
+
+  async save(session: Session, userId: string | null): Promise<void> {
+    if (this.hasPersistentStore()) {
+      const { sessionId, ...state } = session;
+      const { error } = await getSupabase().from("chat_sessions").upsert(
+        {
+          session_id: sessionId,
+          user_id: userId,
+          state,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "session_id" },
+      );
+      if (error) throw error;
+      return;
+    }
+
+    this.sessions.set(session.sessionId, session);
+  }
 }
 
-/** 모듈 수준 단일 인스턴스. 서버리스 배포 시 외부 저장소로 교체 필요. */
+/** Supabase 설정 시 영속 저장하며, 로컬 최소 설정에서는 메모리를 사용한다. */
 export const store = new SessionStore();
